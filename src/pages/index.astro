@@ -1,0 +1,601 @@
+---
+import Base from "../layouts/Base.astro";
+
+// Textes provisoires : à relire et valider par l'équipe avant la mise en ligne.
+const univers = [
+  {
+    titre: "La musique",
+    texte:
+      "Jazz, jazz manouche, rock, pop et DJ sets jusqu'au bout de la nuit, sur plusieurs scènes nichées dans le domaine.",
+    icone: "musique",
+  },
+  {
+    titre: "La magie",
+    texte:
+      "De grands numéros d'illusion sur scène et des magiciens qui surgissent au milieu du public, à quelques centimètres de vous.",
+    icone: "magie",
+  },
+  {
+    titre: "La nature",
+    texte:
+      "Dix hectares de nature préservée au bord du Loing, transformés le temps d'un week-end en monde onirique.",
+    icone: "nature",
+  },
+];
+
+const jours = [
+  {
+    jour: "Vendredi",
+    date: "28 mai",
+    titre: "L'éveil",
+    texte: "Ouverture du camping, premiers concerts en fin d'après-midi, puis DJ sets jusque tard dans la nuit.",
+  },
+  {
+    jour: "Samedi",
+    date: "29 mai",
+    titre: "La grande nuit",
+    texte: "Magiciens sur scène et en close-up, concerts toute la journée et grande soirée avec nos têtes d'affiche.",
+  },
+  {
+    jour: "Dimanche",
+    date: "30 mai",
+    titre: "La journée des familles",
+    texte: "Artistes pour les enfants, magie à hauteur d'yeux, jeux et animations pour tous les âges.",
+  },
+];
+---
+
+<Base>
+  <!-- ===================== OUVERTURE ===================== -->
+  <section class="ouverture" aria-labelledby="titre-festival">
+    <div class="portail">
+      <h1 id="titre-festival" class="portail__logo">
+        <img
+          src="/brouillon/logo.webp"
+          alt="Les Ragondins Farfelus"
+          width="1200"
+          height="717"
+          fetchpriority="high"
+        />
+      </h1>
+      <p class="portail__badge">Festival de musique et de magie</p>
+      <div class="portail__infos">
+        <p class="portail__lieu">
+          Domaine de Briquemault
+          <span>Sainte-Geneviève-des-Bois</span>
+        </p>
+        <p class="portail__dates">
+          <span class="texte-or">28·29·30</span>
+          <span>mai 2027</span>
+        </p>
+      </div>
+      <p class="portail__genres">Magie · DJ sets · Concerts jazz et rock</p>
+    </div>
+
+    <div class="scene">
+      <img class="scene__escalier" src="/brouillon/escalier.webp" alt="" width="419" height="244" />
+      <div class="scene__actions">
+        <a class="bouton bouton--rose" href="#billetterie">Billetterie</a>
+        <a class="bouton bouton--contour" href="#experience">Entrer dans le monde</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== L'EXPÉRIENCE ===================== -->
+  <section class="section experience" id="experience" aria-labelledby="titre-experience">
+    <div class="contenu">
+      <span class="surtitre">Le festival</span>
+      <h2 id="titre-experience">Là où la musique rencontre l'illusion</h2>
+      <p class="intro">
+        Un monde mystérieux, onirique et hors du temps qui s'éveille une fois par an au cœur du
+        Loiret. Trois jours pour vivre une expérience immersive, entre nature, musique puissante et
+        magie.
+      </p>
+
+      <ul class="arches">
+        {
+          univers.map((u) => (
+            <li class="arche">
+              <span class="arche__icone" aria-hidden="true">
+                {u.icone === "musique" && (
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 36V10l20-4v26" />
+                    <circle cx="13" cy="36" r="5" />
+                    <circle cx="33" cy="32" r="5" />
+                  </svg>
+                )}
+                {u.icone === "magie" && (
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M24 4c1.5 9 4 11.5 13 13-9 1.5-11.5 4-13 13-1.5-9-4-11.5-13-13 9-1.5 11.5-4 13-13Z" />
+                    <path d="M38 30c.7 4 1.8 5.2 6 6-4.2.8-5.3 2-6 6-.7-4-1.8-5.2-6-6 4.2-.8 5.3-2 6-6Z" />
+                  </svg>
+                )}
+                {u.icone === "nature" && (
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 40C10 20 22 8 40 8c0 18-12 30-30 32Z" />
+                    <path d="M10 40 30 18" />
+                  </svg>
+                )}
+              </span>
+              <h3>{u.titre}</h3>
+              <p>{u.texte}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== PROGRAMME ===================== -->
+  <section class="section programme" id="programme" aria-labelledby="titre-programme">
+    <div class="contenu">
+      <span class="surtitre">Programme</span>
+      <h2 id="titre-programme">Trois jours, trois ambiances</h2>
+      <p class="intro">La programmation complète sera dévoilée très bientôt. Restez à l'affût&nbsp;!</p>
+
+      <ol class="jours">
+        {
+          jours.map((j) => (
+            <li class="jour">
+              <p class="jour__date">
+                <span class="jour__nom">{j.jour}</span>
+                <span class="texte-or">{j.date}</span>
+              </p>
+              <h3>{j.titre}</h3>
+              <p>{j.texte}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===================== BILLETTERIE ===================== -->
+  <section class="section billetterie" id="billetterie" aria-labelledby="titre-billetterie">
+    <div class="contenu billetterie__carte">
+      <div>
+        <span class="surtitre">Billetterie</span>
+        <h2 id="titre-billetterie">Ouverture prochaine</h2>
+        <p>
+          Pass 1 jour, pass week-end, camping : toutes les formules seront annoncées ici à
+          l'ouverture de la billetterie.
+        </p>
+      </div>
+      <p class="billetterie__gratuit">
+        <strong>Entrée gratuite</strong> pour les moins de 11&nbsp;ans et les personnes en situation
+        de handicap.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== SOLIDARITÉ ===================== -->
+  <section class="section solidarite" id="solidarite" aria-labelledby="titre-solidarite">
+    <div class="contenu solidarite__grille">
+      <div>
+        <span class="surtitre">Un festival solidaire</span>
+        <h2 id="titre-solidarite">Au profit de Handi'Chiens</h2>
+      </div>
+      <div>
+        <p class="intro">
+          Les Ragondins Farfelus soutiennent l'association Handi'Chiens, qui éduque et remet
+          gratuitement des chiens d'assistance à des personnes en situation de handicap.
+        </p>
+        <p>
+          Chaque billet, chaque verre partagé au bar contribue à offrir un compagnon à quatre pattes
+          à celles et ceux qui en ont besoin.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LE LIEU ===================== -->
+  <section class="section lieu" id="lieu" aria-labelledby="titre-lieu">
+    <div class="contenu">
+      <span class="surtitre">Le lieu</span>
+      <h2 id="titre-lieu">Le Domaine de Briquemault</h2>
+      <p class="intro">
+        Un domaine chargé d'histoire au cœur du Loiret, entre château, orangerie et guinguette,
+        qui ouvre ses portes au festival le temps d'un week-end.
+      </p>
+
+      <dl class="chiffres">
+        <div>
+          <dt>Hectares de nature</dt>
+          <dd class="texte-or">10</dd>
+        </div>
+        <div>
+          <dt>De Paris</dt>
+          <dd class="texte-or">1 h 30</dd>
+        </div>
+        <div>
+          <dt>Jours de festival</dt>
+          <dd class="texte-or">3</dd>
+        </div>
+      </dl>
+
+      <a class="bouton bouton--contour" href="https://domainedebriquemault.com" rel="noopener">
+        Découvrir le domaine
+      </a>
+    </div>
+  </section>
+
+  <!-- ===================== BÉNÉVOLES ===================== -->
+  <section class="benevoles" id="benevoles" aria-labelledby="titre-benevoles">
+    <div class="contenu benevoles__contenu">
+      <div>
+        <h2 id="titre-benevoles">Rejoignez la troupe</h2>
+        <p>
+          Accueil, bar, scènes, installation, décors… Vivez le festival de l'intérieur aux côtés
+          des Ragondins.
+        </p>
+      </div>
+      <a class="bouton bouton--vert" href="#benevoles">Devenir bénévole</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Ouverture (le portail) ---------- */
+  .ouverture {
+    --pw: min(88vw, 560px, 58svh);
+    position: relative;
+    min-height: 100svh;
+    padding-top: calc(var(--hauteur-entete) + clamp(1rem, 4svh, 2.5rem));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: radial-gradient(
+        ellipse 70% 55% at 50% 38%,
+        var(--emeraude) 0%,
+        #0b4a48 38%,
+        var(--vert) 62%,
+        var(--vert-nuit) 100%
+      );
+    overflow: hidden;
+  }
+
+  .portail {
+    position: relative;
+    z-index: 2;
+    width: var(--pw);
+    aspect-ratio: 1007 / 1292;
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--pw) * 0.032);
+    padding: 0 calc(var(--pw) * 0.15);
+    text-align: center;
+    background: url("/brouillon/cadre-or.webp") center / contain no-repeat;
+    filter: drop-shadow(0 0 2.5rem rgba(243, 226, 176, 0.18));
+    animation: apparition 1.4s ease-out both;
+  }
+
+  .portail__logo {
+    margin: 0;
+    width: 100%;
+  }
+
+  .portail__logo img {
+    width: 100%;
+  }
+
+  .portail__badge {
+    margin: 0;
+    padding: 0.35em 1.1em;
+    border: 1.5px solid var(--creme);
+    border-radius: 999px;
+    font-size: clamp(0.72rem, 3.1cqw, 1rem);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .portail__infos {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 3cqw;
+    width: 112%;
+  }
+
+  .portail__infos::before {
+    content: "";
+    grid-column: 2;
+    grid-row: 1;
+    width: 1.5px;
+    height: 100%;
+    background: var(--creme);
+    opacity: 0.6;
+  }
+
+  .portail__lieu,
+  .portail__dates {
+    margin: 0;
+    grid-row: 1;
+    line-height: 1.1;
+  }
+
+  .portail__lieu {
+    grid-column: 1;
+    font-size: clamp(0.8rem, 4.1cqw, 1.35rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: right;
+  }
+
+  .portail__lieu span {
+    display: block;
+    margin-top: 0.4em;
+    font-size: 0.62em;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .portail__dates {
+    grid-column: 3;
+    text-align: left;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .portail__dates span:first-child {
+    display: block;
+    font-size: clamp(1.3rem, 8cqw, 2.7rem);
+    letter-spacing: 0.02em;
+  }
+
+  .portail__dates span:last-child {
+    font-size: clamp(0.85rem, 4.6cqw, 1.5rem);
+  }
+
+  .portail__genres {
+    margin: 0;
+    text-wrap: balance;
+    font-size: clamp(0.72rem, 3.2cqw, 1rem);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--rose);
+  }
+
+  /* L'escalier et le sol en damier qui mènent au portail */
+  .scene {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    flex: 1;
+    min-height: clamp(12rem, 30svh, 18rem);
+    margin-top: calc(var(--pw) * -0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background:
+      linear-gradient(to bottom, transparent 55%, var(--vert-nuit) 100%),
+      url("/brouillon/sol-damier.webp") center top / max(100%, 900px) auto no-repeat;
+  }
+
+  .scene__escalier {
+    width: calc(var(--pw) * 0.42);
+    margin-top: calc(var(--pw) * -0.005);
+    opacity: 0.95;
+  }
+
+  .scene__actions {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1rem;
+    padding: 1.5rem var(--marge) 3rem;
+  }
+
+  .scene__actions .bouton--contour {
+    background: rgba(5, 40, 40, 0.7);
+  }
+
+  @keyframes apparition {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+      filter: drop-shadow(0 0 0 rgba(243, 226, 176, 0));
+    }
+  }
+
+  /* ---------- L'expérience : trois arches ---------- */
+  .experience {
+    background: var(--vert-nuit);
+  }
+
+  .arches {
+    list-style: none;
+    margin: 3.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  }
+
+  .arche {
+    padding: 3rem 1.75rem 2rem;
+    text-align: center;
+    border: 1.5px solid rgba(243, 226, 176, 0.45);
+    border-radius: 999px 999px var(--rayon) var(--rayon);
+    background: linear-gradient(180deg, rgba(44, 122, 111, 0.28), rgba(8, 61, 61, 0.4));
+  }
+
+  .arche__icone {
+    display: inline-grid;
+    place-items: center;
+    width: 4rem;
+    height: 4rem;
+    margin-bottom: 1rem;
+    color: var(--or-clair);
+  }
+
+  .arche__icone svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .arche p {
+    color: var(--creme-doux);
+    margin: 0;
+  }
+
+  /* ---------- Programme ---------- */
+  .programme {
+    background: var(--vert);
+  }
+
+  .jours {
+    list-style: none;
+    margin: 3rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  }
+
+  .jour {
+    padding: 2rem 1.75rem;
+    border-radius: var(--rayon);
+    background: var(--vert-surface);
+    border-top: 4px solid var(--rose);
+  }
+
+  .jour__date {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    font-family: var(--font-titre);
+    font-size: 1.9rem;
+    font-weight: 600;
+  }
+
+  .jour__nom {
+    font-family: var(--font-texte);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--rose);
+  }
+
+  .jour p:last-child {
+    margin: 0;
+    color: var(--creme-doux);
+  }
+
+  /* ---------- Billetterie ---------- */
+  .billetterie {
+    background: var(--vert);
+    padding-top: 0;
+  }
+
+  .billetterie__carte {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    padding: clamp(2rem, 5vw, 3.5rem);
+    border-radius: var(--rayon);
+    border: 1.5px solid var(--or);
+    background: radial-gradient(ellipse at top left, rgba(44, 122, 111, 0.45), transparent 60%),
+      var(--vert-nuit);
+  }
+
+  .billetterie__carte p {
+    margin: 0;
+    color: var(--creme-doux);
+  }
+
+  .billetterie__gratuit {
+    padding: 1.5rem;
+    border-radius: var(--rayon);
+    background: rgba(255, 160, 203, 0.12);
+    border: 1px solid rgba(255, 160, 203, 0.5);
+    font-size: 1.1rem;
+  }
+
+  .billetterie__gratuit strong {
+    color: var(--rose);
+  }
+
+  /* ---------- Solidarité ---------- */
+  .solidarite {
+    background: var(--vert-nuit);
+  }
+
+  .solidarite__grille {
+    display: grid;
+    gap: 1.5rem 4rem;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    align-items: start;
+  }
+
+  .solidarite p:last-child {
+    color: var(--creme-doux);
+  }
+
+  /* ---------- Le lieu ---------- */
+  .lieu {
+    background:
+      radial-gradient(ellipse 60% 70% at 85% 30%, rgba(44, 122, 111, 0.5), transparent 70%),
+      var(--vert);
+  }
+
+  .chiffres {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 1.5rem;
+    margin: 3rem 0;
+  }
+
+  .chiffres div {
+    display: flex;
+    flex-direction: column-reverse;
+    border-left: 2px solid var(--rose);
+    padding-left: 1.25rem;
+  }
+
+  .chiffres dt {
+    color: var(--creme-doux);
+  }
+
+  .chiffres dd {
+    margin: 0;
+    font-family: var(--font-titre);
+    font-size: clamp(2.6rem, 6vw, 3.8rem);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  /* ---------- Bénévoles ---------- */
+  .benevoles {
+    background: var(--rose);
+    color: var(--vert);
+    padding: clamp(3.5rem, 8vw, 5.5rem) var(--marge);
+  }
+
+  .benevoles__contenu {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 3rem;
+  }
+
+  .benevoles h2 {
+    margin-bottom: 0.25em;
+  }
+
+  .benevoles p {
+    margin: 0;
+    max-width: 36rem;
+    font-size: 1.15rem;
+  }
+</style>

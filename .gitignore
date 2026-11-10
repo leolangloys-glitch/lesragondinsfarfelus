@@ -1,0 +1,12 @@
+# Dépendances et fichiers générés
+node_modules/
+dist/
+.astro/
+
+# Visuels provisoires de la graphiste : pas encore publiés dans le dépôt public
+public/brouillon/
+
+# Divers
+.DS_Store
+*.log
+.env

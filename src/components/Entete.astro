@@ -1,0 +1,219 @@
+---
+// Menu principal. Pour l'instant les liens mènent aux sections de la page d'accueil ;
+// ils pointeront vers les vraies pages quand elles seront créées.
+const liens = [
+  { libelle: "Le festival", href: "#experience" },
+  { libelle: "Programme", href: "#programme" },
+  { libelle: "Solidarité", href: "#solidarite" },
+  { libelle: "Le lieu", href: "#lieu" },
+  { libelle: "Bénévoles", href: "#benevoles" },
+];
+---
+
+<header class="entete">
+  <div class="entete__barre">
+    <a class="entete__logo" href="/" aria-label="Les Ragondins Farfelus, accueil">
+      <img src="/brouillon/logo-petit.webp" alt="" width="564" height="338" />
+    </a>
+
+    <button
+      class="entete__burger"
+      type="button"
+      aria-expanded="false"
+      aria-controls="menu-principal"
+    >
+      <span class="entete__burger-trait" aria-hidden="true"></span>
+      <span class="sr-only">Menu</span>
+    </button>
+
+    <nav class="entete__nav" id="menu-principal" aria-label="Menu principal">
+      <ul>
+        {
+          liens.map((lien) => (
+            <li>
+              <a href={lien.href}>{lien.libelle}</a>
+            </li>
+          ))
+        }
+      </ul>
+      <a class="bouton bouton--rose entete__billetterie" href="#billetterie">Billetterie</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const bouton = document.querySelector<HTMLButtonElement>(".entete__burger");
+  const nav = document.getElementById("menu-principal");
+  const entete = document.querySelector(".entete");
+
+  if (bouton && nav && entete) {
+    const fermer = () => {
+      bouton.setAttribute("aria-expanded", "false");
+      entete.classList.remove("entete--ouvert");
+    };
+
+    bouton.addEventListener("click", () => {
+      const ouvert = bouton.getAttribute("aria-expanded") === "true";
+      bouton.setAttribute("aria-expanded", String(!ouvert));
+      entete.classList.toggle("entete--ouvert", !ouvert);
+    });
+
+    nav.querySelectorAll("a").forEach((lien) => lien.addEventListener("click", fermer));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") fermer();
+    });
+  }
+</script>
+
+<style>
+  .entete {
+    position: fixed;
+    inset: 0 0 auto;
+    padding-top: env(safe-area-inset-top, 0px);
+    z-index: 50;
+    background: rgba(5, 40, 40, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(243, 226, 176, 0.15);
+  }
+
+  .entete__barre {
+    max-width: var(--largeur-max);
+    margin: 0 auto;
+    height: var(--hauteur-entete);
+    padding: 0 var(--marge);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .entete__logo img {
+    height: 2.9rem;
+    width: auto;
+  }
+
+  .entete__nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .entete__nav ul a {
+    display: block;
+    padding: 0.5rem 0.85rem;
+    color: var(--creme);
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 999px;
+  }
+
+  .entete__nav ul a:hover {
+    color: var(--rose);
+  }
+
+  .entete__nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .entete__billetterie {
+    min-height: 2.6rem;
+    padding: 0.5rem 1.3rem;
+  }
+
+  .entete__burger {
+    display: none;
+  }
+
+  /* ----- Téléphone et tablette ----- */
+  @media (max-width: 899px) {
+    .entete__burger {
+      display: grid;
+      place-items: center;
+      width: 3rem;
+      height: 3rem;
+      background: none;
+      border: 0;
+      color: var(--creme);
+      cursor: pointer;
+    }
+
+    .entete__burger-trait,
+    .entete__burger-trait::before,
+    .entete__burger-trait::after {
+      display: block;
+      width: 1.6rem;
+      height: 2px;
+      background: currentColor;
+      border-radius: 2px;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    .entete__burger-trait {
+      position: relative;
+    }
+
+    .entete__burger-trait::before,
+    .entete__burger-trait::after {
+      content: "";
+      position: absolute;
+      left: 0;
+    }
+
+    .entete__burger-trait::before {
+      top: -0.5rem;
+    }
+
+    .entete__burger-trait::after {
+      top: 0.5rem;
+    }
+
+    .entete--ouvert .entete__burger-trait {
+      background: transparent;
+    }
+
+    .entete--ouvert .entete__burger-trait::before {
+      transform: translateY(0.5rem) rotate(45deg);
+    }
+
+    .entete--ouvert .entete__burger-trait::after {
+      transform: translateY(-0.5rem) rotate(-45deg);
+    }
+
+    .entete__nav {
+      position: absolute;
+      top: var(--hauteur-entete);
+      inset-inline: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1.25rem;
+      padding: 1.5rem var(--marge) 2rem;
+      background: var(--vert-nuit);
+      border-bottom: 1px solid rgba(243, 226, 176, 0.2);
+      display: none;
+    }
+
+    .entete--ouvert .entete__nav {
+      display: flex;
+    }
+
+    .entete__nav ul {
+      flex-direction: column;
+    }
+
+    .entete__nav ul a {
+      font-family: var(--font-titre);
+      font-size: 1.6rem;
+      padding: 0.5rem 0;
+    }
+
+    .entete__billetterie {
+      align-self: flex-start;
+      min-height: 3rem;
+    }
+  }
+</style>
