@@ -4,30 +4,59 @@ import "@fontsource-variable/fraunces/full.css";
 import "../styles/global.css";
 import Entete from "../components/Entete.astro";
 import PiedDePage from "../components/PiedDePage.astro";
+import { festival } from "../data/site";
 
 interface Props {
-  titre?: string;
-  description?: string;
+  /** Titre de l'onglet et de Google (60 caractères max conseillés) */
+  titre: string;
+  /** Description pour Google et les partages (155 caractères max conseillés) */
+  description: string;
+  /** Image de partage (réseaux sociaux), chemin depuis public/ */
+  image?: string;
+  /** Données structurées schema.org pour Google */
+  donneesStructurees?: object | object[];
+  /** Page d'accueil : le titre n'est pas suffixé du nom du festival */
+  accueil?: boolean;
 }
 
 const {
-  titre = "Les Ragondins Farfelus — Festival de musique et de magie",
-  description = "Festival de musique et de magie au Domaine de Briquemault (Loiret), les 28, 29 et 30 mai 2027. Au profit de l'association Handi'Chiens.",
+  titre,
+  description,
+  image = "/brouillon/partage.jpg",
+  donneesStructurees,
+  accueil = false,
 } = Astro.props;
+
+const titreComplet = accueil ? titre : `${titre} · ${festival.nom}`;
+const canonique = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const imageAbsolue = Astro.site ? new URL(image, Astro.site).href : image;
+const jsonLd = donneesStructurees
+  ? JSON.stringify(Array.isArray(donneesStructurees) ? donneesStructurees : [donneesStructurees])
+  : null;
 ---
 
 <!doctype html>
 <html lang="fr">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{titre}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{titreComplet}</title>
     <meta name="description" content={description} />
+    {canonique && <link rel="canonical" href={canonique} />}
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#083d3d" />
-    <meta property="og:title" content={titre} />
+
+    <meta property="og:site_name" content={festival.nom} />
+    <meta property="og:title" content={titreComplet} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_FR" />
+    <meta property="og:image" content={imageAbsolue} />
+    {canonique && <meta property="og:url" content={canonique} />}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
   </head>
   <body>
     <a class="lien-evitement" href="#contenu">Aller au contenu</a>

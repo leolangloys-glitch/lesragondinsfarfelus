@@ -1,0 +1,75 @@
+---
+// Bandeau d'ouverture des pages intérieures (toutes sauf l'accueil).
+interface Props {
+  surtitre: string;
+  titre: string;
+  intro?: string;
+}
+
+const { surtitre, titre, intro } = Astro.props;
+---
+
+<header class="ouverture-page">
+  <div class="ouverture-page__contenu">
+    <span class="surtitre">{surtitre}</span>
+    <h1>{titre}</h1>
+    {intro && <p class="intro">{intro}</p>}
+    <slot />
+  </div>
+  <img
+    class="ouverture-page__cadre"
+    src="/brouillon/cadre-or.webp"
+    alt=""
+    width="1007"
+    height="1292"
+    aria-hidden="true"
+  />
+</header>
+
+<style>
+  .ouverture-page {
+    position: relative;
+    overflow: hidden;
+    padding: calc(var(--hauteur-entete) + clamp(3rem, 9vw, 6rem)) var(--marge)
+      clamp(3rem, 8vw, 5.5rem);
+    background:
+      radial-gradient(ellipse 55% 80% at 82% 40%, rgba(44, 122, 111, 0.85), transparent 70%),
+      radial-gradient(ellipse 40% 50% at 10% 100%, rgba(255, 160, 203, 0.12), transparent 70%),
+      var(--vert);
+    border-bottom: 1px solid rgba(243, 226, 176, 0.15);
+  }
+
+  .ouverture-page__contenu {
+    position: relative;
+    z-index: 1;
+    max-width: var(--largeur-max);
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: clamp(2.6rem, 8vw, 5rem);
+    max-width: 14ch;
+    text-wrap: balance;
+  }
+
+  .intro {
+    margin: 0;
+  }
+
+  .ouverture-page__cadre {
+    position: absolute;
+    right: max(-6rem, -10vw);
+    top: 50%;
+    width: clamp(14rem, 34vw, 26rem);
+    transform: translateY(-42%) rotate(8deg);
+    opacity: 0.32;
+    pointer-events: none;
+  }
+
+  @media (max-width: 640px) {
+    .ouverture-page__cadre {
+      opacity: 0.16;
+      right: -7rem;
+    }
+  }
+</style>

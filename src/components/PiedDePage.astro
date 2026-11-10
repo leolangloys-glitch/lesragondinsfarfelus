@@ -1,39 +1,58 @@
 ---
-const annee = 2027;
+import Newsletter from "./Newsletter.astro";
+import { festival, liensExternes, menuPied } from "../data/site";
+
+const reseaux = [
+  { nom: "Instagram", href: liensExternes.instagram },
+  { nom: "Facebook", href: liensExternes.facebook },
+  { nom: "TikTok", href: liensExternes.tiktok },
+].filter((r) => r.href);
 ---
+
+<Newsletter />
 
 <footer class="pied">
   <div class="pied__grille">
     <div class="pied__marque">
-      <img src="/brouillon/logo-petit.webp" alt="Les Ragondins Farfelus" width="564" height="338" />
+      <img src="/brouillon/logo-petit.webp" alt={festival.nom} width="564" height="338" loading="lazy" />
       <p>
-        Festival de musique et de magie<br />
-        Domaine de Briquemault, Sainte-Geneviève-des-Bois (Loiret)
+        {festival.accroche}<br />
+        {festival.dates.affichage}<br />
+        {festival.lieu.nom}, {festival.lieu.commune} ({festival.lieu.departement})
       </p>
+      {
+        reseaux.length > 0 && (
+          <ul class="pied__reseaux">
+            {reseaux.map((r) => (
+              <li>
+                <a href={r.href} rel="noopener">
+                  {r.nom}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
     </div>
 
-    <nav aria-label="Liens du pied de page">
-      <h2 class="pied__titre">Le festival</h2>
-      <ul>
-        <li><a href="#programme">Programme</a></li>
-        <li><a href="#billetterie">Billetterie</a></li>
-        <li><a href="#benevoles">Devenir bénévole</a></li>
-        <li><a href="#lieu">Venir au festival</a></li>
-      </ul>
-    </nav>
-
-    <div>
-      <h2 class="pied__titre">Ensemble</h2>
-      <ul>
-        <li><a href="#solidarite">Handi'Chiens</a></li>
-        <li><a href="https://domainedebriquemault.com" rel="noopener">Domaine de Briquemault</a></li>
-        <li><a href="#">Mentions légales</a></li>
-      </ul>
-    </div>
+    {
+      menuPied.map((colonne) => (
+        <nav aria-label={colonne.titre}>
+          <h2 class="pied__titre">{colonne.titre}</h2>
+          <ul>
+            {colonne.liens.map((lien) => (
+              <li>
+                <a href={lien.href}>{lien.libelle}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ))
+    }
   </div>
 
   <p class="pied__bas">
-    © {annee} Les Ragondins Farfelus · Festival au profit de l'association Handi'Chiens
+    © 2027 {festival.nom} · Festival au profit de l'association {festival.association}
   </p>
 </footer>
 
@@ -41,7 +60,7 @@ const annee = 2027;
   .pied {
     background: var(--vert-nuit);
     border-top: 1px solid rgba(243, 226, 176, 0.18);
-    padding: 4rem var(--marge) 2rem;
+    padding: 4rem var(--marge) calc(2rem + env(safe-area-inset-bottom, 0px));
     color: var(--creme-doux);
     font-size: 0.975rem;
   }
@@ -51,7 +70,7 @@ const annee = 2027;
     margin: 0 auto;
     display: grid;
     gap: 2.5rem;
-    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
   }
 
   .pied__marque img {
@@ -75,6 +94,11 @@ const annee = 2027;
     padding: 0;
     display: grid;
     gap: 0.6rem;
+  }
+
+  .pied__reseaux {
+    display: flex;
+    gap: 1rem;
   }
 
   a {

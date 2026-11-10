@@ -1,0 +1,79 @@
+---
+// Questions fréquentes en accordéon (fonctionne sans JavaScript).
+export interface Question {
+  q: string;
+  r: string;
+}
+
+interface Props {
+  questions: Question[];
+}
+
+const { questions } = Astro.props;
+---
+
+<div class="faq">
+  {
+    questions.map((item) => (
+      <details>
+        <summary>{item.q}</summary>
+        <p set:html={item.r} />
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .faq {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 52rem;
+  }
+
+  details {
+    border-radius: var(--rayon);
+    background: var(--vert-surface);
+    border: 1px solid rgba(243, 226, 176, 0.14);
+  }
+
+  summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.15rem 1.5rem;
+    font-weight: 600;
+    font-size: 1.075rem;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::after {
+    content: "+";
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 1.5px solid var(--or);
+    color: var(--or-clair);
+    font-size: 1.25rem;
+    line-height: 1;
+    transition: transform 0.25s ease;
+  }
+
+  details[open] summary::after {
+    transform: rotate(45deg);
+  }
+
+  details p {
+    margin: 0;
+    padding: 0 1.5rem 1.35rem;
+    color: var(--creme-doux);
+  }
+</style>

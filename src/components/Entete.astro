@@ -1,13 +1,8 @@
 ---
-// Menu principal. Pour l'instant les liens mènent aux sections de la page d'accueil ;
-// ils pointeront vers les vraies pages quand elles seront créées.
-const liens = [
-  { libelle: "Le festival", href: "#experience" },
-  { libelle: "Programme", href: "#programme" },
-  { libelle: "Solidarité", href: "#solidarite" },
-  { libelle: "Le lieu", href: "#lieu" },
-  { libelle: "Bénévoles", href: "#benevoles" },
-];
+import { menuPrincipal } from "../data/site";
+
+const cheminActuel = Astro.url.pathname.replace(/\/$/, "") || "/";
+const estActif = (href: string) => cheminActuel === href;
 ---
 
 <header class="entete">
@@ -29,14 +24,20 @@ const liens = [
     <nav class="entete__nav" id="menu-principal" aria-label="Menu principal">
       <ul>
         {
-          liens.map((lien) => (
+          menuPrincipal.map((lien) => (
             <li>
-              <a href={lien.href}>{lien.libelle}</a>
+              <a href={lien.href} aria-current={estActif(lien.href) ? "page" : undefined}>
+                {lien.libelle}
+              </a>
             </li>
           ))
         }
       </ul>
-      <a class="bouton bouton--rose entete__billetterie" href="#billetterie">Billetterie</a>
+      <a
+        class="bouton bouton--rose entete__billetterie"
+        href="/billetterie"
+        aria-current={estActif("/billetterie") ? "page" : undefined}>Billetterie</a
+      >
     </nav>
   </div>
 </header>
@@ -75,6 +76,7 @@ const liens = [
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(243, 226, 176, 0.15);
+    transition: transform 0.6s ease, opacity 0.6s ease;
   }
 
   .entete__barre {
@@ -112,6 +114,13 @@ const liens = [
 
   .entete__nav ul a:hover {
     color: var(--rose);
+  }
+
+  .entete__nav ul a[aria-current="page"] {
+    color: var(--rose);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.45em;
   }
 
   .entete__nav {
@@ -186,7 +195,7 @@ const liens = [
 
     .entete__nav {
       position: absolute;
-      top: var(--hauteur-entete);
+      top: calc(var(--hauteur-entete) + env(safe-area-inset-top, 0px));
       inset-inline: 0;
       flex-direction: column;
       align-items: stretch;
@@ -195,6 +204,8 @@ const liens = [
       background: var(--vert-nuit);
       border-bottom: 1px solid rgba(243, 226, 176, 0.2);
       display: none;
+      max-height: calc(100svh - var(--hauteur-entete));
+      overflow-y: auto;
     }
 
     .entete--ouvert .entete__nav {

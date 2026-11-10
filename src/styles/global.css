@@ -237,3 +237,179 @@ p {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---------- Éléments réutilisables des pages ---------- */
+
+.grille {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+}
+
+.grille--large {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+}
+
+.carte {
+  padding: 2rem 1.75rem;
+  border-radius: var(--rayon);
+  background: var(--vert-surface);
+  border: 1px solid rgba(243, 226, 176, 0.14);
+  min-width: 0;
+}
+
+.carte h3 {
+  margin-bottom: 0.6rem;
+}
+
+.carte p:last-child,
+.carte ul:last-child {
+  margin-bottom: 0;
+}
+
+.carte--arche {
+  border-radius: 999px 999px var(--rayon) var(--rayon);
+  padding-top: 3rem;
+  text-align: center;
+  border: 1.5px solid rgba(243, 226, 176, 0.45);
+  background: linear-gradient(180deg, rgba(44, 122, 111, 0.28), rgba(8, 61, 61, 0.4));
+}
+
+.texte-doux {
+  color: var(--creme-doux);
+}
+
+.liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.liste li {
+  position: relative;
+  padding-left: 1.6rem;
+}
+
+.liste li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--or-clair), var(--or-fonce));
+}
+
+.encart {
+  padding: 1.5rem 1.75rem;
+  border-radius: var(--rayon);
+  background: rgba(255, 160, 203, 0.1);
+  border: 1px solid rgba(255, 160, 203, 0.45);
+}
+
+.encart strong {
+  color: var(--rose);
+}
+
+.a-completer {
+  display: inline-block;
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  border: 1px dashed var(--or);
+  color: var(--or-clair);
+  font-size: 0.85em;
+  font-style: normal;
+}
+
+.etapes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  counter-reset: etape;
+}
+
+.etapes li {
+  counter-increment: etape;
+  position: relative;
+  padding: 2rem 1.75rem 1.75rem;
+  border-radius: var(--rayon);
+  background: var(--vert-surface);
+}
+
+.etapes li::before {
+  content: counter(etape);
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-bottom: 1rem;
+  border-radius: 50%;
+  background: var(--rose);
+  color: var(--vert);
+  font-family: var(--font-titre);
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.etapes h3 {
+  font-size: 1.35rem;
+}
+
+.etapes p {
+  margin: 0;
+  color: var(--creme-doux);
+}
+
+.titre-section {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+}
+
+.titre-section h2 {
+  margin-bottom: 0.4em;
+  text-wrap: balance;
+}
+
+.titre-section .intro {
+  margin: 0;
+}
+
+.fond-nuit {
+  background: var(--vert-nuit);
+}
+
+.fond-vert {
+  background: var(--vert);
+}
+
+.boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  margin-top: 2rem;
+}
+
+.texte-long {
+  max-width: 46rem;
+}
+
+.texte-long h2 {
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  margin-top: 2.5rem;
+}
+
+.texte-long h2:first-child {
+  margin-top: 0;
+}
+
+.texte-long p,
+.texte-long li {
+  color: var(--creme-doux);
+}
