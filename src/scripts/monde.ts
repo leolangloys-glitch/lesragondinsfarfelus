@@ -5,10 +5,12 @@
 //    de la graphiste, en relief et en métal, est éclairé par un projecteur.
 //    À travers lui, on voit déjà le monde.
 // 2. Au clic, la caméra traverse le portail.
-// 3. Le monde : une clairière de nuit au clair de lune. Vraie forêt générée
-//    (chênes, frênes, pins, trembles), herbe qui ondule au vent, fleurs, rochers,
-//    chemin de dalles en damier, champignons bioluminescents, lanternes,
-//    lucioles, cartes à jouer en lévitation, scène et faisceaux au loin, brume.
+// 3. Le monde : les berges enchantées du Loing, la nuit. La rivière s'illumine
+//    de plancton fluorescent ; des ragondins y nagent en laissant un sillage de
+//    lumière. Héron dans les roseaux, chevreuil sur l'autre rive, chouettes aux
+//    yeux d'or, nénuphars et massettes lumineux, lanternes qui dérivent, petit
+//    pont de bois. Autour : vraie forêt générée, herbe au vent, champignons
+//    géants bioluminescents, lucioles, scène et faisceaux, château dans la brume.
 //
 // Rendu : matériaux physiques, éclairage d'ambiance HDRI, ombres portées,
 // halo lumineux, vignettage et grain de film. La qualité s'adapte à l'appareil
@@ -27,6 +29,8 @@ import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { EXRLoader } from "three/addons/loaders/EXRLoader.js";
+import { Reflector } from "three/addons/objects/Reflector.js";
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { Tree } from "@dgreenheck/ez-tree";
 import hdriCoucher from "@pmndrs/assets/hdri/sunset.exr.js";
 
@@ -128,30 +132,6 @@ function textureMarbre(alea: () => number) {
   });
   t.wrapS = t.wrapT = THREE.RepeatWrapping;
   return t;
-}
-
-function textureCarte(symbole: string, couleur: string) {
-  return toile(200, 280, (g) => {
-    const arrondi = (x: number, y: number, l: number, h: number, r: number) => {
-      g.beginPath();
-      if (g.roundRect) g.roundRect(x, y, l, h, r);
-      else g.rect(x, y, l, h);
-    };
-    g.fillStyle = "#f6eedb";
-    arrondi(4, 4, 192, 272, 18);
-    g.fill();
-    g.strokeStyle = "#b8904f";
-    g.lineWidth = 6;
-    arrondi(16, 16, 168, 248, 12);
-    g.stroke();
-    g.fillStyle = couleur;
-    g.textAlign = "center";
-    g.textBaseline = "middle";
-    g.font = "bold 120px serif";
-    g.fillText(symbole, 100, 146);
-    g.font = "bold 40px serif";
-    g.fillText(symbole, 44, 52);
-  });
 }
 
 function textureNote(symbole: string) {
@@ -505,11 +485,727 @@ function construireSeuil(alea: () => number, leger: boolean, or: THREE.Material)
 
 const cheminX = (z: number) => Math.sin(((1.8 - z) / 0.96) * 0.12) * 0.9;
 
+// ---------------------------------------------------------------------------
+// Champignons géants bioluminescents (d'après les références de l'équipe) :
+// chapeau sombre bleu-violet piqueté de points lumineux, lamelles orange-rose
+// qui rayonnent dessous, liseré lumineux, pied long et courbé.
+// ---------------------------------------------------------------------------
+
+function textureChapeau(alea: () => number, base: string, points: string) {
+  const t = toile(512, 256, (g) => {
+    const d = g.createLinearGradient(0, 0, 0, 256);
+    d.addColorStop(0, base);
+    d.addColorStop(1, "#0d0820");
+    g.fillStyle = d;
+    g.fillRect(0, 0, 512, 256);
+    for (let i = 0; i < 2200; i++) {
+      const x = alea() * 512;
+      const y = alea() * 256;
+      g.globalAlpha = 0.04 + alea() * 0.08;
+      g.fillStyle = alea() < 0.5 ? "#000000" : "#6a7cff";
+      g.fillRect(x, y, 2 + alea() * 6, 2 + alea() * 6);
+    }
+    g.globalAlpha = 1;
+    for (let i = 0; i < 420; i++) {
+      const x = alea() * 512;
+      const y = 20 + alea() * 230;
+      const r = 1 + alea() * 3.2;
+      g.fillStyle = points;
+      g.beginPath();
+      g.ellipse(x, y, r * 1.4, r, 0, 0, Math.PI * 2);
+      g.fill();
+    }
+  });
+  t.wrapS = THREE.RepeatWrapping;
+  return t;
+}
+
+function textureLamelles(alea: () => number) {
+  const t = toile(1024, 128, (g) => {
+    const d = g.createLinearGradient(0, 0, 0, 128);
+    d.addColorStop(0, "#ffd36a"); // près du pied : jaune-orangé
+    d.addColorStop(0.45, "#ff8a3d");
+    d.addColorStop(1, "#ff3d8e"); // vers le bord : rose
+    g.fillStyle = "#120612";
+    g.fillRect(0, 0, 1024, 128);
+    for (let i = 0; i < 260; i++) {
+      const x = (i / 260) * 1024 + (alea() - 0.5) * 2;
+      g.strokeStyle = d;
+      g.globalAlpha = 0.55 + alea() * 0.45;
+      g.lineWidth = 1 + alea() * 1.6;
+      g.beginPath();
+      g.moveTo(x, alea() * 18);
+      g.lineTo(x + (alea() - 0.5) * 3, 128);
+      g.stroke();
+    }
+    g.globalAlpha = 1;
+  });
+  t.wrapS = THREE.RepeatWrapping;
+  return t;
+}
+
+// Pied courbé : profil de révolution puis courbure progressive vers le haut
+function geometriePied(courbure: number, direction: number) {
+  const profil = [
+    [0.16, 0], [0.13, 0.04], [0.105, 0.12], [0.09, 0.3], [0.082, 0.5], [0.08, 0.7], [0.086, 0.86], [0.1, 0.95], [0.14, 1.0],
+  ].map(([x, y]) => new THREE.Vector2(x, y));
+  const geo = new THREE.LatheGeometry(profil, 20);
+  const pos = geo.attributes.position;
+  const couleurs = new Float32Array(pos.count * 3);
+  const bas = new THREE.Color(0x4b3a6e);
+  const haut = new THREE.Color(0xf2d2c4);
+  const c = new THREE.Color();
+  for (let i = 0; i < pos.count; i++) {
+    const y = pos.getY(i);
+    const decal = courbure * y * y;
+    pos.setX(i, pos.getX(i) + Math.cos(direction) * decal);
+    pos.setZ(i, pos.getZ(i) + Math.sin(direction) * decal);
+    c.lerpColors(bas, haut, Math.pow(y, 1.6));
+    couleurs.set([c.r, c.g, c.b], i * 3);
+  }
+  geo.setAttribute("color", new THREE.BufferAttribute(couleurs, 3));
+  geo.computeVertexNormals();
+  return { geo, sommet: new THREE.Vector2(Math.cos(direction) * courbure, Math.sin(direction) * courbure) };
+}
+
+function ajouterChampignons(
+  scene: THREE.Scene,
+  alea: () => number,
+  leger: boolean,
+  animes: ((t: number) => void)[],
+  emplacements: { x: number; z: number; geant: boolean }[],
+) {
+  // Chapeau (rayon 1) : dôme aplati, bord légèrement retroussé
+  const chapeau = new THREE.LatheGeometry(
+    [[1.0, 0.02], [1.02, 0.07], [0.97, 0.16], [0.86, 0.28], [0.68, 0.38], [0.45, 0.45], [0.22, 0.49], [0, 0.5]].map(
+      ([x, y]) => new THREE.Vector2(x, y),
+    ),
+    48,
+  );
+  // Dessous : lamelles en cône très ouvert, du pied jusqu'au bord
+  const dessous = new THREE.LatheGeometry(
+    [[0.1, 0.13], [0.4, 0.1], [0.75, 0.05], [1.0, 0.02]].map(([x, y]) => new THREE.Vector2(x, y)),
+    64,
+  );
+  const lisere = new THREE.TorusGeometry(1.01, 0.018, 8, 64);
+  lisere.rotateX(Math.PI / 2);
+  lisere.translate(0, 0.03, 0);
+
+  const variantes = [
+    { base: "#1d3a8a", points: "#7fe8ff", lueurPoints: 0x56d8ff },
+    { base: "#3a1f78", points: "#c7a8ff", lueurPoints: 0xa98bff },
+    { base: "#173f6e", points: "#ffd2f0", lueurPoints: 0xff9fd8 },
+  ].map((v) => {
+    const tex = textureChapeau(alea, v.base, v.points);
+    return new THREE.MeshPhysicalMaterial({
+      map: tex,
+      emissiveMap: tex,
+      emissive: new THREE.Color(v.lueurPoints),
+      emissiveIntensity: 0.55,
+      roughness: 0.5,
+      sheen: 1,
+      sheenColor: new THREE.Color(0x8a7cff),
+      sheenRoughness: 0.5,
+    });
+  });
+  const lamelles = textureLamelles(alea);
+  const matDessous = new THREE.MeshStandardMaterial({
+    color: 0x2a0c1c,
+    emissive: 0xffffff,
+    emissiveMap: lamelles,
+    emissiveIntensity: 2.4,
+    roughness: 0.7,
+    side: THREE.DoubleSide,
+  });
+  const matLisere = new THREE.MeshStandardMaterial({ color: 0xff6fae, emissive: 0xff4f9a, emissiveIntensity: 2.2 });
+  const matPied = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.75, emissive: 0x1a0a24, emissiveIntensity: 0.6 });
+  const pieds = Array.from({ length: 5 }, () => geometriePied(0.15 + alea() * 0.45, alea() * Math.PI * 2));
+
+  // La lueur des lamelles pulse doucement
+  animes.push((t) => (matDessous.emissiveIntensity = 2.2 + Math.sin(t * 0.8) * 0.3));
+
+  let lumieres = leger ? 1 : 3;
+  emplacements.forEach((e, i) => {
+    const hauteur = e.geant ? 3.6 + alea() * 4.5 : 0.9 + alea() * 1.8;
+    const rayon = e.geant ? hauteur * (0.28 + alea() * 0.12) : hauteur * (0.3 + alea() * 0.15);
+    const pied = pieds[i % pieds.length];
+    const g = new THREE.Group();
+
+    const p = new THREE.Mesh(pied.geo, matPied);
+    p.scale.set(rayon, hauteur, rayon);
+    p.castShadow = true;
+    g.add(p);
+
+    const tete = new THREE.Group();
+    const c = new THREE.Mesh(chapeau, variantes[Math.floor(alea() * variantes.length)]);
+    c.scale.set(1, 0.85 + alea() * 0.4, 1);
+    c.castShadow = true;
+    tete.add(c, new THREE.Mesh(dessous, matDessous), new THREE.Mesh(lisere, matLisere));
+    tete.scale.setScalar(rayon);
+    tete.position.set(pied.sommet.x * rayon, hauteur * 0.985, pied.sommet.y * rayon);
+    tete.rotation.set(pied.sommet.y * 0.35, alea() * 6, -pied.sommet.x * 0.35);
+    g.add(tete);
+
+    if (e.geant && lumieres > 0) {
+      lumieres--;
+      const l = new THREE.PointLight(0xff8a5c, 6 + hauteur * 3, hauteur * 2.4, 2);
+      l.position.set(tete.position.x, hauteur * 0.8, tete.position.z);
+      g.add(l);
+    }
+    g.position.set(e.x, 0, e.z);
+    scene.add(g);
+  });
+}
+
+// Petits champignons lumineux en grappes au ras du sol
+function ajouterPetitsChampignons(scene: THREE.Scene, alea: () => number, leger: boolean) {
+  const pied = new THREE.CylinderGeometry(0.025, 0.035, 0.22, 8);
+  pied.translate(0, 0.11, 0);
+  const tete = new THREE.SphereGeometry(0.09, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2);
+  tete.scale(1, 0.6, 1);
+  tete.translate(0, 0.21, 0);
+  const geo = mergeGeometries([pied, tete])!;
+  const n = leger ? 90 : 220;
+  const champs = new THREE.InstancedMesh(geo, new THREE.MeshBasicMaterial(), n);
+  const o = new THREE.Object3D();
+  const teintes = [new THREE.Color(0.25, 1.4, 2.0), new THREE.Color(0.4, 0.8, 2.2), new THREE.Color(2.0, 0.5, 1.4), new THREE.Color(0.3, 1.8, 1.3)];
+  let k = 0;
+  while (k < n) {
+    const z0 = 1 - alea() * 40;
+    const x0 = cheminX(z0) + (alea() < 0.5 ? -1 : 1) * (1.8 + alea() * 9);
+    if (dansRiviere(x0, z0, 0.6)) continue;
+    const teinte = teintes[Math.floor(alea() * teintes.length)];
+    const grappe = 3 + Math.floor(alea() * 6);
+    for (let j = 0; j < grappe && k < n; j++, k++) {
+      o.position.set(x0 + (alea() - 0.5) * 0.7, 0, z0 + (alea() - 0.5) * 0.7);
+      o.rotation.set((alea() - 0.5) * 0.4, alea() * 6, (alea() - 0.5) * 0.4);
+      o.scale.setScalar(0.6 + alea() * 1.6);
+      o.updateMatrix();
+      champs.setMatrixAt(k, o.matrix);
+      champs.setColorAt(k, teinte);
+    }
+  }
+  scene.add(champs);
+}
+
+// ---------------------------------------------------------------------------
+// Le Loing enchanté : rivière bioluminescente, ragondins et faune des berges
+// ---------------------------------------------------------------------------
+
+const RIV_Z0 = -16; // la rivière passe à z = -16 sous le pont
+const RIV_PENTE = 0.25; // elle traverse la vue en diagonale
+const RIV_DEMI = 5; // demi-largeur
+const RIV_NORME = Math.sqrt(1 + RIV_PENTE * RIV_PENTE);
+const RIV_DIR = new THREE.Vector2(1, RIV_PENTE).normalize(); // sens du courant
+const RIV_ANGLE = -Math.atan(RIV_PENTE);
+
+/** Distance signée au milieu de la rivière (positive côté caméra). */
+const distRiviere = (x: number, z: number) => (z - (RIV_Z0 + RIV_PENTE * x)) / RIV_NORME;
+const dansRiviere = (x: number, z: number, marge = 0) => Math.abs(distRiviere(x, z)) < RIV_DEMI + marge;
+/** Point situé à l'abscisse x, à la distance d du milieu de la rivière. */
+const pointRiviere = (x: number, d = 0) =>
+  new THREE.Vector2(x - (RIV_PENTE / RIV_NORME) * d, RIV_Z0 + RIV_PENTE * x + d / RIV_NORME);
+
+function orienterSurRiviere(o: THREE.Object3D) {
+  o.quaternion.setFromEuler(new THREE.Euler(-Math.PI / 2, RIV_ANGLE, 0, "YXZ"));
+}
+
+// La surface lumineuse : plancton, filaments, étincelles, sillages, ronds dans l'eau
+function construireLumiereRiviere(nNageurs: number, densiteBrume: number) {
+  const nageurs = Array.from({ length: nNageurs }, () => new THREE.Vector4(999, 999, 1, 0));
+  const mat = new THREE.ShaderMaterial({
+    uniforms: {
+      uTemps: { value: 0 },
+      uNageurs: { value: nageurs },
+      uDir: { value: RIV_DIR.clone() },
+      uDensite: { value: densiteBrume },
+    },
+    vertexShader: /* glsl */ `
+      varying vec3 vMonde; varying float vDist;
+      void main() {
+        vec4 m = modelMatrix * vec4(position, 1.0); vMonde = m.xyz;
+        vec4 mv = viewMatrix * m; vDist = length(mv.xyz);
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: /* glsl */ `
+      #define N ${nNageurs}
+      uniform float uTemps; uniform vec4 uNageurs[N]; uniform vec2 uDir; uniform float uDensite;
+      varying vec3 vMonde; varying float vDist;
+      float h(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
+      float b(vec2 p){ vec2 i=floor(p), f=fract(p); vec2 u=f*f*(3.0-2.0*f);
+        return mix(mix(h(i),h(i+vec2(1,0)),u.x), mix(h(i+vec2(0,1)),h(i+vec2(1,1)),u.x), u.y); }
+      float fbm(vec2 p){ float v=0.0, a=0.5; for(int i=0;i<4;i++){ v+=a*b(p); p*=2.03; a*=0.5; } return v; }
+      void main() {
+        vec2 p = vMonde.xz;
+        float d = (p.y - (${RIV_Z0.toFixed(1)} + ${RIV_PENTE.toFixed(3)} * p.x)) / ${RIV_NORME.toFixed(4)};
+        float dedans = smoothstep(${RIV_DEMI.toFixed(1)}, ${(RIV_DEMI - 1.2).toFixed(1)}, abs(d));
+        vec2 courant = uDir * uTemps * 0.35;
+        float n = fbm(p * 0.45 - courant);
+        float n2 = fbm(p * 1.6 - courant * 1.7 + 7.0);
+        vec3 col = vec3(0.0);
+        col += vec3(0.03, 0.28, 0.32) * (0.4 + n);
+        col += vec3(0.04, 0.6, 0.62) * smoothstep(0.42, 0.82, n) * 1.6;
+        col += vec3(0.9, 0.12, 0.62) * smoothstep(0.68, 0.9, n2) * 0.6;
+        vec2 cel = p * 7.0 - courant * 7.0;
+        float e = h(floor(cel) + floor(uTemps * 1.3));
+        col += vec3(0.4, 1.0, 0.95) * step(0.982, e) * smoothstep(0.35, 0.0, length(fract(cel) - 0.5)) * 1.2;
+        col += vec3(0.1, 0.75, 0.7) * exp(-pow((abs(d) - ${(RIV_DEMI - 0.5).toFixed(1)}) * 2.2, 2.0)) * 0.3;
+        for (int i = 0; i < N; i++) {
+          vec2 r = p - uNageurs[i].xy;
+          vec2 dir = uNageurs[i].zw;
+          float le = dot(r, dir);
+          float co = dot(r, vec2(-dir.y, dir.x));
+          float derriere = smoothstep(0.3, -0.1, le);
+          float bras = abs(abs(co) - (-le) * 0.36);
+          float v = exp(-bras * bras * 26.0) * exp(le * 0.28) * derriere;
+          v *= 0.55 + 0.45 * sin(-le * 8.0 + uTemps * 5.0);
+          float tete = exp(-dot(r, r) * 5.0);
+          col += vec3(0.25, 1.0, 0.9) * v * 3.4 + vec3(0.9, 0.5, 1.0) * tete * 1.1;
+        }
+        for (int i = 0; i < 3; i++) {
+          float fi = float(i);
+          float cycle = uTemps * 0.2 + fi * 0.37;
+          float k = fract(cycle);
+          float x = -10.0 + h(vec2(floor(cycle), fi)) * 20.0;
+          vec2 c = vec2(x, ${RIV_Z0.toFixed(1)} + ${RIV_PENTE.toFixed(3)} * x + (h(vec2(fi, floor(cycle))) - 0.5) * 6.0);
+          float rr = length(p - c);
+          col += vec3(0.5, 1.0, 1.0) * exp(-pow((rr - k * 2.6) * 6.0, 2.0)) * (1.0 - k) * 0.9;
+        }
+        float brume = exp(-pow(uDensite * vDist, 2.0));
+        gl_FragColor = vec4(col * dedans * brume, 1.0);
+      }`,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  });
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(260, RIV_DEMI * 2, 1, 1), mat);
+  orienterSurRiviere(m);
+  m.position.set(0, 0.05, RIV_Z0);
+  m.renderOrder = 4;
+  return { maillage: m, nageurs };
+}
+
+function construireEau(scene: THREE.Scene, leger: boolean) {
+  const geo = new THREE.PlaneGeometry(260, RIV_DEMI * 2 + 0.6);
+  let eau: THREE.Mesh;
+  if (!leger) {
+    eau = new Reflector(geo, {
+      textureWidth: Math.floor(window.innerWidth * 0.5),
+      textureHeight: Math.floor(window.innerHeight * 0.5),
+      color: 0x3a3f58,
+      clipBias: 0.003,
+    });
+  } else {
+    eau = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: 0x090a18, roughness: 0.06, metalness: 0.4, envMapIntensity: 0.5 }));
+  }
+  orienterSurRiviere(eau);
+  eau.position.set(0, 0.03, RIV_Z0);
+  scene.add(eau);
+}
+
+// Ragondin (Myocastor coypus) : corps trapu, tête ronde, dents orange, moustaches
+function matieresRagondin() {
+  return {
+    fourrure: new THREE.MeshPhysicalMaterial({ color: 0x6e5238, roughness: 0.9, sheen: 0.8, sheenColor: new THREE.Color(0xa88462), sheenRoughness: 0.6 }),
+    museau: new THREE.MeshPhysicalMaterial({ color: 0x8d7563, roughness: 0.85, sheen: 0.8, sheenColor: new THREE.Color(0xd8c0a8) }),
+    dents: new THREE.MeshStandardMaterial({ color: 0xff8a1c, emissive: 0xff6a00, emissiveIntensity: 2.2, roughness: 0.35 }),
+    oeil: new THREE.MeshStandardMaterial({ color: 0x050505, emissive: 0xffc35a, emissiveIntensity: 2.4, roughness: 0.1 }),
+    queue: new THREE.MeshStandardMaterial({ color: 0x2c221c, roughness: 0.7 }),
+    moustache: new THREE.LineBasicMaterial({ color: 0xe8e0d0, transparent: true, opacity: 0.8 }),
+  };
+}
+
+function creerRagondin(m: ReturnType<typeof matieresRagondin>) {
+  const g = new THREE.Group();
+  const corps = new THREE.Mesh(new THREE.SphereGeometry(0.22, 22, 16), m.fourrure);
+  corps.scale.set(1, 0.82, 1.5);
+  corps.position.set(0, 0.18, 0);
+  corps.castShadow = true;
+  const tete = new THREE.Group();
+  tete.position.set(0, 0.25, 0.34);
+  const crane = new THREE.Mesh(new THREE.SphereGeometry(0.12, 18, 14), m.fourrure);
+  crane.scale.set(1, 0.9, 1.2);
+  const museau = new THREE.Mesh(new THREE.SphereGeometry(0.075, 16, 12), m.museau);
+  museau.scale.set(1.15, 0.85, 1);
+  museau.position.set(0, -0.025, 0.12);
+  const oreilles = [-1, 1].map((s) => {
+    const o = new THREE.Mesh(new THREE.SphereGeometry(0.028, 10, 8), m.fourrure);
+    o.position.set(s * 0.075, 0.08, -0.03);
+    return o;
+  });
+  const yeux = [-1, 1].map((s) => {
+    const o = new THREE.Mesh(new THREE.SphereGeometry(0.019, 10, 8), m.oeil);
+    o.position.set(s * 0.068, 0.045, 0.075);
+    return o;
+  });
+  const dents = new THREE.Mesh(new THREE.BoxGeometry(0.038, 0.05, 0.014), m.dents);
+  dents.position.set(0, -0.08, 0.18);
+  const lignes: number[] = [];
+  for (const s of [-1, 1])
+    for (let k = 0; k < 3; k++) lignes.push(s * 0.05, -0.03, 0.17, s * 0.2, -0.05 + k * 0.035, 0.2 + k * 0.02);
+  const moustaches = new THREE.LineSegments(new THREE.BufferGeometry().setAttribute("position", new THREE.Float32BufferAttribute(lignes, 3)), m.moustache);
+  tete.add(crane, museau, ...oreilles, ...yeux, dents, moustaches);
+  const queue = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.035, 0.42, 8), m.queue);
+  queue.rotation.x = Math.PI / 2 - 0.25;
+  queue.position.set(0, 0.1, -0.5);
+  g.add(corps, tete, queue);
+  return { groupe: g, tete };
+}
+
+// Héron cendré, immobile dans les eaux peu profondes
+function creerHeron() {
+  const plume = new THREE.MeshStandardMaterial({ color: 0x8e9aac, roughness: 0.85 });
+  const fonce = new THREE.MeshStandardMaterial({ color: 0x2a2e38, roughness: 0.8 });
+  const bec = new THREE.MeshStandardMaterial({ color: 0xe0a83c, roughness: 0.5 });
+  const g = new THREE.Group();
+  for (const s of [-1, 1]) {
+    const patte = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.01, 0.95, 6), fonce);
+    patte.position.set(s * 0.05, 0.47, 0);
+    g.add(patte);
+  }
+  const corps = new THREE.Mesh(new THREE.SphereGeometry(0.17, 18, 12), plume);
+  corps.scale.set(0.9, 0.85, 1.75);
+  corps.position.set(0, 1.04, -0.02);
+  corps.rotation.x = 0.35;
+  corps.castShadow = true;
+  const cou = new THREE.Mesh(
+    new THREE.TubeGeometry(
+      new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0, 1.12, 0.2),
+        new THREE.Vector3(0, 1.3, 0.3),
+        new THREE.Vector3(0, 1.42, 0.2),
+        new THREE.Vector3(0, 1.58, 0.28),
+      ]),
+      20,
+      0.035,
+      8,
+    ),
+    plume,
+  );
+  const tete = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 10), plume);
+  tete.position.set(0, 1.6, 0.31);
+  const huppe = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.008, 0.14, 4), fonce);
+  huppe.rotation.x = -1.3;
+  huppe.position.set(0, 1.62, 0.22);
+  const pointe = new THREE.Mesh(new THREE.ConeGeometry(0.016, 0.23, 8), bec);
+  pointe.rotation.x = Math.PI / 2;
+  pointe.position.set(0, 1.59, 0.45);
+  g.add(corps, cou, tete, huppe, pointe);
+  return g;
+}
+
+// Chevreuil qui broute à l'orée du bois
+function creerChevreuil() {
+  const robe = new THREE.MeshStandardMaterial({ color: 0x7a5034, roughness: 0.9 });
+  const fonce = new THREE.MeshStandardMaterial({ color: 0x2a1c14, roughness: 0.8 });
+  const blanc = new THREE.MeshStandardMaterial({ color: 0xe8dccb, roughness: 0.9 });
+  const g = new THREE.Group();
+  const corps = new THREE.Mesh(new THREE.CapsuleGeometry(0.2, 0.55, 6, 14), robe);
+  corps.rotation.x = Math.PI / 2;
+  corps.position.set(0, 0.85, 0);
+  corps.castShadow = true;
+  g.add(corps);
+  for (const [x, z] of [[-0.11, 0.3], [0.11, 0.3], [-0.11, -0.3], [0.11, -0.3]]) {
+    const patte = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.02, 0.78, 6), fonce);
+    patte.position.set(x, 0.39, z);
+    g.add(patte);
+  }
+  const miroir = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 8), blanc);
+  miroir.position.set(0, 0.92, -0.42);
+  g.add(miroir);
+  const avant = new THREE.Group();
+  avant.position.set(0, 0.98, 0.36);
+  const cou = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 0.45, 8), robe);
+  cou.position.set(0, 0.18, 0.06);
+  cou.rotation.x = 0.4;
+  const tete = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 10), robe);
+  tete.scale.set(0.9, 0.9, 1.5);
+  tete.position.set(0, 0.42, 0.18);
+  const museau = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 8), fonce);
+  museau.position.set(0, 0.39, 0.32);
+  const oreilles = [-1, 1].map((s) => {
+    const o = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.12, 6), robe);
+    o.position.set(s * 0.07, 0.52, 0.12);
+    o.rotation.z = -s * 0.5;
+    return o;
+  });
+  avant.add(cou, tete, museau, ...oreilles);
+  g.add(avant);
+  return { groupe: g, avant };
+}
+
+// Roseaux et massettes lumineuses le long des berges
+function ajouterRoseaux(scene: THREE.Scene, alea: () => number, leger: boolean, vent: { uTemps: { value: number } }) {
+  const n = leger ? 320 : 760;
+  const tige = new THREE.ConeGeometry(0.014, 1.35, 4);
+  tige.translate(0, 0.675, 0);
+  const matTige = new THREE.MeshStandardMaterial({ color: 0x2c4a2c, roughness: 0.8 });
+  ajouterVent(matTige, vent, true);
+  const tiges = new THREE.InstancedMesh(tige, matTige, n);
+  const nTetes = Math.floor(n * 0.22);
+  const tete = new THREE.CylinderGeometry(0.03, 0.03, 0.17, 8);
+  tete.translate(0, 1.18, 0);
+  const matTete = new THREE.MeshBasicMaterial();
+  ajouterVent(matTete, vent, true);
+  const tetes = new THREE.InstancedMesh(tete, matTete, nTetes);
+  const teintes = [new THREE.Color(0.3, 1.6, 1.5), new THREE.Color(1.9, 0.5, 1.3), new THREE.Color(1.6, 1.2, 0.4)];
+  const o = new THREE.Object3D();
+  let k = 0;
+  let kt = 0;
+  while (k < n) {
+    const x = (alea() - 0.5) * 70;
+    const cote = alea() < 0.5 ? -1 : 1;
+    const d = cote * (RIV_DEMI - 0.6 + alea() * 1.8);
+    const p = pointRiviere(x, d);
+    if (Math.abs(p.x - cheminX(p.y)) < 1.7) continue;
+    const touffe = 4 + Math.floor(alea() * 8);
+    for (let j = 0; j < touffe && k < n; j++, k++) {
+      o.position.set(p.x + (alea() - 0.5) * 0.8, 0, p.y + (alea() - 0.5) * 0.8);
+      o.rotation.set((alea() - 0.5) * 0.25, alea() * 6, (alea() - 0.5) * 0.25);
+      o.scale.set(1, 0.6 + alea() * 0.9, 1);
+      o.updateMatrix();
+      tiges.setMatrixAt(k, o.matrix);
+      if (kt < nTetes && alea() < 0.3) {
+        tetes.setMatrixAt(kt, o.matrix);
+        tetes.setColorAt(kt, teintes[Math.floor(alea() * teintes.length)]);
+        kt++;
+      }
+    }
+  }
+  tetes.count = kt;
+  scene.add(tiges, tetes);
+}
+
+// Nénuphars, dont certains en fleur et lumineux
+function ajouterNenuphars(scene: THREE.Scene, alea: () => number, leger: boolean) {
+  const n = leger ? 30 : 60;
+  const feuille = new THREE.CircleGeometry(0.34, 20, 0.3, Math.PI * 2 - 0.45);
+  feuille.rotateX(-Math.PI / 2);
+  const feuilles = new THREE.InstancedMesh(feuille, new THREE.MeshStandardMaterial({ color: 0x1f4c32, roughness: 0.35, side: THREE.DoubleSide }), n);
+  const petales = Array.from({ length: 9 }, (_, k) => {
+    const petale = new THREE.PlaneGeometry(0.05, 0.12);
+    petale.translate(0, 0.06, 0);
+    petale.rotateX(-0.75 - (k % 2) * 0.35);
+    petale.rotateY((k / 9) * Math.PI * 2);
+    return petale;
+  });
+  const coeur = new THREE.SphereGeometry(0.025, 8, 6);
+  coeur.deleteAttribute("uv");
+  petales.forEach((g) => g.deleteAttribute("uv"));
+  const fleur = mergeGeometries([...petales, coeur])!;
+  fleur.translate(0, 0.02, 0);
+  const nFleurs = Math.floor(n * 0.4);
+  const fleurs = new THREE.InstancedMesh(fleur, new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }), nFleurs);
+  const teintes = [new THREE.Color(2.2, 0.7, 1.5), new THREE.Color(1.9, 1.8, 1.6), new THREE.Color(0.4, 1.6, 1.9)];
+  const o = new THREE.Object3D();
+  let kf = 0;
+  for (let i = 0; i < n; i++) {
+    const x = (alea() - 0.5) * 34;
+    const d = (alea() < 0.5 ? -1 : 1) * (2.2 + alea() * 2.4);
+    const p = pointRiviere(x, d);
+    o.position.set(p.x, 0.055, p.y);
+    o.rotation.set(0, alea() * 6, 0);
+    o.scale.setScalar(0.6 + alea() * 0.9);
+    o.updateMatrix();
+    feuilles.setMatrixAt(i, o.matrix);
+    if (kf < nFleurs && alea() < 0.45) {
+      fleurs.setMatrixAt(kf, o.matrix);
+      fleurs.setColorAt(kf, teintes[Math.floor(alea() * teintes.length)]);
+      kf++;
+    }
+  }
+  fleurs.count = kf;
+  scene.add(feuilles, fleurs);
+}
+
+// Petit pont de bois en arc, là où le chemin franchit la rivière
+function construirePont(scene: THREE.Scene, leger: boolean) {
+  const bois = new THREE.MeshStandardMaterial({ color: 0x3e2a1c, roughness: 0.85 });
+  const lanterne = new THREE.MeshStandardMaterial({ color: 0xffe0b0, emissive: 0xffa040, emissiveIntensity: 3 });
+  const zA = RIV_Z0 + (RIV_DEMI + 1.6) * RIV_NORME;
+  const zB = RIV_Z0 - (RIV_DEMI + 1.6) * RIV_NORME;
+  const point = (t: number, dx = 0, dy = 0) => {
+    const z = zA + (zB - zA) * t;
+    return new THREE.Vector3(cheminX(z) + dx, 0.06 + 1.15 * Math.sin(Math.PI * t) + dy, z);
+  };
+  const n = 46;
+  const planche = new THREE.BoxGeometry(2.1, 0.07, 0.25);
+  const planches = new THREE.InstancedMesh(planche, bois, n);
+  const o = new THREE.Object3D();
+  for (let i = 0; i < n; i++) {
+    const t = i / (n - 1);
+    o.position.copy(point(t));
+    o.lookAt(point(Math.min(1, t + 0.01)).add(new THREE.Vector3(0, 0, t >= 1 ? -0.01 : 0)));
+    o.updateMatrix();
+    planches.setMatrixAt(i, o.matrix);
+  }
+  planches.castShadow = planches.receiveShadow = true;
+  scene.add(planches);
+  for (const cote of [-1, 1]) {
+    const rampe = new THREE.Mesh(
+      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(Array.from({ length: 12 }, (_, i) => point(i / 11, cote * 1.0, 0.95))), 64, 0.035, 8),
+      bois,
+    );
+    scene.add(rampe);
+    for (let i = 0; i <= 6; i++) {
+      const t = i / 6;
+      const bas = point(t, cote * 1.0);
+      const poteau = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.04, 1.0, 8), bois);
+      poteau.position.set(bas.x, bas.y + 0.5, bas.z);
+      scene.add(poteau);
+      if (i === 0 || i === 6) {
+        const globe = new THREE.Mesh(new THREE.SphereGeometry(0.09, 14, 10), lanterne);
+        globe.position.set(bas.x, bas.y + 1.1, bas.z);
+        scene.add(globe);
+      }
+    }
+  }
+  if (!leger) {
+    const l = new THREE.PointLight(0xffb060, 5, 10, 2);
+    l.position.copy(point(0.5, 0, 1.6));
+    scene.add(l);
+  }
+}
+
+function ajouterLoing(
+  scene: THREE.Scene,
+  alea: () => number,
+  leger: boolean,
+  animes: ((t: number) => void)[],
+  vent: { uTemps: { value: number } },
+  densiteBrume: number,
+) {
+  construireEau(scene, leger);
+  for (const [x, couleur] of (leger ? [[2, 0x3fe0d0]] : [[-4, 0x3fe0d0], [7, 0xb070ff]]) as [number, number][]) {
+    const p = pointRiviere(x, 1.5);
+    const l = new THREE.PointLight(couleur, 7, 16, 2);
+    l.position.set(p.x, 0.6, p.y);
+    scene.add(l);
+  }
+  const nNageurs = leger ? 4 : 6;
+  const lumiere = construireLumiereRiviere(nNageurs, densiteBrume);
+  scene.add(lumiere.maillage);
+  animes.push((t) => ((lumiere.maillage.material as THREE.ShaderMaterial).uniforms.uTemps.value = t));
+
+  construirePont(scene, leger);
+  ajouterRoseaux(scene, alea, leger, vent);
+  ajouterNenuphars(scene, alea, leger);
+
+  // Ragondins qui nagent en laissant un sillage de lumière
+  const mats = matieresRagondin();
+  for (let i = 0; i < nNageurs; i++) {
+    const { groupe, tete } = creerRagondin(mats);
+    tete.position.y += 0.1;
+    tete.rotation.x = -0.45;
+    groupe.scale.setScalar(2.0);
+    const sens = i % 3 === 2 ? 1 : -1; // la plupart remontent vers nous
+    const vitesse = (0.45 + alea() * 0.35) * sens;
+    const decalage = -1 + alea() * 4.2;
+    const phase = alea() * 60;
+    animes.push((t) => {
+      const x = (((t * vitesse + phase) % 34) + 34) % 34 - 4;
+      const d = decalage + Math.sin(t * 0.3 + i) * 0.5;
+      const p = pointRiviere(x, d);
+      const dir = RIV_DIR.clone().multiplyScalar(sens);
+      const plongee = 1 - THREE.MathUtils.smoothstep(Math.abs(x - 13), 13, 17);
+      groupe.position.set(p.x, -1.12 + 0.62 * plongee + Math.sin(t * 2.2 + i) * 0.015, p.y);
+      groupe.rotation.y = Math.atan2(dir.x, dir.y);
+      lumiere.nageurs[i].set(p.x, p.y, dir.x, dir.y);
+    });
+    scene.add(groupe);
+  }
+
+  // Ragondins sur les berges, qui grignotent
+  const surBerge: [number, number, number][] = [
+    [4.2, RIV_DEMI + 0.8, 2.8],
+    [7.4, RIV_DEMI + 1.0, -2.6],
+    [5.5, -(RIV_DEMI + 0.9), 0.4],
+    [10.5, -(RIV_DEMI + 1.1), 1.2],
+  ];
+  surBerge.forEach(([x, d, angle], i) => {
+    const { groupe, tete } = creerRagondin(mats);
+    const p = pointRiviere(x, d);
+    groupe.position.set(p.x, 0, p.y);
+    groupe.rotation.y = angle;
+    groupe.scale.setScalar(1.8);
+    animes.push((t) => {
+      tete.rotation.x = 0.15 + Math.max(0, Math.sin(t * 2.4 + i * 2)) * 0.35;
+      tete.rotation.y = Math.sin(t * 0.5 + i) * 0.3;
+    });
+    scene.add(groupe);
+  });
+
+  // Héron dans les eaux peu profondes
+  const heron = creerHeron();
+  const ph = pointRiviere(9, RIV_DEMI - 0.9);
+  heron.position.set(ph.x, 0, ph.y);
+  heron.rotation.y = -2.3;
+  scene.add(heron);
+
+  // Chevreuil qui broute sur l'autre rive
+  const chevreuil = creerChevreuil();
+  const pc = pointRiviere(13, -(RIV_DEMI + 2.6));
+  chevreuil.groupe.position.set(pc.x, 0, pc.y);
+  chevreuil.groupe.rotation.y = 0.6;
+  chevreuil.groupe.scale.setScalar(1.1);
+  animes.push((t) => {
+    const broute = Math.max(0, Math.sin(t * 0.35));
+    chevreuil.avant.rotation.x = broute * 1.05;
+  });
+  scene.add(chevreuil.groupe);
+
+  // Lanternes qui dérivent au fil de l'eau
+  const papier = new THREE.MeshStandardMaterial({ color: 0xffe2b8, emissive: 0xff9a40, emissiveIntensity: 2.4 });
+  const socle = new THREE.MeshStandardMaterial({ color: 0x2a1c14, roughness: 0.8 });
+  for (let i = 0; i < (leger ? 6 : 10); i++) {
+    const g = new THREE.Group();
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.18, 0.05, 10), socle);
+    const corps = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 0.2, 10), papier);
+    corps.position.y = 0.13;
+    g.add(base, corps);
+    const decalage = (alea() - 0.5) * 7;
+    const phase = alea() * 70;
+    animes.push((t) => {
+      const x = ((t * 0.22 + phase) % 70) - 35;
+      const p = pointRiviere(x, decalage + Math.sin(t * 0.2 + i) * 0.4);
+      g.position.set(p.x, 0.04 + Math.sin(t * 1.6 + i) * 0.02, p.y);
+      g.rotation.set(Math.sin(t * 1.3 + i) * 0.05, t * 0.1 + i, Math.cos(t * 1.1 + i) * 0.05);
+    });
+    scene.add(g);
+  }
+
+  // Chouettes : des yeux dorés qui clignent dans les arbres
+  const oeil = new THREE.MeshBasicMaterial({ color: new THREE.Color(2.6, 1.7, 0.35) });
+  const geoOeil = new THREE.SphereGeometry(0.035, 8, 6);
+  for (let i = 0; i < (leger ? 4 : 7); i++) {
+    const g = new THREE.Group();
+    for (const s of [-1, 1]) {
+      const o = new THREE.Mesh(geoOeil, oeil);
+      o.position.x = s * 0.06;
+      g.add(o);
+    }
+    let x = 0;
+    let z = 0;
+    do {
+      x = (alea() - 0.5) * 50;
+      z = -6 - alea() * 40;
+    } while (dansRiviere(x, z, 3) || Math.abs(x - cheminX(z)) < 4);
+    g.position.set(x, 3.5 + alea() * 5, z);
+    g.lookAt(0, 2, 0);
+    const p = alea() * 20;
+    animes.push((t) => {
+      const cycle = (t + p) % 6;
+      g.scale.y = cycle < 0.15 ? 0.1 : 1;
+    });
+    scene.add(g);
+  }
+}
+
 async function construireMonde(alea: () => number, leger: boolean, dossier: string) {
   const scene = new THREE.Scene();
-  const brumeCouleur = new THREE.Color(0x09201f);
+  const brumeCouleur = new THREE.Color(0x1a0f2e);
   scene.background = brumeCouleur;
-  scene.fog = new THREE.FogExp2(brumeCouleur, leger ? 0.026 : 0.022);
+  scene.fog = new THREE.FogExp2(brumeCouleur, leger ? 0.028 : 0.024);
   scene.environmentIntensity = 0.22;
   const animes: ((t: number) => void)[] = [];
   const vent = { uTemps: { value: 0 } };
@@ -540,13 +1236,21 @@ async function construireMonde(alea: () => number, leger: boolean, dossier: stri
         void main() {
           vec3 d = normalize(vDir);
           float y = d.y;
-          vec3 horizon = vec3(0.0029, 0.0144, 0.0137);
-          vec3 zenith = vec3(0.0008, 0.003, 0.006);
-          vec3 col = mix(horizon, zenith, smoothstep(-0.02, 0.45, y));
-          col += vec3(0.35, 0.09, 0.2) * exp(-abs(y - 0.03) * 22.0) * 0.18;
+          // Couleurs linéaires ; l'horizon = la couleur de la brume (violet)
+          vec3 horizon = vec3(0.0103, 0.0048, 0.027);
+          vec3 zenith = vec3(0.0015, 0.0008, 0.006);
+          vec3 col = mix(horizon, zenith, smoothstep(-0.02, 0.5, y));
+          col += vec3(0.55, 0.12, 0.35) * exp(-abs(y - 0.04) * 16.0) * 0.12;
+          vec2 pn = d.xz / (abs(y) + 0.25) * 1.6 + vec2(uTemps * 0.004, 0.0);
+          float nuage = 0.0, amp = 0.5;
+          for (int i = 0; i < 4; i++) { vec2 ip = floor(pn), fp = fract(pn); vec2 u = fp*fp*(3.0-2.0*fp);
+            float a0 = h(vec3(ip,1.0)), a1 = h(vec3(ip+vec2(1,0),1.0)), a2 = h(vec3(ip+vec2(0,1),1.0)), a3 = h(vec3(ip+vec2(1,1),1.0));
+            nuage += amp * mix(mix(a0,a1,u.x), mix(a2,a3,u.x), u.y); pn *= 2.1; amp *= 0.5; }
+          float couverture = smoothstep(0.5, 0.85, nuage) * smoothstep(0.0, 0.12, y) * (1.0 - smoothstep(0.35, 0.8, y));
+          col = mix(col, vec3(0.05, 0.02, 0.09) + vec3(0.25, 0.06, 0.18) * exp(-abs(y - 0.12) * 8.0), couverture * 0.85);
           vec3 g = floor(d * 380.0);
           float e = h(g);
-          float etoile = step(0.9965, e) * smoothstep(0.0, 0.25, y);
+          float etoile = step(0.9965, e) * smoothstep(0.0, 0.25, y) * (1.0 - couverture);
           etoile *= 0.6 + 0.4 * sin(uTemps * (1.0 + e * 3.0) + e * 50.0);
           col += vec3(0.9, 0.95, 1.0) * etoile * 1.4;
           vec3 lune = normalize(vec3(0.42, 0.34, -0.84));
@@ -560,8 +1264,8 @@ async function construireMonde(alea: () => number, leger: boolean, dossier: stri
   animes.push((t) => ((ciel.material as THREE.ShaderMaterial).uniforms.uTemps.value = t));
 
   // Lumières de nuit
-  scene.add(new THREE.HemisphereLight(0x3b6f78, 0x0a120e, 0.55));
-  const lune = new THREE.DirectionalLight(0xa8c8ff, 1.9);
+  scene.add(new THREE.HemisphereLight(0x5b3f8f, 0x0e0816, 0.6));
+  const lune = new THREE.DirectionalLight(0xb8aaff, 1.6);
   lune.position.set(14, 22, -26);
   lune.target.position.set(0, 0, -14);
   lune.castShadow = !leger;
@@ -599,7 +1303,8 @@ async function construireMonde(alea: () => number, leger: boolean, dossier: stri
            float n = bs(suv / 7.0) * 0.65 + bs(suv / 2.3) * 0.35;
            float chemin = 1.0 - smoothstep(1.2, 2.6, abs(vMonde.x - sin(((1.8 - vMonde.z) / 0.96) * 0.12) * 0.9));
            float s = clamp(smoothstep(0.55, 0.75, n) + chemin * 0.8, 0.0, 1.0);
-           diffuseColor.rgb *= mix(cHerbe, cTerre, s);`,
+           float berge = smoothstep(7.5, 5.0, abs((vMonde.z - (-16.0 + 0.25 * vMonde.x)) / 1.0308));
+           diffuseColor.rgb *= mix(cHerbe, cTerre, max(s, berge)) * mix(1.0, 0.5, berge);`,
         )
         .replace(
           "#include <normal_fragment_maps>",
@@ -628,8 +1333,9 @@ async function construireMonde(alea: () => number, leger: boolean, dossier: stri
     let k = 0;
     for (let rang = 0; rang < 70; rang++) {
       for (let col = -1; col <= 1; col++) {
-        if (alea() < 0.06 + rang * 0.004) continue;
         const z = 1.8 - rang * 0.96;
+        if (dansRiviere(cheminX(z), z, 1.7)) continue;
+        if (alea() < 0.06 + rang * 0.004) continue;
         e.set((alea() - 0.5) * 0.04, (alea() - 0.5) * 0.12, (alea() - 0.5) * 0.04);
         q.setFromEuler(e);
         m.compose(new THREE.Vector3(col * 0.96 + cheminX(z), 0.015 + alea() * 0.02, z), q, new THREE.Vector3(1, 1, 1));
@@ -666,13 +1372,15 @@ async function construireMonde(alea: () => number, leger: boolean, dossier: stri
       const x = (alea() - 0.5) * 40;
       const z = 6 - alea() * 70;
       if (Math.abs(x - cheminX(z)) < 1.7 + alea() * 0.4) continue;
+      if (dansRiviere(x, z, 0.3)) continue;
       o.position.set(x, 0, z);
       o.rotation.set(0, alea() * Math.PI * 2, 0);
       const s = (0.35 + alea() * 0.45) / hauteur;
       o.scale.set(s * (0.8 + alea() * 0.6), s, s * (0.8 + alea() * 0.6));
       o.updateMatrix();
       herbe.setMatrixAt(k, o.matrix);
-      herbe.setColorAt(k, c.setRGB(0.55 + alea() * 0.2, 0.7 + alea() * 0.3, 0.45 + alea() * 0.15));
+      if (alea() < 0.35) herbe.setColorAt(k, c.setRGB(0.55 + alea() * 0.2, 0.4 + alea() * 0.15, 0.75 + alea() * 0.2));
+      else herbe.setColorAt(k, c.setRGB(0.45 + alea() * 0.2, 0.6 + alea() * 0.25, 0.5 + alea() * 0.15));
       k++;
     }
     herbe.count = k;
@@ -693,7 +1401,9 @@ async function construireMonde(alea: () => number, leger: boolean, dossier: stri
       const f = modele.clone();
       const cote = alea() < 0.5 ? -1 : 1;
       const z = 2 - alea() * 40;
-      f.position.set(cheminX(z) + cote * (2 + alea() * 6), 0, z);
+      const x = cheminX(z) + cote * (2 + alea() * 6);
+      if (dansRiviere(x, z, 0.5)) continue;
+      f.position.set(x, 0, z);
       f.rotation.y = alea() * Math.PI * 2;
       f.scale.setScalar((0.22 + alea() * 0.15) / h);
       scene.add(f);
@@ -713,7 +1423,9 @@ async function construireMonde(alea: () => number, leger: boolean, dossier: stri
       const r = modele.clone();
       const cote = alea() < 0.5 ? -1 : 1;
       const z = 1 - alea() * 45;
-      r.position.set(cheminX(z) + cote * (2.6 + alea() * 7), -0.1, z);
+      const x = cheminX(z) + cote * (2.6 + alea() * 7);
+      if (dansRiviere(x, z, -0.6)) continue;
+      r.position.set(x, -0.1, z);
       r.rotation.set(0, alea() * Math.PI * 2, 0);
       r.scale.setScalar((0.5 + alea() * 1.3) / taille);
       scene.add(r);
@@ -743,15 +1455,26 @@ async function construireMonde(alea: () => number, leger: boolean, dossier: stri
     }
     const arbres = modeles.filter((a) => !a.userData.buisson);
     const buissons = modeles.filter((a) => a.userData.buisson);
-    const nArbres = leger ? 34 : 70;
+    const nArbres = leger ? 24 : 46;
     for (let i = 0; i < nArbres; i++) {
       const modele = arbres[i % arbres.length];
       const a = modele.clone();
       const cote = i % 2 === 0 ? -1 : 1;
       const z = -7 - alea() * 76;
-      const x = cheminX(z) + cote * ((z > -28 ? 7 : 5) + Math.pow(alea(), 1.3) * 26);
+      const x = cheminX(z) + cote * ((z > -28 ? 12 : 8) + Math.pow(alea(), 1.3) * 24);
+      if (dansRiviere(x, z, 3)) continue;
       a.scale.setScalar((9 + alea() * 11) / modele.userData.hauteur);
       a.position.set(x, 0, z);
+      a.rotation.y = alea() * Math.PI * 2;
+      scene.add(a);
+    }
+    for (let i = 0; i < (leger ? 18 : 36); i++) {
+      const modele = arbres[(i + 3) % arbres.length];
+      const a = modele.clone();
+      const x = 4 + alea() * 70;
+      const p = pointRiviere(x, (i % 2 === 0 ? -1 : 1) * (RIV_DEMI + 4 + alea() * 16));
+      a.scale.setScalar((8 + alea() * 10) / modele.userData.hauteur);
+      a.position.set(p.x, 0, p.y);
       a.rotation.y = alea() * Math.PI * 2;
       scene.add(a);
     }
@@ -760,7 +1483,9 @@ async function construireMonde(alea: () => number, leger: boolean, dossier: stri
       const b = modele.clone();
       const cote = alea() < 0.5 ? -1 : 1;
       const z = -5 - alea() * 45;
-      b.position.set(cheminX(z) + cote * (2.6 + alea() * 9), 0, z);
+      const x = cheminX(z) + cote * (2.6 + alea() * 9);
+      if (dansRiviere(x, z, 1.5)) continue;
+      b.position.set(x, 0, z);
       b.scale.setScalar((1 + alea() * 1.2) / modele.userData.hauteur);
       b.rotation.y = alea() * Math.PI * 2;
       scene.add(b);
@@ -768,71 +1493,38 @@ async function construireMonde(alea: () => number, leger: boolean, dossier: stri
   }
   animes.push((t) => modeles.forEach((m) => m.update(t)));
 
-  // Champignons bioluminescents
+  // Champignons géants (au second plan) et petits champignons lumineux
   {
-    const profil = [
-      [0.02, 0], [0.55, 0.02], [0.78, 0.08], [0.82, 0.16], [0.7, 0.32], [0.48, 0.46], [0.22, 0.54], [0, 0.56],
-    ].map(([x, y]) => new THREE.Vector2(x, y));
-    const chapeau = new THREE.LatheGeometry(profil, 40);
-    const pied = new THREE.LatheGeometry(
-      [[0.13, 0], [0.11, 0.3], [0.09, 0.7], [0.1, 1.0], [0.12, 1.06]].map(([x, y]) => new THREE.Vector2(x, y)),
-      24,
-    );
-    const matPied = new THREE.MeshStandardMaterial({ color: 0xe9e0c6, roughness: 0.75, emissive: 0x3a2a2a, emissiveIntensity: 0.3 });
-    const teintes = [
-      { couleur: 0xff4f9e, lueur: 0xff2f8a },
-      { couleur: 0x2fd8b8, lueur: 0x14c8a4 },
-    ];
-    const pois = new THREE.SphereGeometry(0.05, 10, 6);
-    const matPois = new THREE.MeshStandardMaterial({ color: 0xfff6d8, emissive: 0xfff0d0, emissiveIntensity: 0.5 });
-    const nLumieres = leger ? 1 : 3;
-    for (let i = 0; i < (leger ? 7 : 12); i++) {
-      const t = teintes[alea() < 0.7 ? 0 : 1];
-      const g = new THREE.Group();
-      const p = new THREE.Mesh(pied, matPied);
-      p.scale.set(1, 0.8 + alea() * 0.9, 1);
-      const c = new THREE.Mesh(
-        chapeau,
-        new THREE.MeshPhysicalMaterial({ color: t.couleur, emissive: t.lueur, emissiveIntensity: 0.22, roughness: 0.55, sheen: 1, sheenColor: new THREE.Color(t.couleur) }),
-      );
-      c.position.y = p.scale.y * 1.04;
-      const lamelles = new THREE.Mesh(
-        new THREE.CircleGeometry(0.76, 32),
-        new THREE.MeshBasicMaterial({ color: new THREE.Color(t.lueur).multiplyScalar(2.2), side: THREE.DoubleSide }),
-      );
-      lamelles.rotation.x = Math.PI / 2;
-      lamelles.position.y = c.position.y + 0.01;
-      g.add(lamelles);
-      for (let k = 0; k < 7; k++) {
-        const s = new THREE.Mesh(pois, matPois);
-        const ang = alea() * Math.PI * 2;
-        const r = 0.15 + alea() * 0.5;
-        s.position.set(Math.cos(ang) * r, c.position.y + 0.52 - r * 0.6, Math.sin(ang) * r);
-        s.scale.set(1, 0.4, 1);
-        g.add(s);
+    const emplacements: { x: number; z: number; geant: boolean }[] = [];
+    const placer = (geant: boolean, zMin: number, zMax: number, ecart: [number, number]) => {
+      for (let essai = 0; essai < 40; essai++) {
+        const z = zMin - alea() * (zMin - zMax);
+        const x = cheminX(z) + (alea() < 0.5 ? -1 : 1) * (ecart[0] + alea() * (ecart[1] - ecart[0]));
+        if (!dansRiviere(x, z, geant ? 2.5 : 1)) {
+          emplacements.push({ x, z, geant });
+          return;
+        }
       }
-      p.castShadow = c.castShadow = true;
-      g.add(p, c);
-      const cote = i % 2 === 0 ? -1 : 1;
-      const z = -9 - alea() * 30;
-      g.position.set(cheminX(z) + cote * (2.6 + alea() * 4), 0, z);
-      g.scale.setScalar(0.6 + alea() * 1.0);
-      g.rotation.set((alea() - 0.5) * 0.25, alea() * 6, (alea() - 0.5) * 0.25);
-      if (i < nLumieres) {
-        const l = new THREE.PointLight(t.lueur, 5, 7, 2);
-        l.position.set(0, c.position.y + 0.1, 0);
-        g.add(l);
-      }
-      scene.add(g);
+    };
+    for (let i = 0; i < (leger ? 4 : 7); i++) placer(true, -5, -42, [4, 13]);
+    for (let i = 0; i < (leger ? 5 : 10); i++) placer(false, -3, -36, [2.4, 8]);
+    for (const [x, d] of [[8, -8.5], [14, -7.5], [21, -9], [12, 8.5], [19, 7.8]]) {
+      const p = pointRiviere(x, d);
+      emplacements.push({ x: p.x, z: p.y, geant: true });
     }
+    ajouterChampignons(scene, alea, leger, animes, emplacements);
+    ajouterPetitsChampignons(scene, alea, leger);
   }
+
+  // Le Loing : rivière lumineuse, ragondins, héron, chevreuil, chouettes, pont
+  ajouterLoing(scene, alea, leger, animes, vent, (scene.fog as THREE.FogExp2).density);
 
   // Lanternes de papier qui flottent
   {
     const corps = new THREE.SphereGeometry(0.22, 20, 14).scale(1, 1.3, 1);
     const matLanterne = new THREE.MeshStandardMaterial({ color: 0xffd8a0, emissive: 0xffa040, emissiveIntensity: 2.6, roughness: 0.6 });
-    const nLumieres = leger ? 2 : 4;
-    for (let i = 0; i < (leger ? 10 : 18); i++) {
+    const nLumieres = leger ? 0 : 1;
+    for (let i = 0; i < (leger ? 5 : 8); i++) {
       const l = new THREE.Group();
       l.add(new THREE.Mesh(corps, matLanterne));
       if (i < nLumieres) l.add(new THREE.PointLight(0xffb060, 4, 9, 2));
@@ -851,35 +1543,12 @@ async function construireMonde(alea: () => number, leger: boolean, dossier: stri
   // Lucioles
   const lucioles = nuee(
     leger ? 160 : 320,
-    { x: [-12, 12], y: [0.3, 4], z: [-40, 3] },
+    { x: [-16, 16], y: [0.3, 3.5], z: [-30, -2] },
     [new THREE.Color(2.2, 1.7, 0.7), new THREE.Color(1.6, 1.9, 0.9), new THREE.Color(2.0, 0.9, 1.4)],
     0.7,
     alea,
   );
   scene.add(lucioles);
-
-  // Cartes à jouer en lévitation
-  {
-    const faces = [textureCarte("♥", "#d64a83"), textureCarte("♠", "#083d3d"), textureCarte("♦", "#d64a83"), textureCarte("♣", "#083d3d")];
-    const geo = new THREE.PlaneGeometry(0.42, 0.59);
-    for (let i = 0; i < (leger ? 8 : 14); i++) {
-      const carte = new THREE.Mesh(
-        geo,
-        new THREE.MeshStandardMaterial({ map: faces[i % 4], side: THREE.DoubleSide, roughness: 0.55, emissive: 0x332a20, emissiveIntensity: 0.25 }),
-      );
-      carte.castShadow = true;
-      const z = -2.5 - alea() * 24;
-      const x = cheminX(z) + (alea() < 0.5 ? -1 : 1) * (1.4 + alea() * 4);
-      const y = 1.4 + alea() * 2.8;
-      const v = 0.25 + alea() * 0.4;
-      const p = alea() * 10;
-      animes.push((t) => {
-        carte.position.set(x, y + Math.sin(t * 0.5 + p) * 0.25, z);
-        carte.rotation.set(Math.sin(t * v + p) * 0.5, t * v + p, Math.sin(t * 0.35 + p) * 0.3);
-      });
-      scene.add(carte);
-    }
-  }
 
   // Notes de musique dorées qui s'élèvent
   {
@@ -975,15 +1644,20 @@ async function construireMonde(alea: () => number, leger: boolean, dossier: stri
       f.position.set(-7 + (i % 5) * 3.3 + (i > 4 ? 1.6 : 0), i > 4 ? 6.2 : 3.2, 3.02);
       chateau.add(f);
     }
-    chateau.position.set(-26, 0, -78);
-    chateau.rotation.y = 0.35;
+    chateau.position.set(42, 0, -36);
+    chateau.rotation.y = -1.14;
     scene.add(chateau);
   }
 
   // Brume au ras du sol
-  const brumes = [brume(70, 90, new THREE.Color(0x4f7c78), 0.13), brume(80, 60, new THREE.Color(0x3d6663), 0.08)];
+  const brumes = [brume(70, 90, new THREE.Color(0x7a5cb0), 0.08), brume(80, 60, new THREE.Color(0x553f86), 0.06)];
   brumes[0].position.set(0, 0.22, -28);
   brumes[1].position.set(0, 0.55, -40);
+  const brumeRiviere = brume(100, 12, new THREE.Color(0x6a5aa0), 0.09);
+  brumeRiviere.rotation.set(-Math.PI / 2, 0, 0);
+  brumeRiviere.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), RIV_ANGLE);
+  brumeRiviere.position.set(0, 0.32, RIV_Z0);
+  brumes.push(brumeRiviere);
   scene.add(...brumes);
 
   animes.push((t) => (vent.uTemps.value = t));
@@ -1126,8 +1800,10 @@ export async function lancerMonde(o: OptionsMonde): Promise<Monde> {
 
   const regard = new THREE.Vector3();
   const regardSeuil = () => new THREE.Vector3(0, portrait ? 1.25 : 1.85, 0);
-  const regardMonde = new THREE.Vector3(0, 2.4, -40);
-  const positionMonde = new THREE.Vector3(0, 1.7, -4.5);
+  // Au sommet du pont, accoudé à la rambarde, on regarde le Loing descendre
+  const regardMonde = new THREE.Vector3(17, 0.1, -12.2);
+  const positionMonde = new THREE.Vector3(cheminX(RIV_Z0) - 0.2, 2.75, RIV_Z0);
+  const directionVue = regardMonde.clone().sub(positionMonde).normalize();
 
   const trajet = () =>
     new THREE.CatmullRomCurve3([
@@ -1248,11 +1924,10 @@ export async function lancerMonde(o: OptionsMonde): Promise<Monde> {
       if (passeRendu.scene !== monde.scene && camera.position.z < 0.12) passeRendu.scene = monde.scene;
       if (k >= 1) arriver();
     } else {
-      camera.position.set(
-        positionMonde.x + pointeurLisse.x * 0.7,
-        positionMonde.y + pointeurLisse.y * 0.25 + defilement * 0.5,
-        positionMonde.z - defilement * 8,
-      );
+      camera.position
+        .copy(positionMonde)
+        .addScaledVector(directionVue, defilement * 6)
+        .add(regard.set(pointeurLisse.x * 0.6, pointeurLisse.y * 0.22 + defilement * 0.4, 0));
       regard.set(regardMonde.x + pointeurLisse.x * 3, regardMonde.y + pointeurLisse.y * 1.2, regardMonde.z);
       camera.lookAt(regard);
       halo.strength = HALO;

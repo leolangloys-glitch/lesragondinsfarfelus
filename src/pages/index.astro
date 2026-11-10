@@ -617,18 +617,37 @@ const jours = [
   }
 
   /* ----- État « monde » : les infos s'affichent par-dessus le monde ----- */
+  /* Les infos se rangent en haut et en bas (sur le côté sur grand écran)
+     pour laisser voir le monde au centre */
   .ouverture[data-etat="monde"] {
-    justify-content: center;
-    padding-bottom: 4rem;
+    justify-content: space-between;
+    padding-bottom: 4.5rem;
   }
 
   .ouverture[data-etat="monde"] .portail {
-    background: radial-gradient(ellipse at center, rgba(2, 24, 24, 0.55) 0%, rgba(2, 24, 24, 0) 68%);
+    background: radial-gradient(ellipse at center, rgba(10, 4, 24, 0.6) 0%, rgba(10, 4, 24, 0) 70%);
     filter: none;
     aspect-ratio: auto;
-    width: min(92vw, 640px);
-    padding: 2.5rem calc(var(--pw) * 0.1);
+    width: min(86vw, 400px);
+    gap: 0.55rem;
+    padding: 1rem 0.75rem 1.5rem;
     animation: apparition 1.6s ease-out both;
+  }
+
+  @media (min-width: 900px) {
+    .ouverture[data-etat="monde"] {
+      align-items: flex-end;
+      justify-content: center;
+      padding-right: max(5vw, 2rem);
+    }
+
+    .ouverture[data-etat="monde"] .portail {
+      width: 430px;
+    }
+
+    .ouverture[data-etat="monde"] .scene {
+      width: 430px;
+    }
   }
 
   .ouverture[data-etat="monde"] .portail__logo {

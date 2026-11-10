@@ -104,10 +104,25 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
   cadre doré de la graphiste est extrudé en vrai relief métallique à partir de
   son contour (`public/brouillon/cadre-or.json`, tracé depuis son PDF). À
   travers le portail on voit déjà le monde. Clic → la caméra traverse.
-- **Le monde** : clairière de nuit au clair de lune, vrais arbres générés
-  (ez-tree), herbe et fleurs qui ondulent au vent, rochers, chemin de dalles en
-  damier, champignons bioluminescents, lanternes, lucioles, cartes à jouer,
-  notes de musique, rayons de lune, scène avec faisceaux, château dans la brume.
+- **Le monde : les berges enchantées du Loing** (demande de l'équipe : partir
+  de l'univers de Briquemault — nature, bord du Loing, ragondins, animaux
+  sauvages — en gardant du fluo, et s'éloigner d'« Alice au pays des
+  merveilles »). La rivière traverse la vue, couverte de plancton
+  bioluminescent ; des ragondins (dents orange, yeux dorés, moustaches) y nagent
+  en laissant un sillage de lumière, d'autres grignotent sur les berges.
+  Héron cendré dans les roseaux, chevreuil sur l'autre rive, chouettes aux yeux
+  d'or, roseaux et massettes lumineux, nénuphars en fleurs, lanternes qui
+  dérivent, petit pont de bois en arc. Après la traversée du portail, on se
+  retrouve au sommet du pont, à regarder le Loing descendre.
+- Autour : vraie forêt générée (ez-tree), herbe au vent, champignons géants
+  bioluminescents d'après les références de l'équipe (chapeau sombre piqueté,
+  lamelles orange-rose lumineuses, pied courbé) mais au second plan, petits
+  champignons lumineux, lucioles, notes de musique, scène et faisceaux, château
+  dans la brume. Ambiance nuit violette (« violet mystique » du brief). Plus de
+  cartes à jouer (trop « Alice »).
+- Réglages de la rivière : constantes `RIV_*` dans `monde.ts`
+  (`distRiviere`, `pointRiviere`). Eau en vrai miroir sur ordinateur
+  (`Reflector`), surface brillante sur téléphone.
 - Rendu : matériaux physiques, HDRI, ombres, halo, vignettage et grain.
   Qualité adaptative (jusqu'à la 4K sur écran 4K, allégée sur téléphone et
   baissée automatiquement si l'appareil peine). `?qualite=haute` ou
@@ -122,8 +137,11 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
 - Bouton « Passer l'introduction ». Après la traversée, la session s'en
   souvient.
 - Pas de son pour l'instant (à décider, droits sur la musique nécessaires).
-- Pour aller plus loin : mascotte ragondin en 3D (artiste 3D), illustrations de
-  la graphiste en calques, ou séquence vidéo précalculée en 4K.
+- Sur ordinateur, le texte d'accueil se range à droite après la traversée ; sur
+  téléphone, en haut et en bas, pour laisser voir le monde au centre.
+- Pour aller plus loin : vrais modèles 3D d'animaux et de la mascotte (artiste
+  3D), illustrations de la graphiste en calques, ou séquence vidéo
+  précalculée en 4K.
 
 ## Référencement (priorité de l'équipe)
 
