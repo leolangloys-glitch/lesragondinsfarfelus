@@ -97,19 +97,33 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
 
 - Inspiration : l'expérience immersive symphonyofvines.unseen.co (portail
   qu'on traverse pour entrer dans un monde). On crée **notre** monde, on ne
-  copie rien.
-- Code : `src/scripts/monde.ts` (Three.js). Le portail doré est posé sur le
-  damier ; à travers, on voit déjà le monde ; au clic, la caméra le traverse.
-  Le monde : chemin en damier, arbres de travers, champignons néon, lanternes,
-  cartes à jouer, notes de musique, scène et faisceaux, château à l'horizon.
-- La 3D se charge **après** la page, seulement si l'appareil le permet. Sans
-  WebGL ou avec « réduire les animations », le visuel 2D reste affiché. Le
-  texte (titre, dates, lieu) est toujours dans le HTML, pour Google.
+  copie rien. Demande de l'équipe : rendu **réaliste**, « comme un jeu vidéo ».
+- Code : `src/scripts/monde.ts` (Three.js). L'ancienne version stylisée est
+  gardée dans `src/scripts/monde-stylise.ts`.
+- **Le seuil** : antichambre de marbre vernis en damier, colonnes, brume. Le
+  cadre doré de la graphiste est extrudé en vrai relief métallique à partir de
+  son contour (`public/brouillon/cadre-or.json`, tracé depuis son PDF). À
+  travers le portail on voit déjà le monde. Clic → la caméra traverse.
+- **Le monde** : clairière de nuit au clair de lune, vrais arbres générés
+  (ez-tree), herbe et fleurs qui ondulent au vent, rochers, chemin de dalles en
+  damier, champignons bioluminescents, lanternes, lucioles, cartes à jouer,
+  notes de musique, rayons de lune, scène avec faisceaux, château dans la brume.
+- Rendu : matériaux physiques, HDRI, ombres, halo, vignettage et grain.
+  Qualité adaptative (jusqu'à la 4K sur écran 4K, allégée sur téléphone et
+  baissée automatiquement si l'appareil peine). `?qualite=haute` ou
+  `?qualite=basse` dans l'adresse force un niveau pour tester.
+- Poids : le module 3D fait environ 5 Mo (dont les textures des arbres), chargé
+  **après** l'affichage de la page. Sans WebGL ou avec « réduire les
+  animations », le visuel 2D reste affiché. Le texte reste dans le HTML.
+- Ressources libres dans `public/monde/` (crédits dans `CREDITS.md` du
+  dossier) : herbe, fleurs, rochers, textures de sol (démo ez-tree, MIT),
+  HDRI Poly Haven (CC0) via `@pmndrs/assets`. Les rochers ont été décompressés
+  (pas de décodeur Draco nécessaire).
 - Bouton « Passer l'introduction ». Après la traversée, la session s'en
-  souvient (pas de nouvelle intro en revenant sur l'accueil).
-- Pas de son pour l'instant (à décider, et il faudra des droits sur la musique).
-- Prochaine étape : intégrer les illustrations de la graphiste livrées en
-  calques séparés (ciel, arbres, portail, mascotte, premier plan).
+  souvient.
+- Pas de son pour l'instant (à décider, droits sur la musique nécessaires).
+- Pour aller plus loin : mascotte ragondin en 3D (artiste 3D), illustrations de
+  la graphiste en calques, ou séquence vidéo précalculée en 4K.
 
 ## Référencement (priorité de l'équipe)
 
@@ -138,7 +152,8 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
   En-tête et pied de page : `src/components/`.
 - Couleurs, polices et boutons communs : `src/styles/global.css`.
 - Aperçu partageable (Artifact) : `npm run build` puis
-  `python3 -I outils/apercu.py dist <dossier>` produit des pages autonomes.
+  `python3 -I outils/apercu.py dist <dossier>` produit des pages autonomes
+  (les .glb y sont renommés en .glb.wasm, seul format binaire accepté).
 - `public/brouillon/` : visuels provisoires de la graphiste. **Ce dossier est
   exclu du dépôt** (`.gitignore`) tant que le dépôt est public et que les
   visuels ne sont pas validés. Il faut les y remettre à la main pour voir le

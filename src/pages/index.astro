@@ -328,10 +328,14 @@ const jours = [
     if (!ouverture || !canvas || !seuil) return;
     const { lancerMonde } = await import("../scripts/monde");
     const entre = dejaEntre();
-    const monde = lancerMonde({
+    const monde = await lancerMonde({
       canvas,
       imagePortail: "/brouillon/cadre-or.webp",
+      formePortail: "/brouillon/cadre-or.json",
+      dossierRessources: "/monde",
       dejaEntre: entre,
+      // ?qualite=haute ou ?qualite=basse dans l'adresse force un niveau (pour les tests)
+      qualite: new URLSearchParams(location.search).get("qualite") as "haute" | "basse" | null,
       surPret: () => {
         ouverture.dataset.etat = entre ? "monde" : "seuil";
         seuil.hidden = entre;
@@ -350,7 +354,11 @@ const jours = [
   }
 
   if (!reduit && webglDisponible()) {
-    const demarrer = () => lancer().catch(() => (ouverture!.dataset.etat = "statique"));
+    const demarrer = () =>
+      lancer().catch((erreur) => {
+        console.error("Le monde 3D n'a pas pu se lancer :", erreur);
+        ouverture!.dataset.etat = "statique";
+      });
     if (document.readyState === "complete") setTimeout(demarrer, 50);
     else window.addEventListener("load", () => setTimeout(demarrer, 50), { once: true });
   }
