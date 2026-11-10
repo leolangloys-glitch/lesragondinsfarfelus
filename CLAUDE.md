@@ -111,6 +111,11 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
   `.affiche` dans `index.astro`). Dans l'affiche, le miroir n'est pas tout à
   fait centré : marches et damier sont alignés sur le bas du miroir, un peu à
   droite. C'est voulu, ne pas « recentrer ».
+- **Dans le miroir, seul le titre (le logo)**, un peu plus grand que sur
+  l'affiche et centré dans l'ouverture, « comme s'il n'y avait que ça d'écrit »
+  (demande de l'équipe). Les autres infos (badge, lieu, dates, genres, têtes
+  d'affiche) restent dans le HTML et s'affichent une fois dans le monde ; elles
+  sont aussi dans « Le festival en bref » plus bas.
 - **On n'entre dans le monde qu'en cliquant (ou touchant) le miroir** : rien
   d'automatique, pas de saut direct au monde en revenant sur l'accueil. Le
   miroir est un vrai bouton (clavier, lecteur d'écran) ; une petite phrase

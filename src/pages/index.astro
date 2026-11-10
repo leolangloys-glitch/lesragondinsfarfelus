@@ -558,11 +558,14 @@ const jours = [
     width: 32.67%;
   }
 
-  /* Le texte dans le miroir, aux mêmes hauteurs que sur l'affiche */
+  /* Dans le miroir, seul le titre (le logo), un peu plus grand que sur l'affiche,
+     centré dans l'ouverture. Les autres infos s'affichent une fois dans le monde
+     (et restent dans la page pour Google, voir aussi « Le festival en bref »). */
   .portail {
     position: absolute;
     z-index: 3;
-    top: 20.5%;
+    top: 49%;
+    translate: 0 -50%;
     left: 0;
     right: 0;
     margin-inline: auto;
@@ -577,7 +580,11 @@ const jours = [
 
   .portail__logo {
     margin: 0 0 0 1.06cqw;
-    width: 51.4cqw;
+    width: 60cqw;
+  }
+
+  .ouverture:not([data-etat="monde"]) .portail > :not(.portail__logo) {
+    display: none;
   }
 
   .portail__logo img {
@@ -819,6 +826,7 @@ const jours = [
   .ouverture[data-etat="monde"] .portail {
     position: relative;
     top: auto;
+    translate: none;
     z-index: 2;
     width: min(92vw, 640px);
     container-type: inline-size;
