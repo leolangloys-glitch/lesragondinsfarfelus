@@ -8,10 +8,10 @@
 import base64, re, sys, pathlib, shutil
 dist = pathlib.Path(sys.argv[1]); sortie = pathlib.Path(sys.argv[2])
 if sortie.exists(): shutil.rmtree(sortie)
-for dossier in ("brouillon", "monde"):
+for dossier in ("brouillon", "monde", "photos"):
     if (dist / dossier).exists():
         shutil.copytree(dist / dossier, sortie / dossier)
-for glb in (sortie / "monde").glob("*.glb"):
+for glb in (sortie / "monde").glob("*.glb") if (sortie / "monde").exists() else []:
     glb.rename(glb.with_name(glb.name + ".wasm"))
 
 def data_uri(p):
@@ -52,7 +52,7 @@ def nom_page(chemin):
 def reecrire(html, principale):
     html = re.sub(r'<link rel="stylesheet" href="([^"]+)">', lambda m: f"<style>{css_integre(m.group(1))}</style>", html)
     html = re.sub(r'<script type="module" src="([^"]+)"></script>', lambda m: js_integre(m.group(1)), html)
-    html = html.replace("/brouillon/", "brouillon/").replace('href="/favicon.svg"', 'href="data:,"')
+    html = html.replace("/brouillon/", "brouillon/").replace("/photos/", "photos/").replace('href="/favicon.svg"', 'href="data:,"')
     # Le service d'aperçu ne sert pas les .glb : on les publie en .glb.wasm (données binaires brutes)
     html = html.replace(".glb`", ".glb.wasm`")
     html = html.replace('"/monde"', '"monde"').replace('`/monde`', '`monde`').replace("/monde/", "monde/")

@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import { evenementSchema } from "../data/site";
+import { habitants, photoAccueil, urlsLicences } from "../data/photos";
 
 // Textes provisoires : à relire et valider par l'équipe avant la mise en ligne.
 const univers = [
@@ -52,61 +53,77 @@ const jours = [
   description="Festival de musique et de magie au Domaine de Briquemault (Loiret), les 28, 29 et 30 mai 2027. Concerts, DJ sets, magiciens. Au profit de Handi'Chiens."
   donneesStructurees={evenementSchema()}
 >
-  <!-- ===================== OUVERTURE : LE PORTAIL ===================== -->
+  <!-- ===================== OUVERTURE : LE PORTAIL ET LE LOING ===================== -->
   <!--
-    Trois états (attribut data-etat) :
-      statique : visuel 2D (sans JavaScript, animations réduites, ou en attendant la 3D)
-      seuil    : le portail en 3D, on invite à entrer
-      monde    : on a traversé, le monde s'affiche avec les infos du festival
+    États (attribut data-etat) :
+      monde     : la photo du Loing en plein écran avec les infos (état par défaut,
+                  sans JavaScript, et ce que voit Google)
+      seuil     : le portail doré, avec le monde visible à travers ; on invite à entrer
+      traversee : le portail s'agrandit jusqu'à remplir l'écran
   -->
-  <section class="ouverture" data-etat="statique" aria-labelledby="titre-festival">
-    <canvas class="ouverture__monde" aria-hidden="true"></canvas>
-
-    <div class="portail">
-      <h1 id="titre-festival" class="portail__logo">
-        <img
-          src="/brouillon/logo.webp"
-          alt="Les Ragondins Farfelus"
-          width="1200"
-          height="717"
-          fetchpriority="high"
-        />
-      </h1>
-      <p class="portail__badge">Festival de musique et de magie</p>
-      <div class="portail__infos">
-        <p class="portail__lieu">
-          Domaine de Briquemault
-          <span>Sainte-Geneviève-des-Bois</span>
-        </p>
-        <p class="portail__dates">
-          <span class="texte-or">28·29·30</span>
-          <span>mai 2027</span>
-        </p>
-      </div>
-      <p class="portail__genres">Magie · DJ sets · Concerts jazz et rock</p>
+  <section class="ouverture" data-etat="monde" aria-labelledby="titre-festival">
+    <div class="ouverture__photo">
+      <img
+        src={`${photoAccueil.base}-1600.webp`}
+        srcset={photoAccueil.largeurs.map((l) => `${photoAccueil.base}-${l}.webp ${l}w`).join(", ")}
+        sizes="100vw"
+        alt={photoAccueil.alt}
+        width={photoAccueil.largeur}
+        height={photoAccueil.hauteur}
+        fetchpriority="high"
+        decoding="async"
+      />
     </div>
+    <div class="ouverture__voile" aria-hidden="true"></div>
+    <canvas class="ouverture__lucioles" aria-hidden="true"></canvas>
 
-    <div class="scene">
-      <img class="scene__escalier" src="/brouillon/escalier.webp" alt="" width="419" height="244" />
-      <div class="scene__actions">
+    <div class="ouverture__contenu">
+      <div class="ouverture__haut">
+        <h1 id="titre-festival" class="ouverture__logo">
+          <img src="/brouillon/logo.webp" alt="Les Ragondins Farfelus" width="1200" height="717" />
+        </h1>
+        <p class="ouverture__badge">Festival de musique et de magie</p>
+        <p class="ouverture__infos">
+          <span class="ouverture__dates texte-or">28·29·30 mai 2027</span>
+          <span class="ouverture__lieu">Domaine de Briquemault<span class="ouverture__commune"> · Sainte-Geneviève-des-Bois (Loiret)</span></span>
+        </p>
+        <p class="ouverture__genres">Magie · DJ sets · Concerts jazz et rock · Au bord du Loing</p>
+      </div>
+      <div class="ouverture__actions">
         <a class="bouton bouton--rose" href="/billetterie/">Billetterie</a>
-        <a class="bouton bouton--contour" href="/programmation/">Découvrir la programmation</a>
+        <a class="bouton bouton--contour" href="/programmation/">Programmation</a>
       </div>
     </div>
 
-    <div class="seuil" hidden>
-      <p class="seuil__invitation">
-        Un monde s'éveille une fois par an au cœur du Loiret.<br />
-        <strong>Oserez-vous franchir le portail&nbsp;?</strong>
-      </p>
+    <div class="seuil">
+      <div class="seuil__portail">
+        <div class="seuil__fenetre" aria-hidden="true"></div>
+        <img class="seuil__cadre" src="/brouillon/cadre-or.webp" alt="" width="1007" height="1292" />
+      </div>
+      <p class="seuil__invitation">Au bord du Loing, un monde s'éveille une fois par an.</p>
       <button class="bouton bouton--rose seuil__entrer" type="button">Entrer dans le monde</button>
       <button class="seuil__passer" type="button">Passer l'introduction</button>
     </div>
+
+    <p class="ouverture__credit">
+      Photo : {photoAccueil.credit.auteur},
+      <a href={urlsLicences[photoAccueil.credit.licence]} rel="noopener license">{photoAccueil.credit.licence}</a>, couleurs modifiées
+    </p>
 
     <a class="ouverture__suite" href="#experience" aria-label="Découvrir le festival">
       <span aria-hidden="true"></span>
     </a>
   </section>
+  <script is:inline>
+    // Avant le premier affichage : on montre le portail si on n'est pas encore entré
+    // et si le visiteur n'a pas demandé à réduire les animations.
+    (function () {
+      var o = document.querySelector(".ouverture");
+      var entre = false;
+      try { entre = sessionStorage.getItem("rf-entre") === "1"; } catch (e) {}
+      if (o && !entre && !matchMedia("(prefers-reduced-motion: reduce)").matches) o.dataset.etat = "seuil";
+    })();
+  </script>
 
   <!-- ===================== L'EXPÉRIENCE ===================== -->
   <section class="section experience" id="experience" aria-labelledby="titre-experience">
@@ -146,6 +163,43 @@ const jours = [
               </span>
               <h3>{u.titre}</h3>
               <p>{u.texte}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== LES HABITANTS DU LOING ===================== -->
+  <section class="section habitants" id="habitants" aria-labelledby="titre-habitants">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Faune et flore du Loiret</span>
+        <h2 id="titre-habitants">Les habitants du Loing</h2>
+        <p class="intro">
+          Le festival s'installe au bord du Loing, dans une nature préservée. Voici quelques-uns de
+          nos voisins : bien réels, un brin magiques, ils ont inspiré le monde des Ragondins
+          Farfelus.
+        </p>
+      </div>
+      <ul class="habitants__liste">
+        {
+          habitants.map((h, i) => (
+            <li class:list={["habitant", { "habitant--vedette": i === 0 }]}>
+              <figure>
+                <div class="habitant__cadre">
+                  <img src={h.fichier} alt={h.alt} width="800" height="1000" loading="lazy" decoding="async" />
+                </div>
+                <figcaption>
+                  <h3>{h.nom}</h3>
+                  <p class="habitant__latin">{h.latin}</p>
+                  <p class="habitant__texte">{h.texte}</p>
+                  <p class="habitant__credit">
+                    Photo : <a href={h.credit.source} rel="noopener">{h.credit.auteur}</a>,{" "}
+                    <a href={urlsLicences[h.credit.licence]} rel="noopener license">{h.credit.licence}</a>
+                  </p>
+                </figcaption>
+              </figure>
             </li>
           ))
         }
@@ -292,29 +346,11 @@ const jours = [
 </Base>
 
 <script>
-  // L'entrée en 3D ne se charge qu'après l'affichage de la page, et seulement si
-  // l'appareil le permet. Sinon, le visuel 2D reste en place.
+  // Entrée par le miroir (sans 3D : animation CSS + lucioles dessinées en 2D, très léger)
   const ouverture = document.querySelector<HTMLElement>(".ouverture");
-  const canvas = document.querySelector<HTMLCanvasElement>(".ouverture__monde");
-  const seuil = document.querySelector<HTMLElement>(".seuil");
+  const portail = document.querySelector<HTMLElement>(".seuil__portail");
+  const canvas = document.querySelector<HTMLCanvasElement>(".ouverture__lucioles");
   const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  function webglDisponible() {
-    try {
-      const c = document.createElement("canvas");
-      return Boolean(c.getContext("webgl2") || c.getContext("webgl"));
-    } catch {
-      return false;
-    }
-  }
-
-  function dejaEntre() {
-    try {
-      return sessionStorage.getItem("rf-entre") === "1";
-    } catch {
-      return false;
-    }
-  }
 
   function memoriserEntree() {
     try {
@@ -324,357 +360,283 @@ const jours = [
     }
   }
 
-  async function lancer() {
-    if (!ouverture || !canvas || !seuil) return;
-    const { lancerMonde } = await import("../scripts/monde");
-    const entre = dejaEntre();
-    const monde = await lancerMonde({
-      canvas,
-      imagePortail: "/brouillon/cadre-or.webp",
-      formePortail: "/brouillon/cadre-or.json",
-      dossierRessources: "/monde",
-      dejaEntre: entre,
-      // ?qualite=haute ou ?qualite=basse dans l'adresse force un niveau (pour les tests)
-      qualite: new URLSearchParams(location.search).get("qualite") as "haute" | "basse" | null,
-      surPret: () => {
-        ouverture.dataset.etat = entre ? "monde" : "seuil";
-        seuil.hidden = entre;
-      },
-      surDepart: () => {
-        seuil.hidden = true;
-      },
-      surEntree: () => {
-        ouverture.dataset.etat = "monde";
-        seuil.hidden = true;
-        memoriserEntree();
-      },
-    });
-    seuil.querySelector(".seuil__entrer")?.addEventListener("click", () => monde.entrer());
-    seuil.querySelector(".seuil__passer")?.addEventListener("click", () => monde.passer());
+  function arriver() {
+    if (!ouverture) return;
+    ouverture.dataset.etat = "monde";
+    memoriserEntree();
+    ouverture.querySelector<HTMLElement>(".ouverture__actions a")?.focus({ preventScroll: true });
   }
 
-  if (!reduit && webglDisponible()) {
-    const demarrer = () =>
-      lancer().catch((erreur) => {
-        console.error("Le monde 3D n'a pas pu se lancer :", erreur);
-        ouverture!.dataset.etat = "statique";
-      });
-    if (document.readyState === "complete") setTimeout(demarrer, 50);
-    else window.addEventListener("load", () => setTimeout(demarrer, 50), { once: true });
+  function entrer() {
+    if (!ouverture || !portail || ouverture.dataset.etat !== "seuil") return;
+    const r = portail.getBoundingClientRect();
+    const zone = ouverture.getBoundingClientRect();
+    // Agrandit le miroir jusqu'à ce que son ouverture couvre tout l'écran
+    const zoom = Math.max(zone.width / (r.width * 0.86), zone.height / (r.height * 0.88)) * 1.15;
+    portail.style.setProperty("--dx", `${zone.left + zone.width / 2 - (r.left + r.width / 2)}px`);
+    portail.style.setProperty("--dy", `${zone.top + zone.height / 2 - (r.top + r.height / 2)}px`);
+    portail.style.setProperty("--zoom", String(zoom));
+    ouverture.dataset.etat = "traversee";
+    window.setTimeout(arriver, 1700);
+  }
+
+  document.querySelector(".seuil__entrer")?.addEventListener("click", entrer);
+  portail?.addEventListener("click", entrer);
+  document.querySelector(".seuil__passer")?.addEventListener("click", arriver);
+
+  // Léger effet de profondeur quand on bouge la souris
+  if (ouverture && !reduit && window.matchMedia("(pointer: fine)").matches) {
+    ouverture.addEventListener("pointermove", (e) => {
+      const r = ouverture.getBoundingClientRect();
+      ouverture.style.setProperty("--px", (((e.clientX - r.left) / r.width) * 2 - 1).toFixed(3));
+      ouverture.style.setProperty("--py", (((e.clientY - r.top) / r.height) * 2 - 1).toFixed(3));
+    });
+  }
+
+  // Lucioles : points lumineux flous, jaune-vert et rose, qui flottent et clignotent
+  if (canvas && ouverture) {
+    const ctx = canvas.getContext("2d");
+    const petit = window.innerWidth < 700;
+    const teintes = ["255,236,120", "214,245,107", "255,236,120", "255,160,203", "255,246,216"];
+    const lucioles = Array.from({ length: petit ? 36 : 64 }, () => ({
+      x: Math.random(),
+      y: 0.15 + Math.random() * 0.85,
+      r: 1.6 + Math.pow(Math.random(), 3) * 10,
+      teinte: teintes[Math.floor(Math.random() * teintes.length)],
+      vx: (Math.random() - 0.5) * 0.000012,
+      vy: -(0.000004 + Math.random() * 0.000014),
+      phase: Math.random() * Math.PI * 2,
+      rythme: 0.5 + Math.random() * 1.3,
+    }));
+    let l = 0;
+    let h = 0;
+    const tailler = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      l = canvas.clientWidth;
+      h = canvas.clientHeight;
+      canvas.width = Math.round(l * dpr);
+      canvas.height = Math.round(h * dpr);
+      ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    const dessiner = (t: number) => {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, l, h);
+      ctx.globalCompositeOperation = "lighter";
+      for (const p of lucioles) {
+        const x = ((((p.x + p.vx * t) % 1) + 1) % 1) * l + Math.sin(t * 0.0004 + p.phase) * 14;
+        const y = ((((p.y + p.vy * t) % 1) + 1) % 1) * h + Math.cos(t * 0.0003 + p.phase) * 10;
+        const a = reduit ? 0.6 : Math.max(0, Math.sin(t * 0.001 * p.rythme + p.phase)) * 0.85 + 0.1;
+        const rayon = p.r * 3;
+        const g = ctx.createRadialGradient(x, y, 0, x, y, rayon);
+        g.addColorStop(0, `rgba(${p.teinte},${a})`);
+        g.addColorStop(0.3, `rgba(${p.teinte},${a * 0.55})`);
+        g.addColorStop(1, `rgba(${p.teinte},0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(x, y, rayon, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    };
+    tailler();
+    new ResizeObserver(() => {
+      tailler();
+      if (reduit) dessiner(0);
+    }).observe(canvas);
+    if (reduit) {
+      dessiner(0);
+    } else {
+      let visible = true;
+      let boucle = 0;
+      const image = (t: number) => {
+        boucle = 0;
+        if (!visible || document.hidden) return;
+        dessiner(t);
+        boucle = requestAnimationFrame(image);
+      };
+      const relancer = () => {
+        if (!boucle && visible && !document.hidden) boucle = requestAnimationFrame(image);
+      };
+      new IntersectionObserver(([e]) => {
+        visible = e.isIntersecting;
+        relancer();
+      }).observe(ouverture);
+      document.addEventListener("visibilitychange", relancer);
+      relancer();
+    }
   }
 </script>
 
 <style>
-  /* ---------- Ouverture (le portail) ---------- */
+  /* ---------- Ouverture : le miroir puis le monde du Loing ---------- */
   .ouverture {
-    --pw: min(88vw, 560px, 58svh);
+    --px: 0;
+    --py: 0;
     position: relative;
     min-height: 100svh;
-    padding-top: calc(var(--hauteur-entete) + clamp(1rem, 4svh, 2.5rem));
     display: flex;
     flex-direction: column;
-    align-items: center;
-    background: radial-gradient(
-        ellipse 70% 55% at 50% 38%,
-        var(--emeraude) 0%,
-        #0b4a48 38%,
-        var(--vert) 62%,
-        var(--vert-nuit) 100%
-      );
     overflow: hidden;
     isolation: isolate;
+    background: radial-gradient(ellipse 70% 60% at 50% 45%, #0e5650 0%, var(--vert) 45%, var(--vert-nuit) 100%);
   }
 
-  .ouverture__monde {
+  .ouverture__photo {
     position: absolute;
-    inset: 0;
+    inset: -2%;
+    z-index: 0;
+    transition: opacity 0.9s ease;
+  }
+
+  .ouverture__photo img {
     width: 100%;
     height: 100%;
-    z-index: 0;
-    opacity: 0;
-    transition: opacity 1.2s ease;
-    touch-action: pan-y;
+    object-fit: cover;
+    object-position: 58% 42%;
+    transform: translate3d(calc(var(--px) * -12px), calc(var(--py) * -9px), 0) scale(1.03);
+    transition: transform 1.2s ease-out;
   }
 
-  .portail {
-    position: relative;
+  .ouverture[data-etat="monde"] .ouverture__photo img {
+    animation: respiration 26s ease-in-out infinite alternate;
+  }
+
+  @keyframes respiration {
+    from {
+      scale: 1.06;
+    }
+    to {
+      scale: 1;
+    }
+  }
+
+  .ouverture__voile {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(5, 40, 40, 0.88) 0%, rgba(5, 40, 40, 0.55) 34%, rgba(5, 40, 40, 0) 62%),
+      linear-gradient(0deg, rgba(5, 40, 40, 0.75) 0%, rgba(5, 40, 40, 0) 30%),
+      radial-gradient(ellipse 40% 50% at 92% 4%, rgba(255, 160, 203, 0.22), transparent 70%);
+    transition: opacity 0.9s ease;
+  }
+
+  .ouverture__lucioles {
+    position: absolute;
+    inset: 0;
     z-index: 2;
-    width: var(--pw);
-    aspect-ratio: 1007 / 1292;
-    max-width: 100%;
-    container-type: inline-size;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    transform: translate3d(calc(var(--px) * 10px), calc(var(--py) * 8px), 0);
+    transition: transform 1.2s ease-out;
+  }
+
+  .ouverture__contenu {
+    position: relative;
+    z-index: 3;
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    gap: calc(var(--pw) * 0.032);
-    padding: 0 calc(var(--pw) * 0.15);
-    text-align: center;
-    background: url("/brouillon/cadre-or.webp") center / contain no-repeat;
-    filter: drop-shadow(0 0 2.5rem rgba(243, 226, 176, 0.18));
-    animation: apparition 1.4s ease-out both;
+    gap: 2rem;
+    width: min(100%, var(--largeur-max));
+    margin: 0 auto;
+    padding: calc(var(--hauteur-entete) + 2rem) var(--marge) 5rem;
     transition: opacity 0.8s ease;
   }
 
-  .portail__logo {
+  .ouverture__haut {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    max-width: 30rem;
+  }
+
+  .ouverture__logo {
     margin: 0;
+    width: min(100%, 26rem);
+    filter: drop-shadow(0 0.5rem 1.8rem rgba(0, 0, 0, 0.55));
+  }
+
+  .ouverture__logo img {
     width: 100%;
   }
 
-  .portail__logo img {
-    width: 100%;
-  }
-
-  .portail__badge {
+  .ouverture__badge {
     margin: 0;
     padding: 0.35em 1.1em;
     border: 1.5px solid var(--creme);
     border-radius: 999px;
-    font-size: clamp(0.72rem, 3.1cqw, 1rem);
+    font-size: 0.875rem;
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    white-space: nowrap;
+    background: rgba(5, 40, 40, 0.35);
   }
 
-  .portail__infos {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 3cqw;
-    width: 112%;
-  }
-
-  .portail__infos::before {
-    content: "";
-    grid-column: 2;
-    grid-row: 1;
-    width: 1.5px;
-    height: 100%;
-    background: var(--creme);
-    opacity: 0.6;
-  }
-
-  .portail__lieu,
-  .portail__dates {
+  .ouverture__infos {
     margin: 0;
-    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .ouverture__dates {
+    font-family: var(--font-titre);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 600;
     line-height: 1.1;
   }
 
-  .portail__lieu {
-    grid-column: 1;
-    font-size: clamp(0.8rem, 4.1cqw, 1.35rem);
-    font-weight: 700;
-    text-transform: uppercase;
-    text-align: right;
-  }
-
-  .portail__lieu span {
-    display: block;
-    margin-top: 0.4em;
-    font-size: 0.62em;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-  }
-
-  .portail__dates {
-    grid-column: 3;
-    text-align: left;
-    font-weight: 700;
-    text-transform: uppercase;
-  }
-
-  .portail__dates span:first-child {
-    display: block;
-    font-size: clamp(1.3rem, 8cqw, 2.7rem);
-    letter-spacing: 0.02em;
-  }
-
-  .portail__dates span:last-child {
-    font-size: clamp(0.85rem, 4.6cqw, 1.5rem);
-  }
-
-  .portail__genres {
-    margin: 0;
-    text-wrap: balance;
-    font-size: clamp(0.72rem, 3.2cqw, 1rem);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--rose);
-  }
-
-  /* L'escalier et le sol en damier (version 2D) */
-  .scene {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    flex: 1;
-    min-height: clamp(12rem, 30svh, 18rem);
-    margin-top: calc(var(--pw) * -0.06);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background:
-      linear-gradient(to bottom, transparent 55%, var(--vert-nuit) 100%),
-      url("/brouillon/sol-damier.webp") center top / max(100%, 900px) auto no-repeat;
-    transition: opacity 0.8s ease;
-  }
-
-  .scene__escalier {
-    width: calc(var(--pw) * 0.42);
-    margin-top: calc(var(--pw) * -0.005);
-    opacity: 0.95;
-  }
-
-  .scene__actions {
-    position: relative;
-    z-index: 3;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.75rem 1rem;
-    padding: 1.5rem var(--marge) 3rem;
-  }
-
-  .scene__actions .bouton--contour {
-    background: rgba(5, 40, 40, 0.7);
-  }
-
-  /* Invitation à entrer (état « seuil ») */
-  .seuil {
-    position: absolute;
-    z-index: 3;
-    inset: auto 0 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.9rem;
-    padding: 2rem var(--marge) calc(2.25rem + env(safe-area-inset-bottom, 0px));
-    text-align: center;
-    background: linear-gradient(to top, rgba(2, 24, 24, 0.92), rgba(2, 24, 24, 0));
-    animation: monter 1s 0.4s ease-out both;
-  }
-
-  .seuil[hidden] {
-    display: none;
-  }
-
-  .seuil__invitation {
-    margin: 0;
-    max-width: 30rem;
-    color: var(--creme-doux);
-    font-size: clamp(1rem, 2.4vw, 1.15rem);
-  }
-
-  .seuil__invitation strong {
-    display: block;
-    margin-top: 0.3rem;
-    font-family: var(--font-titre);
-    font-size: clamp(1.35rem, 3.6vw, 1.75rem);
+  .ouverture__lieu {
     font-weight: 600;
     color: var(--creme);
   }
 
-  .seuil__entrer {
-    min-height: 3.4rem;
-    padding-inline: 2.2rem;
-    font-size: 1.075rem;
-    box-shadow: 0 0 2.5rem rgba(255, 160, 203, 0.35);
-  }
-
-  .seuil__passer {
-    background: none;
-    border: 0;
-    padding: 0.5rem 1rem;
-    color: var(--creme-doux);
-    font: inherit;
-    font-size: 0.9rem;
-    text-decoration: underline;
-    text-underline-offset: 0.25em;
-    cursor: pointer;
-  }
-
-  .seuil__passer:hover {
+  .ouverture__genres {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     color: var(--rose);
   }
 
-  .ouverture__suite {
-    display: none;
+  .ouverture__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
   }
 
-  /* ----- État « seuil » : seul le portail 3D est visible ----- */
-  .ouverture[data-etat="seuil"] .ouverture__monde,
-  .ouverture[data-etat="monde"] .ouverture__monde {
-    opacity: 1;
+  .ouverture__actions .bouton--contour {
+    background: rgba(5, 40, 40, 0.55);
   }
 
-  .ouverture[data-etat="seuil"] .portail,
-  .ouverture[data-etat="seuil"] .scene {
-    opacity: 0;
-    pointer-events: none;
+  .ouverture__actions .bouton--contour:hover {
+    background: var(--creme);
+    color: var(--vert);
   }
 
-  /* ----- État « monde » : les infos s'affichent par-dessus le monde ----- */
-  /* Les infos se rangent en haut et en bas (sur le côté sur grand écran)
-     pour laisser voir le monde au centre */
-  .ouverture[data-etat="monde"] {
-    justify-content: space-between;
-    padding-bottom: 4.5rem;
-  }
-
-  .ouverture[data-etat="monde"] .portail {
-    background: radial-gradient(ellipse at center, rgba(10, 4, 24, 0.6) 0%, rgba(10, 4, 24, 0) 70%);
-    filter: none;
-    aspect-ratio: auto;
-    width: min(86vw, 400px);
-    gap: 0.55rem;
-    padding: 1rem 0.75rem 1.5rem;
-    animation: apparition 1.6s ease-out both;
-  }
-
-  @media (min-width: 900px) {
-    .ouverture[data-etat="monde"] {
-      align-items: flex-end;
-      justify-content: center;
-      padding-right: max(5vw, 2rem);
-    }
-
-    .ouverture[data-etat="monde"] .portail {
-      width: 430px;
-    }
-
-    .ouverture[data-etat="monde"] .scene {
-      width: 430px;
-    }
-  }
-
-  .ouverture[data-etat="monde"] .portail__logo {
-    filter: drop-shadow(0 0.4rem 1.6rem rgba(0, 0, 0, 0.55));
-  }
-
-  .ouverture[data-etat="monde"] .scene {
-    flex: none;
-    min-height: 0;
-    margin: 0;
-    background: none;
-  }
-
-  .ouverture[data-etat="monde"] .scene__escalier {
-    display: none;
-  }
-
-  .ouverture[data-etat="monde"] .scene__actions {
-    padding-top: 0.5rem;
-    animation: monter 1s 0.6s ease-out both;
-  }
-
-  .ouverture[data-etat="monde"] .ouverture__suite {
-    display: block;
+  .ouverture__credit {
     position: absolute;
     z-index: 3;
-    bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+    right: var(--marge);
+    bottom: 0.6rem;
+    margin: 0;
+    font-size: 0.7rem;
+    color: rgba(255, 246, 216, 0.7);
+  }
+
+  .ouverture__credit a {
+    color: inherit;
+  }
+
+  .ouverture__suite {
+    position: absolute;
+    z-index: 3;
+    bottom: calc(1.6rem + env(safe-area-inset-bottom, 0px));
     left: 50%;
     width: 2.75rem;
     height: 2.75rem;
@@ -695,10 +657,155 @@ const jours = [
     transform: translate(-50%, -50%) rotate(45deg);
   }
 
+  @keyframes flotter {
+    50% {
+      transform: translateY(0.4rem);
+    }
+  }
+
+  /* ----- Le seuil : le miroir de la graphiste ----- */
+  .seuil {
+    display: none;
+  }
+
+  .ouverture[data-etat="seuil"] .seuil,
+  .ouverture[data-etat="traversee"] .seuil {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: calc(var(--hauteur-entete) + 1rem) var(--marge) calc(1.5rem + env(safe-area-inset-bottom, 0px));
+    text-align: center;
+  }
+
+  .seuil__portail {
+    --zoom: 1;
+    --dx: 0px;
+    --dy: 0px;
+    position: relative;
+    width: min(74vw, 400px, 46svh);
+    aspect-ratio: 1007 / 1292;
+    cursor: pointer;
+    filter: drop-shadow(0 0 2.5rem rgba(243, 226, 176, 0.25));
+    animation: apparition 1.4s ease-out both;
+  }
+
+  .seuil__fenetre {
+    position: absolute;
+    inset: 0;
+    clip-path: ellipse(44.5% 45.5% at 50% 50%);
+    background:
+      radial-gradient(ellipse at 50% 40%, rgba(255, 160, 203, 0.18), transparent 60%),
+      url("/photos/ragondin-loing-960.webp") 57% 42% / cover no-repeat;
+    animation: reflet 7s ease-in-out infinite alternate;
+  }
+
+  @keyframes reflet {
+    from {
+      background-position: 0 0, 54% 42%;
+    }
+    to {
+      background-position: 0 0, 60% 46%;
+    }
+  }
+
+  .seuil__cadre {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .seuil__portail:hover .seuil__fenetre {
+    filter: brightness(1.12) saturate(1.1);
+  }
+
+  .seuil__invitation {
+    margin: 0.5rem 0 0;
+    max-width: 26rem;
+    font-family: var(--font-titre);
+    font-size: clamp(1.2rem, 3.2vw, 1.6rem);
+    font-weight: 600;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  .seuil__entrer {
+    min-height: 3.3rem;
+    padding-inline: 2.2rem;
+    box-shadow: 0 0 2.5rem rgba(255, 160, 203, 0.35);
+  }
+
+  .seuil__passer {
+    background: none;
+    border: 0;
+    padding: 0.4rem 1rem;
+    color: var(--creme-doux);
+    font: inherit;
+    font-size: 0.875rem;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    cursor: pointer;
+  }
+
+  .seuil__passer:hover {
+    color: var(--rose);
+  }
+
+  /* Pendant le seuil, la photo et les infos attendent derrière le miroir */
+  .ouverture[data-etat="seuil"] .ouverture__photo,
+  .ouverture[data-etat="seuil"] .ouverture__voile,
+  .ouverture[data-etat="seuil"] .ouverture__contenu,
+  .ouverture[data-etat="seuil"] .ouverture__credit,
+  .ouverture[data-etat="seuil"] .ouverture__suite {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* La traversée : le miroir s'agrandit jusqu'à remplir l'écran */
+  .ouverture[data-etat="traversee"] .seuil__portail {
+    transform: translate(var(--dx), var(--dy)) scale(var(--zoom));
+    transition: transform 1.6s cubic-bezier(0.7, 0, 0.25, 1);
+    animation: none;
+  }
+
+  .ouverture[data-etat="traversee"] .seuil__cadre {
+    opacity: 0;
+    transition: opacity 0.7s 0.7s ease;
+  }
+
+  .ouverture[data-etat="traversee"] .seuil__invitation,
+  .ouverture[data-etat="traversee"] .seuil__entrer,
+  .ouverture[data-etat="traversee"] .seuil__passer {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .ouverture[data-etat="traversee"] .ouverture__contenu,
+  .ouverture[data-etat="traversee"] .ouverture__voile,
+  .ouverture[data-etat="traversee"] .ouverture__credit,
+  .ouverture[data-etat="traversee"] .ouverture__suite {
+    opacity: 0;
+  }
+
+  .ouverture[data-etat="traversee"] .ouverture__photo {
+    opacity: 1;
+    transition: opacity 0.6s 1.1s ease;
+  }
+
+  .ouverture[data-etat="monde"] .ouverture__contenu {
+    animation: monter 1s ease-out both;
+  }
+
   @keyframes apparition {
     from {
       opacity: 0;
-      transform: scale(0.96);
+      transform: scale(0.94);
     }
   }
 
@@ -709,10 +816,153 @@ const jours = [
     }
   }
 
-  @keyframes flotter {
-    50% {
-      transform: translateY(0.4rem);
+  /* ----- Téléphone : infos en haut, boutons en bas, le ragondin au milieu ----- */
+  @media (max-width: 699px) {
+    .ouverture__photo img {
+      object-position: 52% 45%;
     }
+
+    .ouverture__voile {
+      background:
+        linear-gradient(180deg, rgba(5, 40, 40, 0.88) 0%, rgba(5, 40, 40, 0.45) 22%, rgba(5, 40, 40, 0) 34%),
+        linear-gradient(0deg, rgba(5, 40, 40, 0.95) 0%, rgba(5, 40, 40, 0.7) 26%, rgba(5, 40, 40, 0) 50%);
+    }
+
+    /* Logo en haut, infos et boutons en bas : le ragondin reste visible au milieu */
+    .ouverture__contenu {
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.6rem;
+      text-align: center;
+      padding-top: calc(var(--hauteur-entete) + 0.75rem);
+      padding-bottom: 5.5rem;
+    }
+
+    .ouverture__haut {
+      display: contents;
+    }
+
+    .ouverture__logo {
+      order: 1;
+      width: min(62vw, 16rem);
+    }
+
+    .ouverture__badge {
+      order: 2;
+      font-size: 0.75rem;
+    }
+
+    .ouverture__infos {
+      order: 3;
+      margin-top: auto;
+    }
+
+    .ouverture__dates {
+      font-size: 2rem;
+    }
+
+    .ouverture__commune,
+    .ouverture__genres {
+      display: none;
+    }
+
+    .ouverture__actions {
+      order: 5;
+      margin-top: 0.4rem;
+      flex-wrap: nowrap;
+    }
+
+    .ouverture__actions .bouton {
+      padding-inline: 1.2rem;
+    }
+
+    .ouverture__infos {
+      align-items: center;
+    }
+
+    .ouverture__actions {
+      justify-content: center;
+    }
+
+    .ouverture__credit {
+      left: var(--marge);
+      text-align: center;
+    }
+  }
+
+  /* ---------- Les habitants du Loing ---------- */
+  .habitants {
+    background:
+      radial-gradient(ellipse 50% 40% at 10% 0%, rgba(255, 160, 203, 0.1), transparent 70%),
+      var(--vert);
+  }
+
+  .habitants__liste {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2.5rem 1.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15.5rem), 1fr));
+  }
+
+  .habitant figure {
+    margin: 0;
+  }
+
+  .habitant__cadre {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    padding: 5px;
+    border-radius: 999px 999px var(--rayon) var(--rayon);
+    background: linear-gradient(160deg, var(--or-clair), var(--or) 45%, var(--or-fonce));
+    box-shadow: 0 1.2rem 2.5rem rgba(0, 0, 0, 0.35);
+  }
+
+  .habitant__cadre img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 999px 999px calc(var(--rayon) - 4px) calc(var(--rayon) - 4px);
+    transition: transform 0.6s ease, filter 0.6s ease;
+  }
+
+  .habitant:hover .habitant__cadre img {
+    filter: saturate(1.15) brightness(1.06);
+  }
+
+  .habitant--vedette .habitant__cadre {
+    background: linear-gradient(160deg, var(--rose-pale), var(--rose) 50%, var(--or));
+  }
+
+  .habitant figcaption {
+    padding: 1.1rem 0.25rem 0;
+  }
+
+  .habitant h3 {
+    margin-bottom: 0.15rem;
+  }
+
+  .habitant__latin {
+    margin: 0 0 0.6rem;
+    font-style: italic;
+    color: var(--rose);
+    font-size: 0.95rem;
+  }
+
+  .habitant__texte {
+    margin: 0 0 0.6rem;
+    color: var(--creme-doux);
+  }
+
+  .habitant__credit {
+    margin: 0;
+    font-size: 0.75rem;
+    color: rgba(230, 223, 198, 0.75);
+  }
+
+  .habitant__credit a {
+    color: inherit;
   }
 
   /* ---------- L'expérience : trois arches ---------- */

@@ -95,53 +95,50 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
 
 ## L'entrée dans le monde (page d'accueil)
 
-- Inspiration : l'expérience immersive symphonyofvines.unseen.co (portail
-  qu'on traverse pour entrer dans un monde). On crée **notre** monde, on ne
-  copie rien. Demande de l'équipe : rendu **réaliste**, « comme un jeu vidéo ».
-- Code : `src/scripts/monde.ts` (Three.js). L'ancienne version stylisée est
-  gardée dans `src/scripts/monde-stylise.ts`.
-- **Le seuil** : antichambre de marbre vernis en damier, colonnes, brume. Le
-  cadre doré de la graphiste est extrudé en vrai relief métallique à partir de
-  son contour (`public/brouillon/cadre-or.json`, tracé depuis son PDF). À
-  travers le portail on voit déjà le monde. Clic → la caméra traverse.
-- **Le monde : les berges enchantées du Loing** (demande de l'équipe : partir
-  de l'univers de Briquemault — nature, bord du Loing, ragondins, animaux
-  sauvages — en gardant du fluo, et s'éloigner d'« Alice au pays des
-  merveilles »). La rivière traverse la vue, couverte de plancton
-  bioluminescent ; des ragondins (dents orange, yeux dorés, moustaches) y nagent
-  en laissant un sillage de lumière, d'autres grignotent sur les berges.
-  Héron cendré dans les roseaux, chevreuil sur l'autre rive, chouettes aux yeux
-  d'or, roseaux et massettes lumineux, nénuphars en fleurs, lanternes qui
-  dérivent, petit pont de bois en arc. Après la traversée du portail, on se
-  retrouve au sommet du pont, à regarder le Loing descendre.
-- Autour : vraie forêt générée (ez-tree), herbe au vent, champignons géants
-  bioluminescents d'après les références de l'équipe (chapeau sombre piqueté,
-  lamelles orange-rose lumineuses, pied courbé) mais au second plan, petits
-  champignons lumineux, lucioles, notes de musique, scène et faisceaux, château
-  dans la brume. Ambiance nuit violette (« violet mystique » du brief). Plus de
-  cartes à jouer (trop « Alice »).
-- Réglages de la rivière : constantes `RIV_*` dans `monde.ts`
-  (`distRiviere`, `pointRiviere`). Eau en vrai miroir sur ordinateur
-  (`Reflector`), surface brillante sur téléphone.
-- Rendu : matériaux physiques, HDRI, ombres, halo, vignettage et grain.
-  Qualité adaptative (jusqu'à la 4K sur écran 4K, allégée sur téléphone et
-  baissée automatiquement si l'appareil peine). `?qualite=haute` ou
-  `?qualite=basse` dans l'adresse force un niveau pour tester.
-- Poids : le module 3D fait environ 5 Mo (dont les textures des arbres), chargé
-  **après** l'affichage de la page. Sans WebGL ou avec « réduire les
-  animations », le visuel 2D reste affiché. Le texte reste dans le HTML.
-- Ressources libres dans `public/monde/` (crédits dans `CREDITS.md` du
-  dossier) : herbe, fleurs, rochers, textures de sol (démo ez-tree, MIT),
-  HDRI Poly Haven (CC0) via `@pmndrs/assets`. Les rochers ont été décompressés
-  (pas de décodeur Draco nécessaire).
-- Bouton « Passer l'introduction ». Après la traversée, la session s'en
-  souvient.
+- **Demande de l'équipe** : la première chose qu'on voit est le **miroir de
+  la graphiste** (cadre doré) ; quand on clique dessus, on entre dans le monde
+  des Ragondins Farfelus, où la faune et la flore du Loiret se sont
+  « réveillées » et sont magiques. Rendu **réaliste**, **pas « 3D jeu
+  vidéo »**, couleurs **vert profond + rose clair**, et site **très bien
+  référencé**. Le ragondin farfelu est l'image du festival.
+- Fonctionnement (`src/pages/index.astro`, sans bibliothèque 3D) :
+  - **seuil** : le miroir doré, avec à travers lui la vraie photo du ragondin
+    qui nage ; lucioles autour ; boutons « Entrer dans le monde » et
+    « Passer l'introduction » ;
+  - **traversée** : au clic, le miroir s'agrandit (CSS) jusqu'à remplir
+    l'écran ;
+  - **monde** : la photo en plein écran (lente respiration, léger effet de
+    profondeur à la souris), lucioles jaune-vert et roses dessinées en 2D,
+    infos du festival (à gauche sur ordinateur ; logo en haut, dates et
+    boutons en bas sur téléphone pour laisser voir le ragondin).
+  - L'état « monde » est celui du HTML (sans JavaScript, et pour Google). Un
+    petit script passe au « seuil » avant l'affichage si on n'est pas encore
+    entré dans la session et si « réduire les animations » n'est pas activé.
+- Section **« Les habitants du Loing »** juste après l'introduction : vraies
+  photos dans des cadres en arche dorés, avec nom, nom latin, texte et crédit :
+  ragondin, martin-pêcheur, caloptéryx vierge, effraie des clochers, renard
+  roux, pic noir, fritillaire pintade (la fleur à damier !), citron, ver
+  luisant. Bon pour le référencement local (faune et flore du Loiret).
+- Inspirations envoyées par l'équipe (ne pas utiliser telles quelles, droits
+  inconnus) : forêt de champignons lumineux, martin-pêcheur, pic noir, effraie,
+  renard, ragondin, fritillaire, citron, caloptéryx, lucioles.
+- Les anciennes versions en 3D sont dans `archives/3d/` (voir son LISEZMOI).
 - Pas de son pour l'instant (à décider, droits sur la musique nécessaires).
-- Sur ordinateur, le texte d'accueil se range à droite après la traversée ; sur
-  téléphone, en haut et en bas, pour laisser voir le monde au centre.
-- Pour aller plus loin : vrais modèles 3D d'animaux et de la mascotte (artiste
-  3D), illustrations de la graphiste en calques, ou séquence vidéo
-  précalculée en 4K.
+
+## Photos
+
+- Vraies photos libres de **Wikimedia Commons** (CC0, CC BY, CC BY-SA),
+  téléchargées depuis `upload.wikimedia.org`. L'API de Commons limite fortement
+  les requêtes : espacer les recherches.
+- Étalonnage aux couleurs du festival (ombres vert profond, lumières crème
+  rosé, lueur rose, vignettage) et recadrage 4:5 : `outils/etalonnage.py`
+  (sources dans un dossier de travail, sorties dans `public/photos/`).
+- **Crédits obligatoires** : auteur + licence sous chaque photo et dans les
+  mentions légales. Tout est dans `src/data/photos.ts` (ajouter une photo =
+  ajouter une entrée avec son crédit). Pour CC BY-SA, les versions modifiées
+  restent sous CC BY-SA (mention « couleurs modifiées »).
+- À terme, les visuels de la graphiste (mascotte, illustrations) pourront
+  remplacer ou compléter ces photos.
 
 ## Référencement (priorité de l'équipe)
 
@@ -171,7 +168,8 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
 - Couleurs, polices et boutons communs : `src/styles/global.css`.
 - Aperçu partageable (Artifact) : `npm run build` puis
   `python3 -I outils/apercu.py dist <dossier>` produit des pages autonomes
-  (les .glb y sont renommés en .glb.wasm, seul format binaire accepté).
+  (CSS et JS intégrés, images publiées à côté).
+- Poids : le site complet fait environ 2 Mo (aucune bibliothèque lourde).
 - `public/brouillon/` : visuels provisoires de la graphiste. **Ce dossier est
   exclu du dépôt** (`.gitignore`) tant que le dépôt est public et que les
   visuels ne sont pas validés. Il faut les y remettre à la main pour voir le
