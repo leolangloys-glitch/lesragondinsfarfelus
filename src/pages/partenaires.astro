@@ -1,0 +1,187 @@
+---
+import Base from "../layouts/Base.astro";
+import EnTetePage from "../components/EnTetePage.astro";
+import ModuleExterne from "../components/ModuleExterne.astro";
+import { liensExternes } from "../data/site";
+
+// Niveaux de partenariat proposés à titre d'exemple : noms, montants et
+// contreparties à définir par l'équipe.
+const niveaux = [
+  {
+    nom: "Lanterne",
+    texte: "Pour les commerces et entreprises du territoire qui veulent soutenir le festival.",
+    contreparties: ["Logo sur le site et les réseaux", "Remerciements sur place", "Invitations"],
+  },
+  {
+    nom: "Étoile",
+    texte: "Une présence visible sur tous les supports du festival.",
+    contreparties: ["Logo sur l'affiche et les supports imprimés", "Publications dédiées sur les réseaux", "Invitations et accès à l'espace partenaires"],
+    vedette: true,
+  },
+  {
+    nom: "Portail",
+    texte: "Le partenariat majeur : associez votre nom à un temps fort du festival.",
+    contreparties: ["Visibilité premium sur scène et en ligne", "Activation de votre marque sur le festival", "Soirée privée et invitations VIP"],
+  },
+];
+---
+
+<Base
+  titre="Devenir partenaire"
+  description="Entreprises, commerces, institutions : devenez partenaire ou mécène du festival Les Ragondins Farfelus, festival de musique et de magie solidaire dans le Loiret."
+>
+  <EnTetePage
+    surtitre="Partenaires et mécènes"
+    titre="Faites partie de la magie"
+    intro="Associez votre image à un festival festif, familial et solidaire, au cœur du Loiret."
+  >
+    <div class="boutons">
+      <a class="bouton bouton--rose" href="#contact-partenaires">Demander le dossier de partenariat</a>
+    </div>
+  </EnTetePage>
+
+  <section class="section fond-nuit" aria-labelledby="titre-pourquoi">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Pourquoi nous rejoindre</span>
+        <h2 id="titre-pourquoi">Un festival qui vous ressemble</h2>
+      </div>
+      <div class="grille">
+        <article class="carte">
+          <h3>Un public large</h3>
+          <p class="texte-doux">Familles, amateurs de musique et de magie, habitants du Loiret et visiteurs d'Île-de-France.</p>
+        </article>
+        <article class="carte">
+          <h3>Une cause</h3>
+          <p class="texte-doux">Le festival est organisé au profit de Handi'Chiens. Votre soutien a du sens.</p>
+        </article>
+        <article class="carte">
+          <h3>Une image forte</h3>
+          <p class="texte-doux">Un univers créatif et premium, qui fait parler de lui sur place comme en ligne.</p>
+        </article>
+        <article class="carte">
+          <h3>Un ancrage local</h3>
+          <p class="texte-doux">Un événement qui fait vivre le territoire et rassemble ses acteurs.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-vert" aria-labelledby="titre-niveaux">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Les formules</span>
+        <h2 id="titre-niveaux">Trois façons de briller</h2>
+        <p class="intro">Les montants et contreparties sont détaillés dans notre dossier de partenariat.</p>
+      </div>
+      <ul class="niveaux">
+        {
+          niveaux.map((n) => (
+            <li class:list={["niveau", { "niveau--vedette": n.vedette }]}>
+              <h3>Partenaire {n.nom}</h3>
+              <p class="texte-doux">{n.texte}</p>
+              <ul class="liste">
+                {n.contreparties.map((c) => <li>{c}</li>)}
+              </ul>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section fond-nuit" aria-labelledby="titre-nature">
+    <div class="contenu grille grille--large">
+      <div>
+        <span class="surtitre">Autres façons de nous aider</span>
+        <h2 id="titre-nature">Partenariat en nature et mécénat</h2>
+      </div>
+      <div>
+        <p class="intro">
+          Matériel, mobilier, son et lumière, boissons, transport, communication&nbsp;: votre
+          savoir-faire peut aussi faire partie du spectacle.
+        </p>
+        <p class="texte-doux">
+          Les entreprises et particuliers peuvent également soutenir le festival par un don. Les
+          conditions fiscales du mécénat vous seront précisées sur demande.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-vert" aria-labelledby="titre-soutiens">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Merci</span>
+        <h2 id="titre-soutiens">Ils nous ont soutenus en 2026</h2>
+        <p class="intro">Sans eux, le festival n'aurait pas été le même.</p>
+      </div>
+      <ul class="logos" aria-label="Logos des partenaires (à venir)">
+        {Array.from({ length: 6 }).map(() => <li>Logo à venir</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section fond-nuit" id="contact-partenaires" aria-labelledby="titre-contact-partenaires">
+    <div class="contenu">
+      <h2 id="titre-contact-partenaires" class="sr-only">Nous contacter</h2>
+      <ModuleExterne
+        titre="Parlons de votre projet"
+        texte="Demandez notre dossier de partenariat : nous revenons vers vous rapidement pour imaginer ensemble votre participation."
+        lien={liensExternes.formulairePartenaires}
+        libelleBouton="Devenir partenaire"
+      />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .niveaux {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  }
+
+  .niveau {
+    padding: 2.25rem 1.75rem;
+    border-radius: var(--rayon);
+    background: var(--vert-surface);
+    border: 1px solid rgba(243, 226, 176, 0.18);
+  }
+
+  .niveau--vedette {
+    border: 2px solid var(--or);
+    background: radial-gradient(ellipse at top, rgba(243, 226, 176, 0.14), transparent 70%),
+      var(--vert-surface);
+  }
+
+  .niveau h3 {
+    margin-bottom: 0.6rem;
+  }
+
+  .niveau .texte-doux {
+    margin-bottom: 1.25rem;
+  }
+
+  .logos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+  }
+
+  .logos li {
+    display: grid;
+    place-items: center;
+    min-height: 6.5rem;
+    border-radius: var(--rayon);
+    border: 1.5px dashed rgba(243, 226, 176, 0.35);
+    color: var(--creme-doux);
+    font-size: 0.875rem;
+  }
+</style>

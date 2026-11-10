@@ -1,0 +1,103 @@
+---
+import Base from "../layouts/Base.astro";
+import EnTetePage from "../components/EnTetePage.astro";
+import { festival } from "../data/site";
+---
+
+<Base
+  titre="Le Domaine de Briquemault"
+  description="Le festival Les Ragondins Farfelus se tient au Domaine de Briquemault, 10 hectares de nature et d'histoire à Sainte-Geneviève-des-Bois, dans le Loiret."
+>
+  <EnTetePage
+    surtitre="Le lieu"
+    titre="Le Domaine de Briquemault"
+    intro="À 1 h 30 de Paris, au cœur du Loiret, un domaine chargé d'histoire qui se transforme chaque printemps en monde des Ragondins Farfelus."
+  >
+    <div class="boutons">
+      <a class="bouton bouton--rose" href={festival.lieu.site} rel="noopener">Visiter le site du domaine</a>
+    </div>
+  </EnTetePage>
+
+  <section class="section fond-nuit" aria-labelledby="titre-histoire">
+    <div class="contenu deux-colonnes">
+      <div>
+        <span class="surtitre">Huit siècles d'histoire</span>
+        <h2 id="titre-histoire">Une forteresse devenue terre de fête</h2>
+      </div>
+      <div>
+        <p class="intro">
+          Attesté dès 1240, le site de Briquemault a traversé les siècles. Entièrement rénové et
+          rouvert au printemps 2026, le domaine s'étend sur dix hectares de nature préservée.
+        </p>
+        <p class="texte-doux">
+          Château, orangerie, guinguette, prairies et bords de rivière&nbsp;: un décor idéal pour
+          accueillir un monde magique le temps d'un week-end.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-vert" aria-labelledby="titre-chiffres">
+    <div class="contenu">
+      <h2 id="titre-chiffres" class="sr-only">Le domaine en chiffres</h2>
+      <dl class="chiffres">
+        <div><dt>Hectares de nature</dt><dd class="texte-or">10</dd></div>
+        <div><dt>De Paris</dt><dd class="texte-or">1 h 30</dd></div>
+        <div><dt>Première mention du site</dt><dd class="texte-or">1240</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section fond-nuit" aria-labelledby="titre-annee">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Toute l'année</span>
+        <h2 id="titre-annee">Le domaine, au-delà du festival</h2>
+        <p class="intro">Le reste de l'année, le Domaine de Briquemault accueille&nbsp;:</p>
+      </div>
+      <div class="grille">
+        <article class="carte"><h3>Mariages</h3><p class="texte-doux">Des réceptions dans un cadre d'exception.</p></article>
+        <article class="carte"><h3>Événements d'entreprise</h3><p class="texte-doux">Séminaires, soirées et séjours d'équipe.</p></article>
+        <article class="carte"><h3>Chambres d'hôtes</h3><p class="texte-doux">Pour prolonger le séjour, au festival comme toute l'année.</p></article>
+        <article class="carte"><h3>Dîners-spectacles</h3><p class="texte-doux">Gastronomie et magie à la même table.</p></article>
+      </div>
+      <div class="boutons">
+        <a class="bouton bouton--contour" href={festival.lieu.site} rel="noopener">Découvrir le Domaine de Briquemault</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .deux-colonnes {
+    display: grid;
+    gap: 1.5rem 4rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  }
+
+  .chiffres {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 1.5rem;
+    margin: 0;
+  }
+
+  .chiffres div {
+    display: flex;
+    flex-direction: column-reverse;
+    border-left: 2px solid var(--rose);
+    padding-left: 1.25rem;
+  }
+
+  .chiffres dt {
+    color: var(--creme-doux);
+  }
+
+  .chiffres dd {
+    margin: 0;
+    font-family: var(--font-titre);
+    font-size: clamp(2.6rem, 6vw, 3.8rem);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+</style>

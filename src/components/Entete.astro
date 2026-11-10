@@ -1,8 +1,9 @@
 ---
 import { menuPrincipal } from "../data/site";
 
-const cheminActuel = Astro.url.pathname.replace(/\/$/, "") || "/";
-const estActif = (href: string) => cheminActuel === href;
+const normaliser = (chemin: string) => chemin.replace(/\/$/, "") || "/";
+const cheminActuel = normaliser(Astro.url.pathname);
+const estActif = (href: string) => cheminActuel === normaliser(href);
 ---
 
 <header class="entete">
@@ -35,8 +36,8 @@ const estActif = (href: string) => cheminActuel === href;
       </ul>
       <a
         class="bouton bouton--rose entete__billetterie"
-        href="/billetterie"
-        aria-current={estActif("/billetterie") ? "page" : undefined}>Billetterie</a
+        href="/billetterie/"
+        aria-current={estActif("/billetterie/") ? "page" : undefined}>Billetterie</a
       >
     </nav>
   </div>

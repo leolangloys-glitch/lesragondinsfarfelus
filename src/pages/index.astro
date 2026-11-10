@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import { evenementSchema } from "../data/site";
 
 // Textes provisoires : à relire et valider par l'équipe avant la mise en ligne.
 const univers = [
@@ -49,9 +50,18 @@ const jours = [
   accueil
   titre="Les Ragondins Farfelus · Festival de musique et de magie · 28-30 mai 2027"
   description="Festival de musique et de magie au Domaine de Briquemault (Loiret), les 28, 29 et 30 mai 2027. Concerts, DJ sets, magiciens. Au profit de Handi'Chiens."
+  donneesStructurees={evenementSchema()}
 >
-  <!-- ===================== OUVERTURE ===================== -->
-  <section class="ouverture" aria-labelledby="titre-festival">
+  <!-- ===================== OUVERTURE : LE PORTAIL ===================== -->
+  <!--
+    Trois états (attribut data-etat) :
+      statique : visuel 2D (sans JavaScript, animations réduites, ou en attendant la 3D)
+      seuil    : le portail en 3D, on invite à entrer
+      monde    : on a traversé, le monde s'affiche avec les infos du festival
+  -->
+  <section class="ouverture" data-etat="statique" aria-labelledby="titre-festival">
+    <canvas class="ouverture__monde" aria-hidden="true"></canvas>
+
     <div class="portail">
       <h1 id="titre-festival" class="portail__logo">
         <img
@@ -79,10 +89,23 @@ const jours = [
     <div class="scene">
       <img class="scene__escalier" src="/brouillon/escalier.webp" alt="" width="419" height="244" />
       <div class="scene__actions">
-        <a class="bouton bouton--rose" href="#billetterie">Billetterie</a>
-        <a class="bouton bouton--contour" href="#experience">Entrer dans le monde</a>
+        <a class="bouton bouton--rose" href="/billetterie/">Billetterie</a>
+        <a class="bouton bouton--contour" href="/programmation/">Découvrir la programmation</a>
       </div>
     </div>
+
+    <div class="seuil" hidden>
+      <p class="seuil__invitation">
+        Un monde s'éveille une fois par an au cœur du Loiret.<br />
+        <strong>Oserez-vous franchir le portail&nbsp;?</strong>
+      </p>
+      <button class="bouton bouton--rose seuil__entrer" type="button">Entrer dans le monde</button>
+      <button class="seuil__passer" type="button">Passer l'introduction</button>
+    </div>
+
+    <a class="ouverture__suite" href="#experience" aria-label="Découvrir le festival">
+      <span aria-hidden="true"></span>
+    </a>
   </section>
 
   <!-- ===================== L'EXPÉRIENCE ===================== -->
@@ -133,9 +156,9 @@ const jours = [
   <!-- ===================== PROGRAMME ===================== -->
   <section class="section programme" id="programme" aria-labelledby="titre-programme">
     <div class="contenu">
-      <span class="surtitre">Programme</span>
+      <span class="surtitre">Programmation</span>
       <h2 id="titre-programme">Trois jours, trois ambiances</h2>
-      <p class="intro">La programmation complète sera dévoilée très bientôt. Restez à l'affût&nbsp;!</p>
+      <p class="intro">Les artistes seront dévoilés au fil des semaines. Restez à l'affût&nbsp;!</p>
 
       <ol class="jours">
         {
@@ -151,19 +174,25 @@ const jours = [
           ))
         }
       </ol>
+      <div class="boutons">
+        <a class="bouton bouton--contour" href="/programmation/">Toute la programmation</a>
+      </div>
     </div>
   </section>
 
   <!-- ===================== BILLETTERIE ===================== -->
-  <section class="section billetterie" id="billetterie" aria-labelledby="titre-billetterie">
+  <section class="section billetterie" aria-labelledby="titre-billetterie">
     <div class="contenu billetterie__carte">
       <div>
         <span class="surtitre">Billetterie</span>
         <h2 id="titre-billetterie">Ouverture prochaine</h2>
         <p>
-          Pass 1 jour, pass week-end, camping : toutes les formules seront annoncées ici à
-          l'ouverture de la billetterie.
+          Pass jour, pass 3 jours, camping : toutes les formules seront disponibles à l'ouverture de
+          la billetterie.
         </p>
+        <div class="boutons">
+          <a class="bouton bouton--rose" href="/billetterie/">Voir les formules</a>
+        </div>
       </div>
       <p class="billetterie__gratuit">
         <strong>Entrée gratuite</strong> pour les moins de 11&nbsp;ans et les personnes en situation
@@ -172,8 +201,28 @@ const jours = [
     </div>
   </section>
 
+  <!-- ===================== RETOUR SUR 2026 ===================== -->
+  <section class="section retour" aria-labelledby="titre-retour">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Retour sur 2026</span>
+        <h2 id="titre-retour">La première fois que le portail s'est ouvert</h2>
+        <p class="intro">
+          Les 30 et 31 mai 2026, le Domaine de Briquemault accueillait la toute première édition des
+          Ragondins Farfelus. Magie, jazz, rock, guinguette et DJ sets&nbsp;: retour en images.
+        </p>
+      </div>
+      <ul class="retour__photos" aria-label="Photos de l'édition 2026 (à venir)">
+        <li><span>Photo à venir</span></li>
+        <li><span>Photo à venir</span></li>
+        <li><span>Photo à venir</span></li>
+        <li><span>Vidéo à venir</span></li>
+      </ul>
+    </div>
+  </section>
+
   <!-- ===================== SOLIDARITÉ ===================== -->
-  <section class="section solidarite" id="solidarite" aria-labelledby="titre-solidarite">
+  <section class="section solidarite" aria-labelledby="titre-solidarite">
     <div class="contenu solidarite__grille">
       <div>
         <span class="surtitre">Un festival solidaire</span>
@@ -193,7 +242,7 @@ const jours = [
   </section>
 
   <!-- ===================== LE LIEU ===================== -->
-  <section class="section lieu" id="lieu" aria-labelledby="titre-lieu">
+  <section class="section lieu" aria-labelledby="titre-lieu">
     <div class="contenu">
       <span class="surtitre">Le lieu</span>
       <h2 id="titre-lieu">Le Domaine de Briquemault</h2>
@@ -217,26 +266,95 @@ const jours = [
         </div>
       </dl>
 
-      <a class="bouton bouton--contour" href="https://domainedebriquemault.com" rel="noopener">
-        Découvrir le domaine
-      </a>
+      <div class="boutons">
+        <a class="bouton bouton--contour" href="/domaine/">Découvrir le domaine</a>
+        <a class="bouton bouton--contour" href="/infos/#venir">Comment venir</a>
+      </div>
     </div>
   </section>
 
-  <!-- ===================== BÉNÉVOLES ===================== -->
-  <section class="benevoles" id="benevoles" aria-labelledby="titre-benevoles">
-    <div class="contenu benevoles__contenu">
+  <!-- ===================== REJOINDRE L'AVENTURE ===================== -->
+  <section class="rejoindre" aria-labelledby="titre-rejoindre">
+    <div class="contenu rejoindre__contenu">
       <div>
-        <h2 id="titre-benevoles">Rejoignez la troupe</h2>
+        <h2 id="titre-rejoindre">Rejoignez l'aventure</h2>
         <p>
-          Accueil, bar, scènes, installation, décors… Vivez le festival de l'intérieur aux côtés
-          des Ragondins.
+          Bénévoles, entreprises, médias : il y a mille façons de faire partie du monde des
+          Ragondins.
         </p>
       </div>
-      <a class="bouton bouton--vert" href="#benevoles">Devenir bénévole</a>
+      <div class="rejoindre__boutons">
+        <a class="bouton bouton--vert" href="/benevoles/">Devenir bénévole</a>
+        <a class="bouton bouton--vert" href="/partenaires/">Devenir partenaire</a>
+      </div>
     </div>
   </section>
 </Base>
+
+<script>
+  // L'entrée en 3D ne se charge qu'après l'affichage de la page, et seulement si
+  // l'appareil le permet. Sinon, le visuel 2D reste en place.
+  const ouverture = document.querySelector<HTMLElement>(".ouverture");
+  const canvas = document.querySelector<HTMLCanvasElement>(".ouverture__monde");
+  const seuil = document.querySelector<HTMLElement>(".seuil");
+  const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function webglDisponible() {
+    try {
+      const c = document.createElement("canvas");
+      return Boolean(c.getContext("webgl2") || c.getContext("webgl"));
+    } catch {
+      return false;
+    }
+  }
+
+  function dejaEntre() {
+    try {
+      return sessionStorage.getItem("rf-entre") === "1";
+    } catch {
+      return false;
+    }
+  }
+
+  function memoriserEntree() {
+    try {
+      sessionStorage.setItem("rf-entre", "1");
+    } catch {
+      /* navigation privée : sans importance */
+    }
+  }
+
+  async function lancer() {
+    if (!ouverture || !canvas || !seuil) return;
+    const { lancerMonde } = await import("../scripts/monde");
+    const entre = dejaEntre();
+    const monde = lancerMonde({
+      canvas,
+      imagePortail: "/brouillon/cadre-or.webp",
+      dejaEntre: entre,
+      surPret: () => {
+        ouverture.dataset.etat = entre ? "monde" : "seuil";
+        seuil.hidden = entre;
+      },
+      surDepart: () => {
+        seuil.hidden = true;
+      },
+      surEntree: () => {
+        ouverture.dataset.etat = "monde";
+        seuil.hidden = true;
+        memoriserEntree();
+      },
+    });
+    seuil.querySelector(".seuil__entrer")?.addEventListener("click", () => monde.entrer());
+    seuil.querySelector(".seuil__passer")?.addEventListener("click", () => monde.passer());
+  }
+
+  if (!reduit && webglDisponible()) {
+    const demarrer = () => lancer().catch(() => (ouverture!.dataset.etat = "statique"));
+    if (document.readyState === "complete") setTimeout(demarrer, 50);
+    else window.addEventListener("load", () => setTimeout(demarrer, 50), { once: true });
+  }
+</script>
 
 <style>
   /* ---------- Ouverture (le portail) ---------- */
@@ -256,6 +374,18 @@ const jours = [
         var(--vert-nuit) 100%
       );
     overflow: hidden;
+    isolation: isolate;
+  }
+
+  .ouverture__monde {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+    touch-action: pan-y;
   }
 
   .portail {
@@ -263,6 +393,7 @@ const jours = [
     z-index: 2;
     width: var(--pw);
     aspect-ratio: 1007 / 1292;
+    max-width: 100%;
     container-type: inline-size;
     display: flex;
     flex-direction: column;
@@ -274,6 +405,7 @@ const jours = [
     background: url("/brouillon/cadre-or.webp") center / contain no-repeat;
     filter: drop-shadow(0 0 2.5rem rgba(243, 226, 176, 0.18));
     animation: apparition 1.4s ease-out both;
+    transition: opacity 0.8s ease;
   }
 
   .portail__logo {
@@ -365,7 +497,7 @@ const jours = [
     color: var(--rose);
   }
 
-  /* L'escalier et le sol en damier qui mènent au portail */
+  /* L'escalier et le sol en damier (version 2D) */
   .scene {
     position: relative;
     z-index: 1;
@@ -379,6 +511,7 @@ const jours = [
     background:
       linear-gradient(to bottom, transparent 55%, var(--vert-nuit) 100%),
       url("/brouillon/sol-damier.webp") center top / max(100%, 900px) auto no-repeat;
+    transition: opacity 0.8s ease;
   }
 
   .scene__escalier {
@@ -389,6 +522,7 @@ const jours = [
 
   .scene__actions {
     position: relative;
+    z-index: 3;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -400,11 +534,157 @@ const jours = [
     background: rgba(5, 40, 40, 0.7);
   }
 
+  /* Invitation à entrer (état « seuil ») */
+  .seuil {
+    position: absolute;
+    z-index: 3;
+    inset: auto 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 2rem var(--marge) calc(2.25rem + env(safe-area-inset-bottom, 0px));
+    text-align: center;
+    background: linear-gradient(to top, rgba(2, 24, 24, 0.92), rgba(2, 24, 24, 0));
+    animation: monter 1s 0.4s ease-out both;
+  }
+
+  .seuil[hidden] {
+    display: none;
+  }
+
+  .seuil__invitation {
+    margin: 0;
+    max-width: 30rem;
+    color: var(--creme-doux);
+    font-size: clamp(1rem, 2.4vw, 1.15rem);
+  }
+
+  .seuil__invitation strong {
+    display: block;
+    margin-top: 0.3rem;
+    font-family: var(--font-titre);
+    font-size: clamp(1.35rem, 3.6vw, 1.75rem);
+    font-weight: 600;
+    color: var(--creme);
+  }
+
+  .seuil__entrer {
+    min-height: 3.4rem;
+    padding-inline: 2.2rem;
+    font-size: 1.075rem;
+    box-shadow: 0 0 2.5rem rgba(255, 160, 203, 0.35);
+  }
+
+  .seuil__passer {
+    background: none;
+    border: 0;
+    padding: 0.5rem 1rem;
+    color: var(--creme-doux);
+    font: inherit;
+    font-size: 0.9rem;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    cursor: pointer;
+  }
+
+  .seuil__passer:hover {
+    color: var(--rose);
+  }
+
+  .ouverture__suite {
+    display: none;
+  }
+
+  /* ----- État « seuil » : seul le portail 3D est visible ----- */
+  .ouverture[data-etat="seuil"] .ouverture__monde,
+  .ouverture[data-etat="monde"] .ouverture__monde {
+    opacity: 1;
+  }
+
+  .ouverture[data-etat="seuil"] .portail,
+  .ouverture[data-etat="seuil"] .scene {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* ----- État « monde » : les infos s'affichent par-dessus le monde ----- */
+  .ouverture[data-etat="monde"] {
+    justify-content: center;
+    padding-bottom: 4rem;
+  }
+
+  .ouverture[data-etat="monde"] .portail {
+    background: radial-gradient(ellipse at center, rgba(2, 24, 24, 0.55) 0%, rgba(2, 24, 24, 0) 68%);
+    filter: none;
+    aspect-ratio: auto;
+    width: min(92vw, 640px);
+    padding: 2.5rem calc(var(--pw) * 0.1);
+    animation: apparition 1.6s ease-out both;
+  }
+
+  .ouverture[data-etat="monde"] .portail__logo {
+    filter: drop-shadow(0 0.4rem 1.6rem rgba(0, 0, 0, 0.55));
+  }
+
+  .ouverture[data-etat="monde"] .scene {
+    flex: none;
+    min-height: 0;
+    margin: 0;
+    background: none;
+  }
+
+  .ouverture[data-etat="monde"] .scene__escalier {
+    display: none;
+  }
+
+  .ouverture[data-etat="monde"] .scene__actions {
+    padding-top: 0.5rem;
+    animation: monter 1s 0.6s ease-out both;
+  }
+
+  .ouverture[data-etat="monde"] .ouverture__suite {
+    display: block;
+    position: absolute;
+    z-index: 3;
+    bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-left: -1.375rem;
+    border-radius: 50%;
+    border: 1.5px solid rgba(243, 226, 176, 0.6);
+    animation: flotter 2.4s ease-in-out infinite;
+  }
+
+  .ouverture__suite span {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-right: 2px solid var(--creme);
+    border-bottom: 2px solid var(--creme);
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
   @keyframes apparition {
     from {
       opacity: 0;
       transform: scale(0.96);
-      filter: drop-shadow(0 0 0 rgba(243, 226, 176, 0));
+    }
+  }
+
+  @keyframes monter {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+  }
+
+  @keyframes flotter {
+    50% {
+      transform: translateY(0.4rem);
     }
   }
 
@@ -419,7 +699,7 @@ const jours = [
     padding: 0;
     display: grid;
     gap: 1.5rem;
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
   }
 
   .arche {
@@ -460,7 +740,7 @@ const jours = [
     padding: 0;
     display: grid;
     gap: 1.5rem;
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
   }
 
   .jour {
@@ -504,7 +784,7 @@ const jours = [
     display: grid;
     gap: 2rem;
     align-items: center;
-    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
     padding: clamp(2rem, 5vw, 3.5rem);
     border-radius: var(--rayon);
     border: 1.5px solid var(--or);
@@ -529,15 +809,40 @@ const jours = [
     color: var(--rose);
   }
 
+  /* ---------- Retour sur 2026 ---------- */
+  .retour {
+    background: var(--vert-nuit);
+  }
+
+  .retour__photos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  }
+
+  .retour__photos li {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 5;
+    border-radius: 999px 999px var(--rayon) var(--rayon);
+    border: 1.5px dashed rgba(243, 226, 176, 0.4);
+    background: radial-gradient(ellipse at 50% 30%, rgba(44, 122, 111, 0.45), rgba(8, 61, 61, 0.2));
+    color: var(--creme-doux);
+    font-size: 0.9rem;
+  }
+
   /* ---------- Solidarité ---------- */
   .solidarite {
-    background: var(--vert-nuit);
+    background: var(--vert);
   }
 
   .solidarite__grille {
     display: grid;
     gap: 1.5rem 4rem;
-    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
     align-items: start;
   }
 
@@ -549,14 +854,14 @@ const jours = [
   .lieu {
     background:
       radial-gradient(ellipse 60% 70% at 85% 30%, rgba(44, 122, 111, 0.5), transparent 70%),
-      var(--vert);
+      var(--vert-nuit);
   }
 
   .chiffres {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
     gap: 1.5rem;
-    margin: 3rem 0;
+    margin: 3rem 0 0;
   }
 
   .chiffres div {
@@ -578,14 +883,14 @@ const jours = [
     line-height: 1.1;
   }
 
-  /* ---------- Bénévoles ---------- */
-  .benevoles {
+  /* ---------- Rejoindre ---------- */
+  .rejoindre {
     background: var(--rose);
     color: var(--vert);
     padding: clamp(3.5rem, 8vw, 5.5rem) var(--marge);
   }
 
-  .benevoles__contenu {
+  .rejoindre__contenu {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -593,13 +898,19 @@ const jours = [
     gap: 1.5rem 3rem;
   }
 
-  .benevoles h2 {
+  .rejoindre h2 {
     margin-bottom: 0.25em;
   }
 
-  .benevoles p {
+  .rejoindre p {
     margin: 0;
     max-width: 36rem;
     font-size: 1.15rem;
+  }
+
+  .rejoindre__boutons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
   }
 </style>

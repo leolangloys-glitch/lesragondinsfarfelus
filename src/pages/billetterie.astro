@@ -1,0 +1,173 @@
+---
+import Base from "../layouts/Base.astro";
+import EnTetePage from "../components/EnTetePage.astro";
+import ModuleExterne from "../components/ModuleExterne.astro";
+import Faq from "../components/Faq.astro";
+import { liensExternes } from "../data/site";
+
+// Formules provisoires : contenus et tarifs à valider par l'équipe.
+const formules = [
+  { nom: "Pass vendredi", jour: "28 mai", texte: "L'ouverture du portail, les premiers concerts et la nuit électro." },
+  { nom: "Pass samedi", jour: "29 mai", texte: "La grande journée : concerts, magiciens et soirée têtes d'affiche." },
+  { nom: "Pass dimanche", jour: "30 mai", texte: "La journée des familles, avec artistes et animations pour les enfants." },
+  { nom: "Pass 3 jours", jour: "28 → 30 mai", texte: "Tout le festival, du premier au dernier tour de magie.", vedette: true },
+  { nom: "Camping", jour: "Option", texte: "Dormez au cœur du monde des Ragondins, à deux pas des scènes." },
+];
+
+const questions = [
+  {
+    q: "Où acheter mes billets ?",
+    r: "Uniquement sur ce site, via notre billetterie officielle. Méfiez-vous des reventes sur les réseaux sociaux ou les sites non officiels : nous ne pourrons pas garantir l'accès avec un billet acheté ailleurs.",
+  },
+  {
+    q: "Les enfants paient-ils ?",
+    r: "L'entrée est gratuite pour les moins de 11 ans. Le dimanche est spécialement pensé pour les familles.",
+  },
+  {
+    q: "L'entrée est-elle gratuite pour les personnes en situation de handicap ?",
+    r: "Oui, l'entrée est gratuite pour les personnes en situation de handicap. Les modalités (justificatif, accompagnateur) seront précisées à l'ouverture de la billetterie.",
+  },
+  {
+    q: "Comment vais-je recevoir mon billet ?",
+    r: "Par e-mail, juste après votre achat. Vous pourrez le présenter sur votre téléphone ou imprimé à l'entrée du festival.",
+  },
+  {
+    q: "Puis-je être remboursé ?",
+    r: "Les conditions d'échange et de remboursement seront détaillées dans les conditions générales de vente, disponibles à l'ouverture de la billetterie.",
+  },
+];
+---
+
+<Base
+  titre="Billetterie"
+  description="Billets pour Les Ragondins Farfelus 2027 : pass jour, pass 3 jours et camping. Festival de musique et de magie, 28-30 mai, Domaine de Briquemault (Loiret)."
+>
+  <EnTetePage
+    surtitre="Billetterie"
+    titre="Votre billet pour l'autre monde"
+    intro="Pass jour, pass 3 jours, camping : choisissez comment vous voulez traverser le portail."
+  />
+
+  <section class="section fond-nuit" aria-labelledby="titre-formules">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Les formules</span>
+        <h2 id="titre-formules">Choisissez votre passage</h2>
+        <p class="intro">Tarifs dévoilés à l'ouverture de la billetterie.</p>
+      </div>
+      <ul class="formules">
+        {
+          formules.map((f) => (
+            <li class:list={["formule", { "formule--vedette": f.vedette }]}>
+              {f.vedette && <span class="formule__ruban">Le plus magique</span>}
+              <h3>{f.nom}</h3>
+              <p class="formule__jour">{f.jour}</p>
+              <p class="texte-doux">{f.texte}</p>
+              <p class="formule__prix">Tarif à venir</p>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="encart gratuit">
+        <p>
+          <strong>Entrée gratuite</strong> pour les enfants de moins de 11&nbsp;ans et pour les
+          personnes en situation de handicap.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-vert" id="reserver" aria-labelledby="titre-reserver">
+    <div class="contenu">
+      <h2 id="titre-reserver" class="sr-only">Réserver</h2>
+      <ModuleExterne
+        titre="Réservez vos places"
+        texte="La billetterie s'ouvrira ici. Inscrivez-vous à la newsletter pour être prévenu dès l'ouverture."
+        lien={liensExternes.billetterie}
+        libelleBouton="Prendre mes billets"
+      />
+    </div>
+  </section>
+
+  <section class="section fond-nuit" aria-labelledby="titre-faq-billets">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Questions fréquentes</span>
+        <h2 id="titre-faq-billets">Tout savoir sur les billets</h2>
+      </div>
+      <Faq questions={questions} />
+      <div class="boutons">
+        <a class="bouton bouton--contour" href="/cashless/">Comment payer sur place ?</a>
+        <a class="bouton bouton--contour" href="/infos/">Toutes les infos pratiques</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .formules {
+    list-style: none;
+    margin: 0 0 2rem;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  }
+
+  .formule {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.5rem 1.75rem;
+    border-radius: var(--rayon);
+    background: var(--vert-surface);
+    border: 1px solid rgba(243, 226, 176, 0.16);
+  }
+
+  .formule--vedette {
+    border: 2px solid var(--rose);
+    background: radial-gradient(ellipse at top, rgba(255, 160, 203, 0.18), transparent 70%),
+      var(--vert-surface);
+  }
+
+  .formule__ruban {
+    position: absolute;
+    top: -0.85rem;
+    left: 1.5rem;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    background: var(--rose);
+    color: var(--vert);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .formule h3 {
+    margin-bottom: 0.2rem;
+  }
+
+  .formule__jour {
+    color: var(--rose);
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+  }
+
+  .formule .texte-doux {
+    flex: 1;
+  }
+
+  .formule__prix {
+    margin: 0;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(243, 226, 176, 0.18);
+    font-family: var(--font-titre);
+    font-size: 1.3rem;
+    color: var(--or-clair);
+  }
+
+  .gratuit p {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+</style>

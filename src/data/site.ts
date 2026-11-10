@@ -41,39 +41,77 @@ export type Lien = { libelle: string; href: string };
 
 // Menu principal (en haut de chaque page). La billetterie est un bouton à part.
 export const menuPrincipal: Lien[] = [
-  { libelle: "Programmation", href: "/programmation" },
-  { libelle: "Infos", href: "/infos" },
-  { libelle: "Cashless", href: "/cashless" },
-  { libelle: "Bénévoles", href: "/benevoles" },
-  { libelle: "Partenaires", href: "/partenaires" },
+  { libelle: "Programmation", href: "/programmation/" },
+  { libelle: "Infos", href: "/infos/" },
+  { libelle: "Cashless", href: "/cashless/" },
+  { libelle: "Bénévoles", href: "/benevoles/" },
+  { libelle: "Partenaires", href: "/partenaires/" },
 ];
 
 export const menuPied: { titre: string; liens: Lien[] }[] = [
   {
     titre: "Le festival",
     liens: [
-      { libelle: "Programmation", href: "/programmation" },
-      { libelle: "Billetterie", href: "/billetterie" },
-      { libelle: "Cashless", href: "/cashless" },
-      { libelle: "Infos pratiques", href: "/infos" },
+      { libelle: "Programmation", href: "/programmation/" },
+      { libelle: "Billetterie", href: "/billetterie/" },
+      { libelle: "Cashless", href: "/cashless/" },
+      { libelle: "Infos pratiques", href: "/infos/" },
     ],
   },
   {
     titre: "Rejoindre l'aventure",
     liens: [
-      { libelle: "Devenir bénévole", href: "/benevoles" },
-      { libelle: "Devenir partenaire", href: "/partenaires" },
-      { libelle: "Espace presse", href: "/presse" },
-      { libelle: "Le Domaine de Briquemault", href: "/domaine" },
+      { libelle: "Devenir bénévole", href: "/benevoles/" },
+      { libelle: "Devenir partenaire", href: "/partenaires/" },
+      { libelle: "Espace presse", href: "/presse/" },
+      { libelle: "Le Domaine de Briquemault", href: "/domaine/" },
     ],
   },
   {
     titre: "Nous trouver",
     liens: [
-      { libelle: "Contact", href: "/infos#contact" },
-      { libelle: "Comment venir", href: "/infos#venir" },
-      { libelle: "Mentions légales", href: "/mentions-legales" },
-      { libelle: "Confidentialité", href: "/confidentialite" },
+      { libelle: "Contact", href: "/infos/#contact" },
+      { libelle: "Comment venir", href: "/infos/#venir" },
+      { libelle: "Mentions légales", href: "/mentions-legales/" },
+      { libelle: "Confidentialité", href: "/confidentialite/" },
     ],
   },
 ];
+
+// Données structurées « Festival » lues par Google (dates, lieu, billetterie).
+export function evenementSchema(siteUrl = "https://lesragondinsfarfelus.fr") {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Festival",
+    name: `${festival.nom} 2027`,
+    description:
+      "Festival de musique et de magie : concerts jazz, rock et pop, DJ sets, magiciens sur scène et en close-up, journée familiale. Au profit de l'association Handi'Chiens.",
+    startDate: festival.dates.debut,
+    endDate: festival.dates.fin,
+    eventStatus: "https://schema.org/EventScheduled",
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    url: siteUrl,
+    image: [`${siteUrl}/brouillon/partage.jpg`],
+    location: {
+      "@type": "Place",
+      name: festival.lieu.nom,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: festival.lieu.commune,
+        postalCode: festival.lieu.codePostal,
+        addressRegion: "Centre-Val de Loire",
+        addressCountry: festival.lieu.pays,
+      },
+    },
+    offers: {
+      "@type": "Offer",
+      url: `${siteUrl}/billetterie/`,
+      availability: "https://schema.org/PreOrder",
+    },
+    organizer: {
+      "@type": "Organization",
+      name: festival.nom,
+      url: siteUrl,
+    },
+  };
+}

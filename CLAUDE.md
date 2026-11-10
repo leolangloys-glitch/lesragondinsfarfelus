@@ -10,8 +10,8 @@ mêmes informations.
 - Lieu : Domaine de Briquemault, 45230 Sainte-Geneviève-des-Bois (Loiret).
   Site du domaine : https://domainedebriquemault.com
 - 1re édition : 30 et 31 mai 2026.
-- 2e édition : **vendredi 28, samedi 29 et dimanche 30 mai 2027** (affiche de
-  la graphiste).
+- 2e édition : **vendredi 28, samedi 29 et dimanche 30 mai 2027** (confirmé par
+  l'équipe ; « été 2027 » sur le site du domaine est une erreur).
 - Au profit de l'association Handi'Chiens.
 - Entrée gratuite pour les moins de 11 ans et les personnes en situation de
   handicap (info de l'édition 2026, à reconfirmer pour 2027).
@@ -69,12 +69,66 @@ n°2 pas encore commencée). Tout ce qui suit est provisoire.
 - **Technique** : site statique avec Astro.
 - **Billetterie** : outil externe intégré au site (nom exact à confirmer).
 
+## Pages du site
+
+Menu principal : Programmation · Infos · Cashless · Bénévoles · Partenaires +
+bouton Billetterie. Pied de page : Domaine, Presse, Contact, Mentions légales,
+Confidentialité. Menus et liens externes : `src/data/site.ts`.
+
+| Page | Fichier |
+| --- | --- |
+| Accueil (entrée 3D, univers, programme, retour 2026, solidarité) | `src/pages/index.astro` |
+| Programmation (3 jours, plateaux musique/magie, artistes « mystère ») | `programmation.astro` |
+| Billetterie (formules, gratuités, module du prestataire, FAQ) | `billetterie.astro` |
+| Cashless (étapes, recharge en ligne, FAQ) | `cashless.astro` |
+| Infos pratiques (dates, accès, camping, accessibilité, sur place, FAQ, contact) | `infos.astro` |
+| Devenir bénévole | `benevoles.astro` |
+| Devenir partenaire (niveaux Lanterne / Étoile / Portail, provisoires) | `partenaires.astro` |
+| Le Domaine de Briquemault | `domaine.astro` |
+| Espace presse | `presse.astro` |
+| Mentions légales, confidentialité, page 404 | `mentions-legales.astro`, `confidentialite.astro`, `404.astro` |
+
+Billetterie, recharge cashless, formulaires et newsletter passent par des
+outils externes : renseigner leurs liens dans `liensExternes` (`src/data/site.ts`),
+les boutons s'activent tout seuls. Les éléments à compléter sont marqués avec
+la classe `a-completer` (chercher `a-completer` dans `src/`).
+
+## L'entrée dans le monde (page d'accueil)
+
+- Inspiration : l'expérience immersive symphonyofvines.unseen.co (portail
+  qu'on traverse pour entrer dans un monde). On crée **notre** monde, on ne
+  copie rien.
+- Code : `src/scripts/monde.ts` (Three.js). Le portail doré est posé sur le
+  damier ; à travers, on voit déjà le monde ; au clic, la caméra le traverse.
+  Le monde : chemin en damier, arbres de travers, champignons néon, lanternes,
+  cartes à jouer, notes de musique, scène et faisceaux, château à l'horizon.
+- La 3D se charge **après** la page, seulement si l'appareil le permet. Sans
+  WebGL ou avec « réduire les animations », le visuel 2D reste affiché. Le
+  texte (titre, dates, lieu) est toujours dans le HTML, pour Google.
+- Bouton « Passer l'introduction ». Après la traversée, la session s'en
+  souvient (pas de nouvelle intro en revenant sur l'accueil).
+- Pas de son pour l'instant (à décider, et il faudra des droits sur la musique).
+- Prochaine étape : intégrer les illustrations de la graphiste livrées en
+  calques séparés (ciel, arbres, portail, mascotte, premier plan).
+
+## Référencement (priorité de l'équipe)
+
+- Chaque page a un titre et une description uniques (props de `Base.astro`).
+- Données structurées : `Festival` (accueil, programmation), `FAQPage` (infos).
+- Plan du site généré automatiquement (`@astrojs/sitemap`), `robots.txt`.
+- Adresses officielles avec barre finale : les liens internes s'écrivent
+  `/programmation/`, jamais `/programmation`.
+- Adresse du site provisoire `https://lesragondinsfarfelus.fr` : à corriger
+  dans `astro.config.mjs`, `public/robots.txt` et `src/data/site.ts` si
+  l'extension change.
+- Image de partage : `public/brouillon/partage.jpg` (1200×630).
+
 ## À décider
 
-- Site de référence d'un autre festival pour la structure du menu.
-- Formulaire bénévoles : service externe (Tally, Google Forms…).
+- Formulaires bénévoles / partenaires / presse : outil (Tally, Google Forms…).
+- Newsletter : outil (Brevo, Mailchimp…).
 - Langues : français seul ou français + anglais.
-- Dépôt privé pendant le développement (visuels provisoires de la graphiste).
+- Son d'ambiance sur l'entrée 3D.
 
 ## Technique
 
@@ -83,6 +137,8 @@ n°2 pas encore commencée). Tout ce qui suit est provisoire.
 - Pages : `src/pages/`. Mise en page commune : `src/layouts/Base.astro`.
   En-tête et pied de page : `src/components/`.
 - Couleurs, polices et boutons communs : `src/styles/global.css`.
+- Aperçu partageable (Artifact) : `npm run build` puis
+  `python3 -I outils/apercu.py dist <dossier>` produit des pages autonomes.
 - `public/brouillon/` : visuels provisoires de la graphiste. **Ce dossier est
   exclu du dépôt** (`.gitignore`) tant que le dépôt est public et que les
   visuels ne sont pas validés. Il faut les y remettre à la main pour voir le
@@ -102,5 +158,7 @@ n°2 pas encore commencée). Tout ce qui suit est provisoire.
 - Mentions légales obligatoires avant la mise en ligne.
 - `main` = version en ligne. Les modifications se font sur une branche et sont
   validées par l'équipe avant d'être fusionnées.
-- Les textes de la page d'accueil sont provisoires : à faire relire par
-  l'équipe.
+- Tous les textes sont provisoires : à faire relire par l'équipe. Points à
+  valider en priorité : FAQ cashless (paiement uniquement cashless, recharge
+  sur place, remboursement, bracelet perdu), FAQ billetterie, avantages
+  bénévoles, niveaux de partenariat, présentation de Handi'Chiens.

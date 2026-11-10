@@ -1,0 +1,205 @@
+---
+import Base from "../layouts/Base.astro";
+import EnTetePage from "../components/EnTetePage.astro";
+import { evenementSchema } from "../data/site";
+
+// Aucun nom d'artiste tant qu'il n'est pas confirmé par l'équipe.
+// Pour annoncer un artiste : remplacer une carte « mystère » par
+// { nom, plateau, horaire, texte }.
+const jours = [
+  {
+    id: "vendredi",
+    jour: "Vendredi 28 mai",
+    titre: "L'éveil",
+    texte:
+      "Le portail s'ouvre en fin d'après-midi : installation au camping, premiers concerts, puis la nuit s'électrise avec les DJ sets.",
+    musique: 3,
+    magie: 1,
+  },
+  {
+    id: "samedi",
+    jour: "Samedi 29 mai",
+    titre: "La grande nuit",
+    texte:
+      "Une journée entière de concerts, des magiciens sur scène et au milieu du public, puis la grande soirée avec nos têtes d'affiche.",
+    musique: 4,
+    magie: 3,
+  },
+  {
+    id: "dimanche",
+    jour: "Dimanche 30 mai",
+    titre: "La journée des familles",
+    texte:
+      "Artistes pour les enfants, magie à hauteur d'yeux, jeux et animations : un dimanche pour petits et grands ragondins.",
+    musique: 2,
+    magie: 2,
+  },
+];
+---
+
+<Base
+  titre="Programmation 2027"
+  description="Programmation du festival Les Ragondins Farfelus, 28-30 mai 2027 : concerts jazz, rock et pop, DJ sets et magiciens au Domaine de Briquemault (Loiret)."
+  donneesStructurees={evenementSchema()}
+>
+  <EnTetePage
+    surtitre="Programmation 2027"
+    titre="Trois jours dans le monde des Ragondins"
+    intro="Les artistes sont dévoilés au fil des semaines. Inscrivez-vous à la newsletter pour être parmi les premiers à les découvrir."
+  >
+    <nav class="jours-nav" aria-label="Choisir un jour">
+      {jours.map((j) => <a href={`#${j.id}`}>{j.jour.split(" ")[0]}</a>)}
+    </nav>
+  </EnTetePage>
+
+  <section class="section fond-nuit" aria-labelledby="titre-plateaux">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Deux plateaux</span>
+        <h2 id="titre-plateaux">La musique et la magie, main dans la main</h2>
+      </div>
+      <div class="grille grille--large">
+        <article class="carte">
+          <h3>Le plateau musique</h3>
+          <p class="texte-doux">
+            Jazz, jazz manouche, rock, pop et DJ sets, des premiers rayons de l'après-midi jusqu'au
+            cœur de la nuit.
+          </p>
+        </article>
+        <article class="carte">
+          <h3>Le plateau magie</h3>
+          <p class="texte-doux">
+            Des numéros d'illusion sur scène et des magiciens de close-up qui viennent vous
+            surprendre au détour d'une allée.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  {
+    jours.map((j, i) => (
+      <section class={`section ${i % 2 === 0 ? "fond-vert" : "fond-nuit"}`} id={j.id} aria-labelledby={`titre-${j.id}`}>
+        <div class="contenu">
+          <div class="titre-section">
+            <span class="surtitre">{j.jour}</span>
+            <h2 id={`titre-${j.id}`}>{j.titre}</h2>
+            <p class="intro">{j.texte}</p>
+          </div>
+          <ul class="artistes">
+            {Array.from({ length: j.musique }).map(() => (
+              <li class="artiste">
+                <span class="artiste__plateau">Musique</span>
+                <span class="artiste__mystere" aria-hidden="true">?</span>
+                <span class="artiste__nom">Artiste mystère</span>
+                <span class="artiste__revelation">Révélation prochaine</span>
+              </li>
+            ))}
+            {Array.from({ length: j.magie }).map(() => (
+              <li class="artiste artiste--magie">
+                <span class="artiste__plateau">Magie</span>
+                <span class="artiste__mystere" aria-hidden="true">?</span>
+                <span class="artiste__nom">Magicien mystère</span>
+                <span class="artiste__revelation">Révélation prochaine</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    ))
+  }
+
+  <section class="section fond-nuit" aria-labelledby="titre-horaires">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Horaires</span>
+        <h2 id="titre-horaires">Le programme heure par heure</h2>
+        <p class="intro">
+          Le détail des passages par scène sera publié ici avec la programmation complète.
+        </p>
+      </div>
+      <div class="boutons">
+        <a class="bouton bouton--rose" href="/billetterie/">Réserver mon billet</a>
+        <a class="bouton bouton--contour" href="/infos/">Infos pratiques</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .jours-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 2rem;
+  }
+
+  .jours-nav a {
+    padding: 0.55rem 1.2rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--or-clair);
+    color: var(--creme);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .jours-nav a:hover {
+    background: var(--creme);
+    color: var(--vert);
+  }
+
+  .artistes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+  }
+
+  .artiste {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 2.5rem 1rem 1.5rem;
+    border-radius: 999px 999px var(--rayon) var(--rayon);
+    border: 1.5px solid rgba(243, 226, 176, 0.4);
+    background: radial-gradient(ellipse at 50% 30%, rgba(44, 122, 111, 0.55), rgba(5, 40, 40, 0.6));
+    text-align: center;
+  }
+
+  .artiste--magie {
+    background: radial-gradient(ellipse at 50% 30%, rgba(255, 160, 203, 0.28), rgba(5, 40, 40, 0.6));
+  }
+
+  .artiste__plateau {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--rose);
+  }
+
+  .artiste__mystere {
+    font-family: var(--font-titre);
+    font-size: 4.5rem;
+    line-height: 1.1;
+    background: linear-gradient(180deg, var(--or-clair), var(--or-fonce));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .artiste__nom {
+    font-family: var(--font-titre);
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .artiste__revelation {
+    font-size: 0.875rem;
+    color: var(--creme-doux);
+  }
+</style>

@@ -1,0 +1,17 @@
+---
+import Base from "../layouts/Base.astro";
+import EnTetePage from "../components/EnTetePage.astro";
+---
+
+<Base titre="Page introuvable" description="Cette page n'existe pas dans le monde des Ragondins Farfelus.">
+  <EnTetePage
+    surtitre="Erreur 404"
+    titre="Vous vous êtes égaré dans le monde des Ragondins"
+    intro="Cette page a disparu, comme par magie. Un ragondin farfelu l'a peut-être emportée."
+  >
+    <div class="boutons">
+      <a class="bouton bouton--rose" href="/">Retrouver le portail</a>
+      <a class="bouton bouton--contour" href="/programmation/">Voir la programmation</a>
+    </div>
+  </EnTetePage>
+</Base>

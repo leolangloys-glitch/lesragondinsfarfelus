@@ -1,0 +1,87 @@
+---
+import Base from "../layouts/Base.astro";
+import EnTetePage from "../components/EnTetePage.astro";
+import ModuleExterne from "../components/ModuleExterne.astro";
+import Faq from "../components/Faq.astro";
+import { liensExternes } from "../data/site";
+
+// À adapter quand le prestataire cashless sera choisi (support, frais, remboursement).
+const questions = [
+  {
+    q: "Puis-je payer en espèces ou par carte bancaire sur le festival ?",
+    r: "Au bar et aux stands, le paiement se fait uniquement en cashless. Vous pourrez recharger sur place, par carte bancaire et en espèces, aux points de recharge.",
+  },
+  {
+    q: "Pourquoi recharger en ligne avant de venir ?",
+    r: "Pour gagner du temps : votre crédit vous attend dès votre arrivée, sans passer par les points de recharge.",
+  },
+  {
+    q: "Que devient l'argent que je n'ai pas dépensé ?",
+    r: "Le solde non utilisé pourra être remboursé après le festival. Les modalités et la période de remboursement seront précisées ici.",
+  },
+  {
+    q: "J'ai perdu mon bracelet, que faire ?",
+    r: "Rendez-vous au point info. Si votre bracelet est associé à votre compte, votre crédit pourra être transféré sur un nouveau bracelet.",
+  },
+];
+---
+
+<Base
+  titre="Cashless"
+  description="Paiement cashless au festival Les Ragondins Farfelus : rechargez votre bracelet en ligne avant de venir et payez d'un geste au bar et aux stands."
+>
+  <EnTetePage
+    surtitre="Cashless"
+    titre="Pas de monnaie, que de la magie"
+    intro="Au festival, on paie d'un simple geste avec son bracelet : plus de file pour la monnaie, plus de temps pour la musique."
+  />
+
+  <section class="section fond-nuit" aria-labelledby="titre-etapes">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Comment ça marche</span>
+        <h2 id="titre-etapes">Quatre étapes, aucun tour de passe-passe</h2>
+      </div>
+      <ol class="etapes">
+        <li>
+          <h3>Rechargez en ligne</h3>
+          <p>Créditez votre bracelet avant de venir, depuis cette page. Vous pourrez aussi recharger sur place.</p>
+        </li>
+        <li>
+          <h3>Récupérez votre bracelet</h3>
+          <p>Il vous est remis à l'entrée du festival avec votre billet.</p>
+        </li>
+        <li>
+          <h3>Payez d'un geste</h3>
+          <p>Au bar, à la restauration et sur les stands : on approche le bracelet, c'est réglé.</p>
+        </li>
+        <li>
+          <h3>Récupérez votre solde</h3>
+          <p>Le crédit non dépensé pourra être remboursé après le festival.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section fond-vert" id="recharger" aria-labelledby="titre-recharger">
+    <div class="contenu">
+      <h2 id="titre-recharger" class="sr-only">Recharger en ligne</h2>
+      <ModuleExterne
+        titre="Rechargez votre bracelet"
+        texte="La recharge en ligne ouvrira quelques semaines avant le festival."
+        lien={liensExternes.rechargeCashless}
+        libelleBouton="Recharger en ligne"
+      />
+    </div>
+  </section>
+
+  <section class="section fond-nuit" aria-labelledby="titre-faq-cashless">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Questions fréquentes</span>
+        <h2 id="titre-faq-cashless">Le cashless en détail</h2>
+      </div>
+      <Faq questions={questions} />
+    </div>
+  </section>
+</Base>

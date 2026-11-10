@@ -1,0 +1,269 @@
+---
+import Base from "../layouts/Base.astro";
+import EnTetePage from "../components/EnTetePage.astro";
+import Faq, { type Question } from "../components/Faq.astro";
+import { festival } from "../data/site";
+
+const adresse = `${festival.lieu.nom}, ${festival.lieu.codePostal} ${festival.lieu.commune}`;
+const lienCarte = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(adresse)}`;
+
+const questions: Question[] = [
+  {
+    q: "Où se trouve le festival ?",
+    r: `Au ${festival.lieu.nom}, ${festival.lieu.codePostal} ${festival.lieu.commune}, dans le Loiret, à environ 1&nbsp;h&nbsp;30 de Paris.`,
+  },
+  {
+    q: "Le festival est-il adapté aux enfants ?",
+    r: "Oui ! Le dimanche est une journée pensée pour les familles, et l'entrée est gratuite pour les moins de 11 ans.",
+  },
+  {
+    q: "Comment payer sur place ?",
+    r: 'Au bar et aux stands, on paie avec le bracelet cashless. Tout est expliqué sur la <a href="/cashless/">page cashless</a>.',
+  },
+  {
+    q: "Peut-on camper sur place ?",
+    r: "Oui, un camping ouvre le vendredi après-midi au cœur du domaine. Les tarifs et services seront annoncés avec la billetterie.",
+  },
+  {
+    q: "Les chiens sont-ils acceptés ?",
+    r: "Les chiens d'assistance et chiens guides sont évidemment les bienvenus. Les règles pour les autres animaux seront précisées prochainement.",
+  },
+  {
+    q: "Comment devenir bénévole ?",
+    r: 'Tout se passe sur la <a href="/benevoles/">page bénévoles</a> : quelques minutes suffisent pour rejoindre la troupe.',
+  },
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: questions.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.r.replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ") },
+  })),
+};
+---
+
+<Base
+  titre="Infos pratiques"
+  description="Infos pratiques du festival Les Ragondins Farfelus : accès au Domaine de Briquemault, camping, accessibilité, horaires, FAQ et contact."
+  donneesStructurees={faqSchema}
+>
+  <EnTetePage
+    surtitre="Infos pratiques"
+    titre="Tout pour préparer votre voyage"
+    intro="Comment venir, où dormir, que prévoir : voici tout ce qu'il faut savoir avant de franchir le portail."
+  >
+    <nav class="sommaire" aria-label="Sur cette page">
+      <a href="#dates">Dates</a>
+      <a href="#venir">Venir</a>
+      <a href="#camping">Camping</a>
+      <a href="#accessibilite">Accessibilité</a>
+      <a href="#sur-place">Sur place</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </EnTetePage>
+
+  <section class="section fond-nuit" id="dates" aria-labelledby="titre-dates">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Dates et horaires</span>
+        <h2 id="titre-dates">Le 28, 29 et 30 mai 2027</h2>
+      </div>
+      <div class="grille">
+        <article class="carte">
+          <h3>Vendredi 28 mai</h3>
+          <p class="texte-doux">Ouverture du camping l'après-midi, concerts en soirée, DJ sets tard dans la nuit.</p>
+          <p><em class="a-completer">Horaires à venir</em></p>
+        </article>
+        <article class="carte">
+          <h3>Samedi 29 mai</h3>
+          <p class="texte-doux">Concerts et magie toute la journée, grande soirée têtes d'affiche.</p>
+          <p><em class="a-completer">Horaires à venir</em></p>
+        </article>
+        <article class="carte">
+          <h3>Dimanche 30 mai</h3>
+          <p class="texte-doux">Journée des familles : artistes jeune public, magie, jeux et animations.</p>
+          <p><em class="a-completer">Horaires à venir</em></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-vert" id="venir" aria-labelledby="titre-venir">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Comment venir</span>
+        <h2 id="titre-venir">Le chemin jusqu'au portail</h2>
+        <p class="intro">
+          <strong>{festival.lieu.nom}</strong><br />
+          {festival.lieu.codePostal} {festival.lieu.commune} ({festival.lieu.departement})
+        </p>
+      </div>
+      <div class="grille">
+        <article class="carte">
+          <h3>En voiture</h3>
+          <p class="texte-doux">Environ 1&nbsp;h&nbsp;30 depuis Paris. Parking à proximité du festival.</p>
+          <p><em class="a-completer">Itinéraire et parking à préciser</em></p>
+        </article>
+        <article class="carte">
+          <h3>En train</h3>
+          <p class="texte-doux">Gares les plus proches et éventuelles navettes&nbsp;:</p>
+          <p><em class="a-completer">À compléter</em></p>
+        </article>
+        <article class="carte">
+          <h3>En covoiturage</h3>
+          <p class="texte-doux">
+            Moins de voitures, plus de place pour la magie&nbsp;: partagez votre trajet avec
+            d'autres festivaliers.
+          </p>
+        </article>
+      </div>
+      <div class="boutons">
+        <a class="bouton bouton--rose" href={lienCarte} rel="noopener">Ouvrir l'itinéraire</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-nuit" id="camping" aria-labelledby="titre-camping">
+    <div class="contenu deux-colonnes">
+      <div>
+        <span class="surtitre">Camping</span>
+        <h2 id="titre-camping">Dormir au cœur du monde</h2>
+        <p class="intro">
+          Le camping ouvre le vendredi après-midi. Plantez votre tente à deux pas des scènes et
+          réveillez-vous dans le monde des Ragondins.
+        </p>
+        <p><em class="a-completer">Tarifs, horaires et services à venir</em></p>
+        <a class="bouton bouton--contour" href="/billetterie/">Réserver le camping</a>
+      </div>
+      <div class="carte">
+        <h3>Dans votre sac</h3>
+        <ul class="liste">
+          <li>Tente, duvet et tapis de sol</li>
+          <li>Lampe frontale</li>
+          <li>Gourde réutilisable</li>
+          <li>Vêtements chauds pour la nuit et K-way</li>
+          <li>Crème solaire et casquette</li>
+          <li>Bouchons d'oreilles (on ne sait jamais)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-vert" id="accessibilite" aria-labelledby="titre-accessibilite">
+    <div class="contenu deux-colonnes">
+      <div>
+        <span class="surtitre">Accessibilité</span>
+        <h2 id="titre-accessibilite">Un monde ouvert à toutes et tous</h2>
+        <p class="intro">
+          Parce que le festival soutient Handi'Chiens, nous tenons à ce que chacun puisse profiter
+          de la fête.
+        </p>
+      </div>
+      <ul class="liste">
+        <li>Entrée gratuite pour les personnes en situation de handicap.</li>
+        <li>Chiens d'assistance et chiens guides bienvenus.</li>
+        <li>Stationnement réservé, cheminements et sanitaires adaptés&nbsp;: <em class="a-completer">à préciser</em></li>
+        <li>
+          Un besoin particulier&nbsp;? Écrivez-nous avant votre venue, nous ferons notre possible
+          pour vous accueillir au mieux.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section fond-nuit" id="sur-place" aria-labelledby="titre-sur-place">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Sur place</span>
+        <h2 id="titre-sur-place">Ce qui vous attend dans le domaine</h2>
+      </div>
+      <div class="grille">
+        <article class="carte"><h3>Bars et restauration</h3><p class="texte-doux">De quoi se régaler et trinquer tout au long du festival.</p></article>
+        <article class="carte"><h3>Paiement cashless</h3><p class="texte-doux">On paie avec son bracelet. <a href="/cashless/">Comment ça marche</a></p></article>
+        <article class="carte"><h3>Point info</h3><p class="texte-doux">Une question, un objet perdu&nbsp;? L'équipe vous accueille à l'entrée.</p></article>
+        <article class="carte"><h3>Poste de secours</h3><p class="texte-doux">Une équipe de secouristes est présente pendant tout le festival.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-vert" id="faq" aria-labelledby="titre-faq">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Questions fréquentes</span>
+        <h2 id="titre-faq">Vous vous demandez peut-être…</h2>
+      </div>
+      <Faq questions={questions} />
+    </div>
+  </section>
+
+  <section class="section fond-nuit" id="contact" aria-labelledby="titre-contact">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Contact</span>
+        <h2 id="titre-contact">Écrivez-nous</h2>
+        <p class="intro">Une question qui n'a pas trouvé sa réponse&nbsp;? L'équipe des Ragondins vous répond.</p>
+      </div>
+      <dl class="contacts">
+        <div class="carte"><dt>Questions générales</dt><dd><em class="a-completer">Adresse e-mail à venir</em></dd></div>
+        <div class="carte"><dt>Bénévolat</dt><dd><a href="/benevoles/">Page bénévoles</a></dd></div>
+        <div class="carte"><dt>Partenariats</dt><dd><a href="/partenaires/">Page partenaires</a></dd></div>
+        <div class="carte"><dt>Presse</dt><dd><a href="/presse/">Espace presse</a></dd></div>
+      </dl>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .sommaire {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 2rem;
+  }
+
+  .sommaire a {
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    border: 1.5px solid rgba(243, 226, 176, 0.6);
+    color: var(--creme);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .sommaire a:hover {
+    background: var(--creme);
+    color: var(--vert);
+  }
+
+  .deux-colonnes {
+    display: grid;
+    gap: 2rem 4rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    align-items: start;
+  }
+
+  .deux-colonnes .bouton {
+    margin-top: 0.5rem;
+  }
+
+  .contacts {
+    margin: 0;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  }
+
+  .contacts dt {
+    font-weight: 600;
+    color: var(--rose);
+    margin-bottom: 0.4rem;
+  }
+
+  .contacts dd {
+    margin: 0;
+  }
+</style>

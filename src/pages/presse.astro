@@ -1,0 +1,115 @@
+---
+import Base from "../layouts/Base.astro";
+import EnTetePage from "../components/EnTetePage.astro";
+import ModuleExterne from "../components/ModuleExterne.astro";
+import { festival, liensExternes } from "../data/site";
+
+const ressources = [
+  { titre: "Dossier de presse 2027", texte: "Le festival, sa programmation et son engagement solidaire." },
+  { titre: "Communiqués", texte: "Les dernières annonces officielles du festival." },
+  { titre: "Photos haute définition", texte: "Images de l'édition 2026, libres de droits pour la presse." },
+  { titre: "Logos et visuels", texte: "Le logo et l'affiche officielle 2027." },
+];
+---
+
+<Base
+  titre="Espace presse"
+  description="Espace presse du festival Les Ragondins Farfelus : dossier de presse, communiqués, photos HD, logos et demande d'accréditation."
+>
+  <EnTetePage
+    surtitre="Presse"
+    titre="Espace presse"
+    intro="Journalistes, blogueurs, créateurs de contenu : retrouvez ici tout ce qu'il faut pour parler du festival."
+  />
+
+  <section class="section fond-nuit" aria-labelledby="titre-bref">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">En bref</span>
+        <h2 id="titre-bref">Le festival en quelques lignes</h2>
+      </div>
+      <dl class="fiche">
+        <div><dt>Quoi</dt><dd>Festival de musique et de magie, {festival.edition}</dd></div>
+        <div><dt>Quand</dt><dd>{festival.dates.affichage}</dd></div>
+        <div><dt>Où</dt><dd>{festival.lieu.nom}, {festival.lieu.commune} ({festival.lieu.departement})</dd></div>
+        <div><dt>Au programme</dt><dd>Concerts jazz, rock et pop, DJ sets, magie sur scène et en close-up, journée familiale</dd></div>
+        <div><dt>Engagement</dt><dd>Au profit de l'association {festival.association}</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section fond-vert" aria-labelledby="titre-ressources">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Ressources</span>
+        <h2 id="titre-ressources">À télécharger</h2>
+      </div>
+      <div class="grille">
+        {
+          ressources.map((r) => (
+            <article class="carte">
+              <h3>{r.titre}</h3>
+              <p class="texte-doux">{r.texte}</p>
+              <p><em class="a-completer">Bientôt disponible</em></p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-nuit" aria-labelledby="titre-accreditation">
+    <div class="contenu">
+      <h2 id="titre-accreditation" class="sr-only">Accréditation</h2>
+      <ModuleExterne
+        titre="Demande d'accréditation"
+        texte="Vous souhaitez couvrir le festival ? Faites votre demande d'accréditation, nous revenons vers vous rapidement."
+        lien={liensExternes.formulairePresse}
+        libelleBouton="Demander une accréditation"
+      />
+      <div class="carte contact-presse">
+        <h3>Contact presse</h3>
+        <p><em class="a-completer">Nom et adresse e-mail à venir</em></p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .fiche {
+    margin: 0;
+    display: grid;
+    gap: 0;
+    max-width: 52rem;
+    border-top: 1px solid rgba(243, 226, 176, 0.2);
+  }
+
+  .fiche div {
+    display: grid;
+    grid-template-columns: minmax(7rem, 12rem) 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(243, 226, 176, 0.2);
+  }
+
+  .fiche dt {
+    font-weight: 600;
+    color: var(--rose);
+  }
+
+  .fiche dd {
+    margin: 0;
+  }
+
+  @media (max-width: 520px) {
+    .fiche div {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+  }
+
+  .contact-presse {
+    margin-top: 1.5rem;
+    max-width: 30rem;
+  }
+</style>

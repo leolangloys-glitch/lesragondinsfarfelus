@@ -1,0 +1,134 @@
+---
+import Base from "../layouts/Base.astro";
+import EnTetePage from "../components/EnTetePage.astro";
+import ModuleExterne from "../components/ModuleExterne.astro";
+import Faq from "../components/Faq.astro";
+import { liensExternes } from "../data/site";
+
+const missions = [
+  { titre: "Accueil et billetterie", texte: "Être le premier sourire du festival et guider les visiteurs vers le portail." },
+  { titre: "Bar et restauration", texte: "Servir, trinquer, garder le rythme quand la foule a soif." },
+  { titre: "Scènes", texte: "Épauler les équipes techniques et accueillir les artistes." },
+  { titre: "Montage et démontage", texte: "Construire le monde des Ragondins avant tout le monde, et le ranger après." },
+  { titre: "Décors et scénographie", texte: "Donner vie à l'univers magique : lumières, installations, détails farfelus." },
+  { titre: "Camping et environnement", texte: "Veiller au confort des campeurs et à la propreté du domaine." },
+];
+
+const questions = [
+  {
+    q: "Faut-il de l'expérience ?",
+    r: "La plupart des missions ne demandent aucune expérience particulière : l'envie et la bonne humeur suffisent. Nous vous expliquons tout avant le festival.",
+  },
+  {
+    q: "Combien de temps dois-je donner ?",
+    r: "Vous choisissez vos créneaux en fonction de vos disponibilités. Le reste du temps, profitez du festival !",
+  },
+  {
+    q: "Y a-t-il un âge minimum ?",
+    r: "L'âge minimum sera précisé dans le formulaire d'inscription.",
+  },
+];
+---
+
+<Base
+  titre="Devenir bénévole"
+  description="Rejoignez la troupe des bénévoles du festival Les Ragondins Farfelus, 28-30 mai 2027 au Domaine de Briquemault : accueil, bar, scènes, décors…"
+>
+  <EnTetePage
+    surtitre="Bénévoles"
+    titre="Rejoignez la troupe des Ragondins"
+    intro="Sans bénévoles, pas de magie. Vivez le festival de l'intérieur, rencontrez une équipe en or et repartez avec des souvenirs plein la tête."
+  >
+    <div class="boutons">
+      <a class="bouton bouton--rose" href="#inscription">Je m'inscris</a>
+    </div>
+  </EnTetePage>
+
+  <section class="section fond-nuit" aria-labelledby="titre-missions">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Les missions</span>
+        <h2 id="titre-missions">Trouvez votre rôle dans le spectacle</h2>
+      </div>
+      <div class="grille">
+        {
+          missions.map((m) => (
+            <article class="carte">
+              <h3>{m.titre}</h3>
+              <p class="texte-doux">{m.texte}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-vert" aria-labelledby="titre-avantages">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">De l'autre côté du rideau</span>
+        <h2 id="titre-avantages">Ce que vous y gagnez</h2>
+      </div>
+      <ul class="liste avantages">
+        <li>Le t-shirt officiel des bénévoles</li>
+        <li>L'accès au festival en dehors de vos créneaux <em class="a-completer">à confirmer</em></li>
+        <li>Les repas pendant vos missions <em class="a-completer">à confirmer</em></li>
+        <li>Une équipe soudée et des rencontres inoubliables</li>
+        <li>La fierté de soutenir Handi'Chiens</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section fond-nuit" aria-labelledby="titre-deroule">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Comment ça se passe</span>
+        <h2 id="titre-deroule">De l'inscription au grand week-end</h2>
+      </div>
+      <ol class="etapes">
+        <li><h3>Inscrivez-vous</h3><p>Remplissez le formulaire en quelques minutes.</p></li>
+        <li><h3>On vous rappelle</h3><p>Nous choisissons ensemble votre mission et vos créneaux.</p></li>
+        <li><h3>Le briefing</h3><p>Avant le festival, on vous explique tout et on rencontre l'équipe.</p></li>
+        <li><h3>La magie opère</h3><p>Les 28, 29 et 30 mai, vous faites partie du spectacle.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section fond-vert" id="inscription" aria-labelledby="titre-inscription">
+    <div class="contenu">
+      <h2 id="titre-inscription" class="sr-only">Inscription</h2>
+      <ModuleExterne
+        titre="Le formulaire d'inscription"
+        texte="Les inscriptions bénévoles ouvriront prochainement. Vos informations servent uniquement à organiser le bénévolat du festival."
+        lien={liensExternes.formulaireBenevoles}
+        libelleBouton="Devenir bénévole"
+      />
+      <p class="note">
+        En savoir plus sur l'utilisation de vos données&nbsp;: <a href="/confidentialite/">politique de confidentialité</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section fond-nuit" aria-labelledby="titre-faq-benevoles">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Questions fréquentes</span>
+        <h2 id="titre-faq-benevoles">Avant de vous lancer</h2>
+      </div>
+      <Faq questions={questions} />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .avantages {
+    max-width: 40rem;
+    font-size: 1.1rem;
+  }
+
+  .note {
+    margin: 1rem 0 0;
+    font-size: 0.9rem;
+    color: var(--creme-doux);
+  }
+</style>
