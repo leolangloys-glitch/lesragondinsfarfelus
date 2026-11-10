@@ -1,0 +1,230 @@
+---
+import Base from "../layouts/Base.astro";
+import EnTetePage from "../components/EnTetePage.astro";
+import Faq, { type Question } from "../components/Faq.astro";
+import { faqSchema, festival, lieuSchema, trajets } from "../data/site";
+
+// Textes provisoires : temps de trajet et gares à faire vérifier par l'équipe.
+const adresse = `${festival.lieu.nom}, ${festival.lieu.codePostal} ${festival.lieu.commune}`;
+const lienCarte = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(adresse)}`;
+
+const questions: Question[] = [
+  {
+    q: "À quelle distance de Paris se trouve le festival ?",
+    r: "Le Domaine de Briquemault est à environ 140&nbsp;km de Paris, soit 1&nbsp;h&nbsp;30 de route par l'A6 puis l'A77. On peut aussi venir en train jusqu'à Montargis, à environ 1&nbsp;h de Paris-Bercy.",
+  },
+  {
+    q: "Peut-on venir en train depuis Paris ?",
+    r: "Oui. Montargis, Nogent-sur-Vernisson et Gien sont desservies depuis Paris-Bercy par la ligne TER vers Nevers ; Montargis l'est aussi par la ligne R depuis Paris-Gare de Lyon. Le domaine est ensuite à 10 à 25 minutes en voiture. Les navettes entre les gares et le festival seront annoncées prochainement.",
+  },
+  {
+    q: "Quelle est la gare la plus proche du festival ?",
+    r: "La gare de Nogent-sur-Vernisson, à une dizaine de minutes en voiture. Les gares de Montargis et de Gien, mieux desservies, sont à environ 25&nbsp;minutes.",
+  },
+  {
+    q: "Combien de temps faut-il depuis Orléans ?",
+    r: "Environ 1&nbsp;h&nbsp;15 en voiture (85&nbsp;km), en passant par Montargis ou par Gien.",
+  },
+  {
+    q: "Le festival est-il près de Montargis et de Gien ?",
+    r: "Oui. Sainte-Geneviève-des-Bois, près de Châtillon-Coligny, est à environ 25&nbsp;minutes de Montargis comme de Gien.",
+  },
+  {
+    q: "Y a-t-il un parking ?",
+    r: "Oui, un parking est prévu à proximité de l'entrée du festival. L'accès et les places réservées aux personnes à mobilité réduite seront précisés avant l'événement.",
+  },
+  {
+    q: "Peut-on dormir sur place ?",
+    r: 'Oui : le camping du festival ouvre le vendredi après-midi, et le domaine propose aussi des chambres d\'hôtes. Voir la <a href="/infos/#camping">page infos pratiques</a>.',
+  },
+];
+---
+
+<Base
+  titre="Accès depuis Paris, Orléans, Montargis, Gien"
+  nomCourt="Venir au festival"
+  description="Domaine de Briquemault (Loiret), à 1 h 30 de Paris, 1 h 15 d'Orléans et 25 min de Montargis ou Gien : venir en voiture, en train ou en covoiturage."
+  donneesStructurees={[faqSchema(questions), { "@context": "https://schema.org", ...lieuSchema() }]}
+>
+  <EnTetePage
+    surtitre="Venir au festival"
+    titre="Le chemin jusqu'au miroir"
+    intro={`Les Ragondins Farfelus se tiennent au ${festival.lieu.nom}, à ${festival.lieu.commune} (${festival.lieu.codePostal}), dans le Loiret, entre Montargis et Gien. Le domaine est à environ 1 h 30 de Paris et 1 h 15 d'Orléans.`}
+  >
+    <div class="boutons">
+      <a class="bouton bouton--rose" href={lienCarte} rel="noopener">Ouvrir l'itinéraire</a>
+      <a class="bouton bouton--contour" href="/billetterie/">Réserver mon billet</a>
+    </div>
+  </EnTetePage>
+
+  <section class="section fond-nuit" id="temps" aria-labelledby="titre-temps">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">En voiture</span>
+        <h2 id="titre-temps">Temps de trajet jusqu'au festival</h2>
+        <p class="intro">Temps indicatifs en voiture, hors bouchons, jusqu'au {festival.lieu.nom}.</p>
+      </div>
+      <div class="grille">
+        {
+          trajets.map((groupe) => (
+            <article class="carte">
+              <h3>{groupe.titre}</h3>
+              <dl class="trajets">
+                {groupe.villes.map((v) => (
+                  <div>
+                    <dt>{v.ville}</dt>
+                    <dd>
+                      <strong>{v.temps}</strong> <span class="texte-doux">· {v.km}&nbsp;km</span>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-vert" id="paris" aria-labelledby="titre-paris">
+    <div class="contenu deux-colonnes">
+      <div>
+        <span class="surtitre">Paris et l'Île-de-France</span>
+        <h2 id="titre-paris">Un festival à 1 h 30 de Paris</h2>
+        <p class="intro">
+          Pas besoin de partir loin pour changer de monde&nbsp;: le Domaine de Briquemault est à
+          environ 140&nbsp;km de Paris, au sud de la Seine-et-Marne.
+        </p>
+      </div>
+      <div>
+        <h3>En voiture</h3>
+        <p class="texte-doux">
+          Par l'autoroute A6 puis l'A77 en direction de Nevers&nbsp;: environ 1&nbsp;h&nbsp;30 depuis Paris,
+          1&nbsp;h depuis Fontainebleau, 45&nbsp;minutes depuis Nemours.
+        </p>
+        <h3>En train</h3>
+        <p class="texte-doux">
+          Depuis Paris-Bercy, la ligne TER vers Nevers dessert Montargis (environ 1&nbsp;h),
+          Nogent-sur-Vernisson et Gien. Depuis Paris-Gare de Lyon, la ligne R va jusqu'à Montargis.
+          Le domaine est ensuite à 10 à 25&nbsp;minutes en voiture.
+        </p>
+        <p><em class="a-completer">Navettes depuis les gares : à confirmer</em></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-nuit" id="loiret" aria-labelledby="titre-loiret">
+    <div class="contenu deux-colonnes">
+      <div>
+        <span class="surtitre">Orléans et le Loiret</span>
+        <h2 id="titre-loiret">Au cœur du Loiret, entre Montargis et Gien</h2>
+        <p class="intro">
+          Le festival se tient à {festival.lieu.commune}, près de Châtillon-Coligny, au bord du Loing.
+        </p>
+      </div>
+      <div>
+        <h3>Depuis Orléans</h3>
+        <p class="texte-doux">Environ 1&nbsp;h&nbsp;15 (85&nbsp;km), par Montargis ou par Gien.</p>
+        <h3>Depuis Montargis, Gien et Briare</h3>
+        <p class="texte-doux">
+          Moins d'une demi-heure de route&nbsp;: le festival est presque à côté de chez vous.
+        </p>
+        <h3>Depuis Pithiviers</h3>
+        <p class="texte-doux">Environ 1&nbsp;h.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-vert" id="yonne" aria-labelledby="titre-yonne">
+    <div class="contenu deux-colonnes">
+      <div>
+        <span class="surtitre">L'Yonne et le Cher</span>
+        <h2 id="titre-yonne">Depuis la Bourgogne et le Berry</h2>
+      </div>
+      <div>
+        <p class="texte-doux">
+          Auxerre et Sens sont à environ 1&nbsp;h de route, Bourges à 1&nbsp;h&nbsp;30.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-nuit" id="ensemble" aria-labelledby="titre-ensemble">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Ensemble, c'est plus magique</span>
+        <h2 id="titre-ensemble">Covoiturage, navettes et camping</h2>
+      </div>
+      <div class="grille">
+        <article class="carte">
+          <h3>Covoiturage</h3>
+          <p class="texte-doux">
+            Moins de voitures, plus de place pour la magie&nbsp;: partagez votre trajet avec d'autres
+            festivaliers depuis Paris, Orléans ou Montargis.
+          </p>
+        </article>
+        <article class="carte">
+          <h3>Navettes</h3>
+          <p class="texte-doux">Des navettes depuis les gares les plus proches sont à l'étude.</p>
+          <p><em class="a-completer">À confirmer</em></p>
+        </article>
+        <article class="carte">
+          <h3>Dormir sur place</h3>
+          <p class="texte-doux">
+            Le camping ouvre le vendredi après-midi&nbsp;: <a href="/infos/#camping">tout savoir sur le camping</a>.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-vert" id="faq" aria-labelledby="titre-faq">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Questions fréquentes</span>
+        <h2 id="titre-faq">Pour venir au festival</h2>
+      </div>
+      <Faq questions={questions} />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .deux-colonnes {
+    display: grid;
+    gap: 1.5rem 4rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    align-items: start;
+  }
+
+  .deux-colonnes h3 {
+    margin: 0 0 0.35rem;
+  }
+
+  .deux-colonnes h3 + p {
+    margin-top: 0;
+  }
+
+  .trajets {
+    margin: 0;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .trajets div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.45rem;
+    border-bottom: 1px solid rgba(243, 226, 176, 0.18);
+  }
+
+  .trajets dt {
+    font-weight: 600;
+  }
+
+  .trajets dd {
+    margin: 0;
+    white-space: nowrap;
+  }
+</style>

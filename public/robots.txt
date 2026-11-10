@@ -1,4 +1,21 @@
+# Le site est ouvert aux moteurs de recherche et aux assistants IA
+# (pour qu'ils puissent recommander le festival).
 User-agent: *
+Allow: /
+
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: Google-Extended
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Applebot
+User-agent: Applebot-Extended
 Allow: /
 
 Sitemap: https://lesragondinsfarfelus.fr/sitemap-index.xml

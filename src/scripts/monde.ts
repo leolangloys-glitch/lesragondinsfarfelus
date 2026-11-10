@@ -44,9 +44,10 @@ import hdriCoucher from "@pmndrs/assets/hdri/sunset.exr.js";
 export type OptionsMonde = {
   canvas: HTMLCanvasElement;
   dossierRessources: string; // herbe, rochers, textures du sol
-  dejaEntre: boolean; // déjà entré pendant la visite : la caméra est tout de suite en place
+  dejaEntre: boolean; // déjà entré : la caméra est tout de suite en place
+  enAttente?: boolean; // ne calcule aucune image avant entrer() (économise la batterie)
   qualite?: "haute" | "basse" | null;
-  surPret: () => void; // première image affichée
+  surPret?: () => void; // première image affichée
 };
 
 export type Monde = {
@@ -2819,14 +2820,20 @@ export async function lancerMonde(o: OptionsMonde): Promise<Monde> {
   let avancee = o.dejaEntre ? 1 : 0; // 0 = devant le miroir, 1 = dans le monde
   let debutEntree = -1;
   let dureeEntree = 2.6;
+  let actif = !o.enAttente;
   function entrer(duree = 2.6) {
+    actif = true;
+    demarrer();
     if (debutEntree >= 0 || avancee >= 1) return;
     dureeEntree = duree;
+    horloge.update();
     debutEntree = horloge.getElapsed();
   }
   function passer() {
+    actif = true;
     avancee = 1;
     debutEntree = -1;
+    demarrer();
   }
 
   // --- Interactions ---
@@ -2907,13 +2914,13 @@ export async function lancerMonde(o: OptionsMonde): Promise<Monde> {
 
     if (premiereImage) {
       premiereImage = false;
-      o.surPret();
+      o.surPret?.();
     }
     boucle = requestAnimationFrame(image);
   }
 
   function demarrer() {
-    if (!boucle && visible && !document.hidden) boucle = requestAnimationFrame(image);
+    if (actif && !boucle && visible && !document.hidden) boucle = requestAnimationFrame(image);
   }
 
   // Prépare les shaders avant la première image pour éviter un à-coup

@@ -1,17 +1,19 @@
 ---
 import Base from "../layouts/Base.astro";
 import EnTetePage from "../components/EnTetePage.astro";
-import { festival } from "../data/site";
+import { festival, lieuSchema } from "../data/site";
 ---
 
 <Base
-  titre="Le Domaine de Briquemault"
-  description="Le festival Les Ragondins Farfelus se tient au Domaine de Briquemault, 10 hectares de nature et d'histoire à Sainte-Geneviève-des-Bois, dans le Loiret."
+  titre="Le Domaine de Briquemault (Loiret)"
+  nomCourt="Le Domaine de Briquemault"
+  description="Le Domaine de Briquemault, 10 hectares de nature et d'histoire entre Montargis et Gien (Loiret), accueille le festival Les Ragondins Farfelus."
+  donneesStructurees={{ "@context": "https://schema.org", ...lieuSchema() }}
 >
   <EnTetePage
     surtitre="Le lieu"
     titre="Le Domaine de Briquemault"
-    intro="À 1 h 30 de Paris, au cœur du Loiret, un domaine chargé d'histoire qui se transforme chaque printemps en monde des Ragondins Farfelus."
+    intro="À 1 h 30 de Paris et 1 h 15 d'Orléans, entre Montargis et Gien, un domaine chargé d'histoire qui se transforme chaque printemps en monde des Ragondins Farfelus."
   >
     <div class="boutons">
       <a class="bouton bouton--rose" href={festival.lieu.site} rel="noopener">Visiter le site du domaine</a>
@@ -30,8 +32,9 @@ import { festival } from "../data/site";
           rouvert au printemps 2026, le domaine s'étend sur dix hectares de nature préservée.
         </p>
         <p class="texte-doux">
-          Château, orangerie, guinguette, prairies et bords de rivière&nbsp;: un décor idéal pour
-          accueillir un monde magique le temps d'un week-end.
+          Les deux grosses tours rondes du château fort se reflètent dans les douves couvertes de
+          nénuphars, entre lavande et peupliers. Ruines, orangerie, guinguette, prairies et bords du
+          Loing&nbsp;: un décor idéal pour accueillir un monde magique le temps d'un week-end.
         </p>
       </div>
     </div>

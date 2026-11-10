@@ -2,7 +2,7 @@
 import Base from "../layouts/Base.astro";
 import EnTetePage from "../components/EnTetePage.astro";
 import Faq, { type Question } from "../components/Faq.astro";
-import { festival } from "../data/site";
+import { faqSchema, festival } from "../data/site";
 
 const adresse = `${festival.lieu.nom}, ${festival.lieu.codePostal} ${festival.lieu.commune}`;
 const lienCarte = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(adresse)}`;
@@ -10,7 +10,7 @@ const lienCarte = `https://www.google.com/maps/search/?api=1&query=${encodeURICo
 const questions: Question[] = [
   {
     q: "Où se trouve le festival ?",
-    r: `Au ${festival.lieu.nom}, ${festival.lieu.codePostal} ${festival.lieu.commune}, dans le Loiret, à environ 1&nbsp;h&nbsp;30 de Paris.`,
+    r: `Au ${festival.lieu.nom}, ${festival.lieu.codePostal} ${festival.lieu.commune}, dans le Loiret, entre Montargis et Gien : à environ 1&nbsp;h&nbsp;30 de Paris, 1&nbsp;h&nbsp;15 d'Orléans et 25&nbsp;minutes de Montargis. Tous les itinéraires sont sur la <a href="/venir/">page Venir au festival</a>.`,
   },
   {
     q: "Le festival est-il adapté aux enfants ?",
@@ -34,21 +34,13 @@ const questions: Question[] = [
   },
 ];
 
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: questions.map((item) => ({
-    "@type": "Question",
-    name: item.q,
-    acceptedAnswer: { "@type": "Answer", text: item.r.replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ") },
-  })),
-};
 ---
 
 <Base
-  titre="Infos pratiques"
-  description="Infos pratiques du festival Les Ragondins Farfelus : accès au Domaine de Briquemault, camping, accessibilité, horaires, FAQ et contact."
-  donneesStructurees={faqSchema}
+  titre="Infos pratiques : accès, camping, FAQ"
+  nomCourt="Infos pratiques"
+  description="Préparez votre venue au festival Les Ragondins Farfelus (Loiret, 28-30 mai 2027) : horaires, accès depuis Paris et Orléans, camping, accessibilité, FAQ."
+  donneesStructurees={faqSchema(questions)}
 >
   <EnTetePage
     surtitre="Infos pratiques"
@@ -105,13 +97,19 @@ const faqSchema = {
       <div class="grille">
         <article class="carte">
           <h3>En voiture</h3>
-          <p class="texte-doux">Environ 1&nbsp;h&nbsp;30 depuis Paris. Parking à proximité du festival.</p>
-          <p><em class="a-completer">Itinéraire et parking à préciser</em></p>
+          <p class="texte-doux">
+            Environ 1&nbsp;h&nbsp;30 depuis Paris, 1&nbsp;h&nbsp;15 depuis Orléans, 25&nbsp;minutes depuis
+            Montargis ou Gien. Parking à proximité du festival.
+          </p>
+          <p><em class="a-completer">Plan du parking à préciser</em></p>
         </article>
         <article class="carte">
           <h3>En train</h3>
-          <p class="texte-doux">Gares les plus proches et éventuelles navettes&nbsp;:</p>
-          <p><em class="a-completer">À compléter</em></p>
+          <p class="texte-doux">
+            Gares de Montargis, Nogent-sur-Vernisson et Gien, desservies depuis Paris-Bercy (environ
+            1&nbsp;h jusqu'à Montargis).
+          </p>
+          <p><em class="a-completer">Navettes à confirmer</em></p>
         </article>
         <article class="carte">
           <h3>En covoiturage</h3>
@@ -122,7 +120,8 @@ const faqSchema = {
         </article>
       </div>
       <div class="boutons">
-        <a class="bouton bouton--rose" href={lienCarte} rel="noopener">Ouvrir l'itinéraire</a>
+        <a class="bouton bouton--rose" href="/venir/">Tous les itinéraires</a>
+        <a class="bouton bouton--contour" href={lienCarte} rel="noopener">Ouvrir la carte</a>
       </div>
     </div>
   </section>

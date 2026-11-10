@@ -105,16 +105,28 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
   « pas assez en mode dessiné » → rendu **peinture numérique**, dans
   l'ambiance des images d'inspiration envoyées par l'équipe (forêt de
   champignons lumineux reflétée dans l'eau, lampions, îles flottantes, lune).
-- **Décision (novembre 2026)** : l'entrée reprend **exactement l'affiche de la
-  graphiste** (son miroir doré, son sol en damier, son escalier, fichiers de
-  `public/brouillon/`), pas une recréation en 3D. L'ancienne antichambre de
-  marbre en 3D est supprimée.
+- **Décision (novembre 2026)** : l'accueil est **exactement l'affiche de la
+  graphiste**, au pixel près : miroir doré, sol en damier, escalier et textes
+  aux positions relevées sur l'affiche de 848 × 1200 (voir les commentaires de
+  `.affiche` dans `index.astro`). Dans l'affiche, le miroir n'est pas tout à
+  fait centré : marches et damier sont alignés sur le bas du miroir, un peu à
+  droite. C'est voulu, ne pas « recentrer ».
+- **On n'entre dans le monde qu'en cliquant (ou touchant) le miroir** : rien
+  d'automatique, pas de saut direct au monde en revenant sur l'accueil. Le
+  miroir est un vrai bouton (clavier, lecteur d'écran) ; une petite phrase
+  invite à cliquer.
+- Le sol est un SVG extensible qui reproduit celui de la graphiste (mêmes
+  couleurs, même perspective, même découpe) pour remplir tout l'écran :
+  `python3 -I outils/sol-damier.py public/brouillon/sol-damier.webp public/brouillon/sol-damier.svg`
+  (à relancer si la graphiste change son sol).
+- Note : l'affiche de la graphiste indique « 42350 », le bon code postal est
+  **45230** (le site affiche 45230).
 - Fonctionnement (`src/pages/index.astro` + `src/scripts/monde.ts`, Three.js) :
-  - **seuil** (2D) : l'affiche ; le monde 3D apparaît **à travers le miroir**
-    (le canvas est masqué par la forme de l'ouverture, tirée de
-    `cadre-or.json`), sous un voile vert qui garde le texte lisible et
-    s'éclaircit au survol ; clic sur le miroir ou « Entrer dans le miroir » ;
-  - **traversée** : l'affiche grandit autour de l'ouverture (on monte
+  - **affiche** : l'affiche seule ; la 3D se prépare en arrière-plan sans
+    calculer d'image (`enAttente`, économise la batterie) ;
+  - **chargement** : clic avant que la 3D soit prête, le miroir scintille ;
+  - **traversée** : le monde apparaît dans l'ouverture du miroir (masque tiré
+    de `cadre-or.json`), l'affiche grandit autour de l'ouverture (on monte
     l'escalier et on plonge dans le miroir) pendant que la caméra avance ;
   - **monde** : chemin en damier entre deux étangs miroirs, forêt de
     champignons géants (chapeaux violets, lamelles orange lumineuses),
@@ -131,9 +143,9 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
     qu'aucun nom n'est confirmé).
   - Filtre peinture en fin de chaîne (`PassePeinture`) ; reflets : un seul
     `Reflector` pour le Loing, les douves et les étangs (`construireEau`).
-  - L'état « monde » est celui du HTML (sans JavaScript, et pour Google) ; la
-    3D se charge après l'affichage. `?qualite=haute|basse` pour forcer la
-    qualité ; « réduire les animations » est respecté.
+  - Sans JavaScript, sans WebGL ou avec « réduire les animations » : l'affiche
+    reste seule (état « statique »), tout le texte est dans le HTML pour
+    Google. `?qualite=haute|basse` pour forcer la qualité de la 3D.
 - Inspirations envoyées par l'équipe (ne pas utiliser telles quelles, droits
   inconnus) : forêt de champignons lumineux, îles flottantes, jardin au clair
   de lune, martin-pêcheur, pic noir, effraie, renard, ragondin, fritillaire,
@@ -142,7 +154,8 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
 - **Avis de l'équipe sur la 3D** : « pas très beau », veut un rendu « fait par
   un graphiste ». Piste recommandée : le monde **dessiné par un ou une
   illustratrice en calques**, que le site anime (profondeur, lucioles, reflets,
-  brume, personnages qui bougent). En attente de la décision de l'équipe.
+  brume, personnages qui bougent). **L'équipe a choisi cette piste** : la
+  graphiste va faire des illustrations. La 3D actuelle reste en attendant.
 - L'ancienne version 3D stylisée est dans `archives/3d/` (voir son LISEZMOI).
 - Pas de son pour l'instant (à décider, droits sur la musique nécessaires).
 
@@ -153,11 +166,30 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
   HDRI Poly Haven (CC0). Tout le reste (champignons, ragondins, château,
   animaux) est dessiné par le code.
 
-## Référencement (priorité de l'équipe)
+## Référencement et « GEO » (priorité de l'équipe)
 
-- Chaque page a un titre et une description uniques (props de `Base.astro`).
-- Données structurées : `Festival` (accueil, programmation), `FAQPage` (infos).
-- Plan du site généré automatiquement (`@astrojs/sitemap`), `robots.txt`.
+- **Publics visés** : Paris et l'Île-de-France, le Loiret (Orléans, Montargis,
+  Gien), et les grandes villes autour (Fontainebleau, Melun, Auxerre, Sens…).
+- Chaque page a un titre (≈ 70 caractères max avec le suffixe du nom) et une
+  description (≤ 160) uniques, avec les mots-clés locaux (props de
+  `Base.astro` ; `nomCourt` pour le fil d'Ariane, `indexer={false}` pour la 404).
+- Page **« Venir au festival »** (`venir.astro`) : temps de trajet depuis
+  Paris, l'Île-de-France, le Loiret, l'Yonne et le Cher (données `trajets`
+  dans `site.ts`), train, covoiturage, FAQ. **Temps de trajet, gares et
+  navettes : estimations à faire valider par l'équipe.**
+- Accueil : phrase d'introduction factuelle (qui, quoi, où, quand) et fiche
+  « Le festival en bref », faciles à citer par Google et les assistants IA.
+- Données structurées (`site.ts`) : `WebSite` + `Organization` (accueil),
+  `Festival` avec les trois jours, lieu géolocalisé, `Place` (domaine, venir),
+  `FAQPage` (infos, venir), fil d'Ariane sur toutes les pages intérieures.
+- Balises : robots, canonique, hreflang fr-FR, Open Graph et Twitter complets,
+  balises géographiques (FR-45, coordonnées du bourg, à affiner).
+- **GEO** (assistants IA) : `/llms.txt` (résumé du festival généré depuis
+  `site.ts`, `src/pages/llms.txt.ts`) ; `robots.txt` autorise explicitement
+  les robots des moteurs et des assistants (GPTBot, ClaudeBot, PerplexityBot…).
+- Plan du site généré automatiquement (`@astrojs/sitemap`, avec date de mise
+  à jour).
+- Logo de l'accueil en deux tailles (`srcset`) pour charger vite sur téléphone.
 - Adresses officielles avec barre finale : les liens internes s'écrivent
   `/programmation/`, jamais `/programmation`.
 - Adresse du site provisoire `https://lesragondinsfarfelus.fr` : à corriger
