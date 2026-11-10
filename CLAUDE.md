@@ -97,48 +97,50 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
 
 - **Demande de l'équipe** : la première chose qu'on voit est le **miroir de
   la graphiste** (cadre doré) ; quand on clique dessus, on entre dans le monde
-  des Ragondins Farfelus, où la faune et la flore du Loiret se sont
-  « réveillées » et sont magiques. Rendu **réaliste**, **pas « 3D jeu
-  vidéo »**, couleurs **vert profond + rose clair**, et site **très bien
-  référencé**. Le ragondin farfelu est l'image du festival.
-- Fonctionnement (`src/pages/index.astro`, sans bibliothèque 3D) :
-  - **seuil** : le miroir doré, avec à travers lui la vraie photo du ragondin
-    qui nage ; lucioles autour ; boutons « Entrer dans le monde » et
-    « Passer l'introduction » ;
-  - **traversée** : au clic, le miroir s'agrandit (CSS) jusqu'à remplir
-    l'écran ;
-  - **monde** : la photo en plein écran (lente respiration, léger effet de
-    profondeur à la souris), lucioles jaune-vert et roses dessinées en 2D,
-    infos du festival (à gauche sur ordinateur ; logo en haut, dates et
-    boutons en bas sur téléphone pour laisser voir le ragondin).
-  - L'état « monde » est celui du HTML (sans JavaScript, et pour Google). Un
-    petit script passe au « seuil » avant l'affichage si on n'est pas encore
-    entré dans la session et si « réduire les animations » n'est pas activé.
-- Section **« Les habitants du Loing »** juste après l'introduction : vraies
-  photos dans des cadres en arche dorés, avec nom, nom latin, texte et crédit :
-  ragondin, martin-pêcheur, caloptéryx vierge, effraie des clochers, renard
-  roux, pic noir, fritillaire pintade (la fleur à damier !), citron, ver
-  luisant. Bon pour le référencement local (faune et flore du Loiret).
+  des Ragondins Farfelus. Couleurs **vert profond + rose clair**, site **très
+  bien référencé**. Le ragondin farfelu est l'image du festival.
+- **Historique des essais** : V2 (monde 3D violet, champignons, cartes) =
+  base retenue. Refusés : la version « berges du Loing » vue du pont, puis la
+  version en vraies photos (« pas une vraie photo de ragondin »). Ensuite :
+  « pas assez en mode dessiné » → rendu **peinture numérique**, dans
+  l'ambiance des images d'inspiration envoyées par l'équipe (forêt de
+  champignons lumineux reflétée dans l'eau, lampions, îles flottantes, lune).
+- Fonctionnement (`src/pages/index.astro` + `src/scripts/monde.ts`, Three.js) :
+  - **seuil** : antichambre de marbre en damier, le miroir doré en relief ;
+    on voit le monde à travers ; boutons « Entrer » et « Passer » ;
+  - **traversée** : la caméra passe à travers le miroir ;
+  - **monde** : chemin en damier entre deux étangs miroirs, forêt de
+    champignons géants (chapeaux violets, lamelles orange lumineuses),
+    ragondins farfelus magiques (chapeau haut-de-forme, baguette, pelage à
+    constellations) sur des nénuphars géants, libellules, papillons, colibris,
+    fritillaires à damier, œufs à pois, lampions-champignons, cartes à jouer,
+    lucioles ; au loin le Loing et son pont, la scène et sa sphère armillaire
+    dorée, le **château de Briquemault** (d'après la photo de l'équipe : deux
+    tours rondes en ruine sans toit, mur en briques à arcades, douves à
+    nénuphars, lavande, peupliers), une île flottante et sa cascade, des
+    poissons fluo, une grande lune.
+  - Par-dessus : l'« affiche » centrée (logo, festival de musique et de magie,
+    Domaine | dates, genres, « Têtes d'affiche dévoilées très bientôt » tant
+    qu'aucun nom n'est confirmé).
+  - Filtre peinture en fin de chaîne (`PassePeinture`) ; reflets : un seul
+    `Reflector` pour le Loing, les douves et les étangs (`construireEau`).
+  - L'état « monde » est celui du HTML (sans JavaScript, et pour Google) ; la
+    3D se charge après l'affichage. `?qualite=haute|basse` pour forcer la
+    qualité ; « réduire les animations » est respecté.
 - Inspirations envoyées par l'équipe (ne pas utiliser telles quelles, droits
-  inconnus) : forêt de champignons lumineux, martin-pêcheur, pic noir, effraie,
-  renard, ragondin, fritillaire, citron, caloptéryx, lucioles.
-- Les anciennes versions en 3D sont dans `archives/3d/` (voir son LISEZMOI).
+  inconnus) : forêt de champignons lumineux, îles flottantes, jardin au clair
+  de lune, martin-pêcheur, pic noir, effraie, renard, ragondin, fritillaire,
+  citron, caloptéryx, lucioles, photo du château (ruines du domaine).
+- Rien n'est copié : on reprend une ambiance, pas une image.
+- L'ancienne version 3D stylisée est dans `archives/3d/` (voir son LISEZMOI).
 - Pas de son pour l'instant (à décider, droits sur la musique nécessaires).
 
-## Photos
+## Ressources 3D
 
-- Vraies photos libres de **Wikimedia Commons** (CC0, CC BY, CC BY-SA),
-  téléchargées depuis `upload.wikimedia.org`. L'API de Commons limite fortement
-  les requêtes : espacer les recherches.
-- Étalonnage aux couleurs du festival (ombres vert profond, lumières crème
-  rosé, lueur rose, vignettage) et recadrage 4:5 : `outils/etalonnage.py`
-  (sources dans un dossier de travail, sorties dans `public/photos/`).
-- **Crédits obligatoires** : auteur + licence sous chaque photo et dans les
-  mentions légales. Tout est dans `src/data/photos.ts` (ajouter une photo =
-  ajouter une entrée avec son crédit). Pour CC BY-SA, les versions modifiées
-  restent sous CC BY-SA (mention « couleurs modifiées »).
-- À terme, les visuels de la graphiste (mascotte, illustrations) pourront
-  remplacer ou compléter ces photos.
+- `public/monde/` : herbe, fleurs, rochers et textures de sol (démo ez-tree,
+  MIT) ; crédits dans `public/monde/CREDITS.md`. Arbres générés par ez-tree,
+  HDRI Poly Haven (CC0). Tout le reste (champignons, ragondins, château,
+  animaux) est dessiné par le code.
 
 ## Référencement (priorité de l'équipe)
 
@@ -169,7 +171,8 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
 - Aperçu partageable (Artifact) : `npm run build` puis
   `python3 -I outils/apercu.py dist <dossier>` produit des pages autonomes
   (CSS et JS intégrés, images publiées à côté).
-- Poids : le site complet fait environ 2 Mo (aucune bibliothèque lourde).
+- Poids : environ 8 Mo en tout ; la 3D (Three.js + ressources du monde) ne se
+  charge que sur l'accueil, après l'affichage du texte.
 - `public/brouillon/` : visuels provisoires de la graphiste. **Ce dossier est
   exclu du dépôt** (`.gitignore`) tant que le dépôt est public et que les
   visuels ne sont pas validés. Il faut les y remettre à la main pour voir le

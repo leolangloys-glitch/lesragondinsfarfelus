@@ -1,7 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
 import EnTetePage from "../components/EnTetePage.astro";
-import { habitants, photoAccueil, urlsLicences } from "../data/photos";
 ---
 
 <Base
@@ -38,29 +37,13 @@ import { habitants, photoAccueil, urlsLicences } from "../data/photos";
       </p>
       <p>
         Identité visuelle et illustrations&nbsp;: <em class="a-completer">nom de la graphiste à compléter</em><br />
-        Photographies&nbsp;: voir les crédits ci-dessous.
+        Photographies&nbsp;: <em class="a-completer">crédits à compléter</em>
       </p>
-
-      <h2>Crédits photos</h2>
       <p>
-        Les photos de nature sont issues de Wikimedia Commons, sous licence libre. Leurs couleurs et
-        leur cadrage ont été modifiés pour le site ; les versions modifiées sont diffusées sous la
-        même licence.
+        Monde en 3D de la page d'accueil&nbsp;: arbres générés avec ez-tree, herbe, fleurs, rochers et
+        textures de sol issus de la démonstration ez-tree (Daniel Greenheck, licence MIT)&nbsp;; éclairage
+        d'ambiance Poly Haven (CC0)&nbsp;; bibliothèque Three.js (licence MIT).
       </p>
-      <ul class="liste">
-        <li>
-          Ragondin (page d'accueil)&nbsp;: <a href={photoAccueil.credit.source} rel="noopener">{photoAccueil.credit.auteur}</a>,
-          <a href={urlsLicences[photoAccueil.credit.licence]} rel="noopener license">{photoAccueil.credit.licence}</a>
-        </li>
-        {
-          habitants.map((h) => (
-            <li>
-              {h.nom.replace(/^(Le |La |L')/, "")}&nbsp;: <a href={h.credit.source} rel="noopener">{h.credit.auteur}</a>,{" "}
-              <a href={urlsLicences[h.credit.licence]} rel="noopener license">{h.credit.licence}</a>
-            </li>
-          ))
-        }
-      </ul>
 
       <h2>Données personnelles</h2>
       <p>
