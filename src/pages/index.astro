@@ -54,10 +54,11 @@ const jours = [
 >
   <!-- ===================== OUVERTURE : LE PORTAIL ===================== -->
   <!--
-    Trois états (attribut data-etat) :
-      statique : visuel 2D (sans JavaScript, animations réduites, ou en attendant la 3D)
-      seuil    : le portail en 3D, on invite à entrer
-      monde    : on a traversé, le monde s'affiche avec les infos du festival
+    Quatre états (attribut data-etat) :
+      statique  : l'affiche de la graphiste (sans JavaScript, animations réduites, ou en attendant la 3D)
+      seuil     : la même affiche, et le monde apparaît à travers le miroir ; on invite à entrer
+      traversee : on monte l'escalier et on plonge dans le miroir
+      monde     : on est passé, le monde s'affiche avec les infos du festival
   -->
   <section class="ouverture" data-etat="statique" aria-labelledby="titre-festival">
     <canvas class="ouverture__monde" aria-hidden="true"></canvas>
@@ -96,11 +97,7 @@ const jours = [
     </div>
 
     <div class="seuil" hidden>
-      <p class="seuil__invitation">
-        Un monde s'éveille une fois par an au cœur du Loiret.<br />
-        <strong>Oserez-vous franchir le portail&nbsp;?</strong>
-      </p>
-      <button class="bouton bouton--rose seuil__entrer" type="button">Entrer dans le monde</button>
+      <button class="bouton bouton--rose seuil__entrer" type="button">Entrer dans le miroir</button>
       <button class="seuil__passer" type="button">Passer l'introduction</button>
     </div>
 
@@ -293,12 +290,18 @@ const jours = [
 </Base>
 
 <script>
-  // L'entrée en 3D ne se charge qu'après l'affichage de la page, et seulement si
-  // l'appareil le permet. Sinon, le visuel 2D reste en place.
+  // L'entrée : l'affiche de la graphiste (miroir doré, sol en damier, escalier).
+  // Quand la 3D est prête, on aperçoit le monde à travers le miroir ; au clic,
+  // on monte l'escalier et on plonge dans le miroir. Sans JavaScript, avec
+  // « réduire les animations » ou sans WebGL, l'affiche reste telle quelle.
   const ouverture = document.querySelector<HTMLElement>(".ouverture");
   const canvas = document.querySelector<HTMLCanvasElement>(".ouverture__monde");
   const seuil = document.querySelector<HTMLElement>(".seuil");
+  const portail = document.querySelector<HTMLElement>(".portail");
+  const scene = document.querySelector<HTMLElement>(".scene");
   const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  type Trou = { uri: string; cx: number; cy: number; l: number; h: number };
 
   function webglDisponible() {
     try {
@@ -325,33 +328,119 @@ const jours = [
     }
   }
 
+  // L'ouverture du miroir (le plus grand « trou » du cadre), en masque SVG
+  async function chargerTrou(): Promise<Trou | null> {
+    try {
+      const d = (await (await fetch("/brouillon/cadre-or.json")).json()) as {
+        largeur: number;
+        hauteur: number;
+        formes: { trous: number[][][] }[];
+      };
+      const aire = (p: number[][]) =>
+        Math.abs(p.reduce((s, [x, y], i) => s + x * p[(i + 1) % p.length][1] - p[(i + 1) % p.length][0] * y, 0)) / 2;
+      let trou: number[][] = [];
+      for (const f of d.formes) for (const t of f.trous) if (aire(t) > aire(trou)) trou = t;
+      if (trou.length < 3) return null;
+      const xs = trou.map((p) => p[0]);
+      const ys = trou.map((p) => p[1]);
+      const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+      const chemin = "M" + trou.map(([x, y]) => `${(x * 1000).toFixed(1)} ${(y * 1000).toFixed(1)}`).join("L") + "Z";
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="none"><path d="${chemin}" fill="#fff"/></svg>`;
+      return {
+        uri: `url("data:image/svg+xml,${encodeURIComponent(svg)}")`,
+        cx: (x0 + x1) / 2,
+        cy: (y0 + y1) / 2,
+        l: x1 - x0,
+        h: y1 - y0,
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  // Le monde (canvas plein écran) n'est visible que dans l'ouverture du miroir
+  function placerMasque() {
+    if (!ouverture || !canvas || !portail) return;
+    const ro = ouverture.getBoundingClientRect();
+    const rp = portail.getBoundingClientRect();
+    const taille = `${rp.width}px ${rp.height}px`;
+    const pos = `${rp.left - ro.left}px ${rp.top - ro.top}px`;
+    canvas.style.setProperty("mask-size", taille);
+    canvas.style.setProperty("-webkit-mask-size", taille);
+    canvas.style.setProperty("mask-position", pos);
+    canvas.style.setProperty("-webkit-mask-position", pos);
+  }
+
   async function lancer() {
-    if (!ouverture || !canvas || !seuil) return;
-    const { lancerMonde } = await import("../scripts/monde");
+    if (!ouverture || !canvas || !seuil || !portail || !scene) return;
     const entre = dejaEntre();
+    const [{ lancerMonde }, trou] = await Promise.all([import("../scripts/monde"), chargerTrou()]);
+    if (trou) ouverture.style.setProperty("--masque", trou.uri);
+    else ouverture.classList.add("sans-masque");
+
+    function arriver() {
+      for (const el of [portail!, scene!]) {
+        el.style.transform = "";
+        el.style.transformOrigin = "";
+      }
+      ouverture!.dataset.etat = "monde";
+      seuil!.hidden = true;
+      memoriserEntree();
+    }
+
+    // On plonge dans le miroir : l'affiche grandit autour de l'ouverture
+    // jusqu'à ce qu'elle remplisse l'écran, pendant que la caméra avance.
+    function plonger() {
+      if (ouverture!.dataset.etat !== "seuil") return;
+      ouverture!.dataset.etat = "traversee";
+      seuil!.hidden = true;
+      monde.entrer(2.8);
+      const rp = portail!.getBoundingClientRect();
+      const t = trou ?? { cx: 0.5, cy: 0.5, l: 0.6, h: 0.7 };
+      const cx = rp.left + rp.width * t.cx;
+      const cy = rp.top + rp.height * t.cy;
+      const echelleFin = 1.7 * Math.max(window.innerWidth / (rp.width * t.l), window.innerHeight / (rp.height * t.h));
+      const elements = [portail!, scene!];
+      for (const el of elements) {
+        const r = el.getBoundingClientRect();
+        el.style.transformOrigin = `${cx - r.left}px ${cy - r.top}px`;
+      }
+      const debut = performance.now();
+      const ATTENTE = 450;
+      const DUREE = 2300;
+      function pas(maintenant: number) {
+        const k = Math.min(1, Math.max(0, (maintenant - debut - ATTENTE) / DUREE));
+        const e = k * k * (3 - 2 * k) * 0.35 + Math.pow(k, 2.4) * 0.65;
+        const s = Math.pow(echelleFin, e);
+        for (const el of elements) el.style.transform = `scale(${s})`;
+        placerMasque();
+        if (k < 1) requestAnimationFrame(pas);
+        else arriver();
+      }
+      requestAnimationFrame(pas);
+    }
+
     const monde = await lancerMonde({
       canvas,
-      imagePortail: "/brouillon/cadre-or.webp",
-      formePortail: "/brouillon/cadre-or.json",
       dossierRessources: "/monde",
       dejaEntre: entre,
       // ?qualite=haute ou ?qualite=basse dans l'adresse force un niveau (pour les tests)
       qualite: new URLSearchParams(location.search).get("qualite") as "haute" | "basse" | null,
       surPret: () => {
+        placerMasque();
         ouverture.dataset.etat = entre ? "monde" : "seuil";
         seuil.hidden = entre;
       },
-      surDepart: () => {
-        seuil.hidden = true;
-      },
-      surEntree: () => {
-        ouverture.dataset.etat = "monde";
-        seuil.hidden = true;
-        memoriserEntree();
-      },
     });
-    seuil.querySelector(".seuil__entrer")?.addEventListener("click", () => monde.entrer());
-    seuil.querySelector(".seuil__passer")?.addEventListener("click", () => monde.passer());
+    seuil.querySelector(".seuil__entrer")?.addEventListener("click", plonger);
+    seuil.querySelector(".seuil__passer")?.addEventListener("click", () => {
+      monde.passer();
+      arriver();
+    });
+    portail.addEventListener("click", plonger);
+    new ResizeObserver(() => {
+      if (ouverture.dataset.etat === "seuil") placerMasque();
+    }).observe(ouverture);
   }
 
   if (!reduit && webglDisponible()) {
@@ -560,10 +649,10 @@ const jours = [
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.9rem;
-    padding: 2rem var(--marge) calc(2.25rem + env(safe-area-inset-bottom, 0px));
+    gap: 0.35rem;
+    padding: 1rem var(--marge) calc(1rem + env(safe-area-inset-bottom, 0px));
     text-align: center;
-    background: linear-gradient(to top, rgba(2, 24, 24, 0.92), rgba(2, 24, 24, 0));
+    background: linear-gradient(to top, rgba(2, 24, 24, 0.55), rgba(2, 24, 24, 0));
     animation: monter 1s 0.4s ease-out both;
   }
 
@@ -614,16 +703,82 @@ const jours = [
     display: none;
   }
 
-  /* ----- État « seuil » : seul le portail 3D est visible ----- */
+  /* ----- États « seuil » et « traversée » : l'affiche, et le monde dans le miroir ----- */
   .ouverture[data-etat="seuil"] .ouverture__monde,
+  .ouverture[data-etat="traversee"] .ouverture__monde,
   .ouverture[data-etat="monde"] .ouverture__monde {
     opacity: 1;
   }
 
-  .ouverture[data-etat="seuil"] .portail,
-  .ouverture[data-etat="seuil"] .scene {
+  .ouverture[data-etat="seuil"] .ouverture__monde,
+  .ouverture[data-etat="traversee"] .ouverture__monde {
+    -webkit-mask-image: var(--masque);
+    mask-image: var(--masque);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+
+  .ouverture.sans-masque[data-etat="seuil"] .ouverture__monde {
     opacity: 0;
+  }
+
+  /* Un voile vert dans le miroir garde le texte lisible ; il s'éclaircit au survol */
+  .portail::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0;
+    background: radial-gradient(
+      ellipse 60% 55% at 50% 50%,
+      rgba(6, 48, 48, 0.86) 0%,
+      rgba(6, 48, 48, 0.66) 55%,
+      rgba(6, 48, 48, 0.3) 100%
+    );
+    -webkit-mask-image: var(--masque);
+    mask-image: var(--masque);
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    transition: opacity 0.6s ease;
     pointer-events: none;
+  }
+
+  .ouverture[data-etat="seuil"] .portail {
+    isolation: isolate;
+    cursor: pointer;
+    transition: filter 0.5s ease;
+  }
+
+  .ouverture[data-etat="seuil"] .portail::before {
+    opacity: 1;
+  }
+
+  .ouverture[data-etat="seuil"] .portail:hover {
+    filter: drop-shadow(0 0 2.5rem rgba(243, 226, 176, 0.45));
+  }
+
+  .ouverture[data-etat="seuil"] .portail:hover::before {
+    opacity: 0.55;
+  }
+
+  .ouverture[data-etat="seuil"] .scene__actions,
+  .ouverture[data-etat="traversee"] .scene__actions {
+    visibility: hidden;
+  }
+
+  .ouverture[data-etat="traversee"] .portail {
+    isolation: isolate;
+    animation: none;
+    will-change: transform;
+  }
+
+  .ouverture[data-etat="traversee"] .scene {
+    will-change: transform;
+  }
+
+  .ouverture[data-etat="traversee"] .portail > * {
+    opacity: 0;
+    transition: opacity 0.4s ease;
   }
 
   /* ----- État « monde » : les infos s'affichent par-dessus le monde ----- */

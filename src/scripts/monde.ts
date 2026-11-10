@@ -1,10 +1,11 @@
 // ==========================================================================
 // Le monde des Ragondins Farfelus — entrée en 3D, rendu « peinture » (accueil)
 //
-// 1. Le seuil : une antichambre de marbre en damier plongée dans la brume. Le
-//    miroir doré de la graphiste, en relief, est éclairé par un projecteur.
-//    À travers lui, on voit déjà le monde.
-// 2. Au clic, la caméra traverse le miroir.
+// 1. Le seuil (dans index.astro, en 2D) : l'affiche de la graphiste, son miroir
+//    doré, son sol en damier et son escalier ; on aperçoit ce monde à travers
+//    le miroir (le canvas est masqué par la forme de l'ouverture).
+// 2. Au clic, l'affiche grandit autour du miroir pendant que la caméra avance
+//    (entrer()) : on plonge dans le monde.
 // 3. Le monde (« monde magique du Loiret », ambiance des images envoyées par
 //    l'équipe, sans en recopier aucune) : un chemin en damier traverse des
 //    étangs miroirs, au milieu d'une forêt de champignons géants aux lamelles
@@ -42,18 +43,14 @@ import hdriCoucher from "@pmndrs/assets/hdri/sunset.exr.js";
 
 export type OptionsMonde = {
   canvas: HTMLCanvasElement;
-  imagePortail: string; // repli si le cadre en relief n'est pas disponible
-  formePortail: string; // contour vectoriel du cadre (JSON)
   dossierRessources: string; // herbe, rochers, textures du sol
-  dejaEntre: boolean;
+  dejaEntre: boolean; // déjà entré pendant la visite : la caméra est tout de suite en place
   qualite?: "haute" | "basse" | null;
-  surPret: () => void;
-  surDepart: () => void;
-  surEntree: () => void;
+  surPret: () => void; // première image affichée
 };
 
 export type Monde = {
-  entrer: () => void;
+  entrer: (duree?: number) => void;
   passer: () => void;
   detruire: () => void;
 };
@@ -100,43 +97,6 @@ function toile(l: number, h: number, dessin: (g: CanvasRenderingContext2D) => vo
   const t = new THREE.CanvasTexture(c);
   if (srgb) t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = 8;
-  return t;
-}
-
-// Marbre en damier (vert émeraude et noir veiné)
-function textureMarbre(alea: () => number) {
-  const t = toile(1024, 1024, (g) => {
-    const cases = [
-      ["#12685d", "#0b1212"],
-      ["#0b1212", "#12685d"],
-    ];
-    for (let i = 0; i < 2; i++)
-      for (let j = 0; j < 2; j++) {
-        g.fillStyle = cases[i][j];
-        g.fillRect(i * 512, j * 512, 512, 512);
-      }
-    g.globalAlpha = 0.18;
-    for (let k = 0; k < 70; k++) {
-      g.strokeStyle = alea() < 0.5 ? "#e8f1e8" : "#1d8f7f";
-      g.lineWidth = 0.6 + alea() * 2.2;
-      g.beginPath();
-      let x = alea() * 1024;
-      let y = alea() * 1024;
-      g.moveTo(x, y);
-      for (let s = 0; s < 6; s++) {
-        x += (alea() - 0.5) * 220;
-        y += (alea() - 0.5) * 220;
-        g.lineTo(x, y);
-      }
-      g.stroke();
-    }
-    g.globalAlpha = 1;
-    g.strokeStyle = "rgba(0,0,0,0.6)";
-    g.lineWidth = 3;
-    g.strokeRect(0, 0, 512, 512);
-    g.strokeRect(512, 512, 512, 512);
-  });
-  t.wrapS = t.wrapT = THREE.RepeatWrapping;
   return t;
 }
 
@@ -297,192 +257,6 @@ function ajouterVent(mat: THREE.Material, uniforms: { uTemps: { value: number } 
         `,
       );
   };
-}
-
-// ---------------------------------------------------------------------------
-// Le portail : cadre doré en relief + membrane qui montre le monde
-// ---------------------------------------------------------------------------
-
-const PORTAIL_H = 3.4;
-const PORTAIL_L = PORTAIL_H * (1007 / 1292);
-const SOCLE = 0.3;
-const PORTAIL_Y = SOCLE + PORTAIL_H / 2;
-
-type FormeCadre = { formes: { contour: number[][]; trous: number[][][] }[] };
-
-function versPoints(pts: number[][]) {
-  return pts.map(([x, y]) => new THREE.Vector2((x - 0.5) * PORTAIL_L, (0.5 - y) * PORTAIL_H));
-}
-
-function aire(pts: THREE.Vector2[]) {
-  return pts.length > 2 ? Math.abs(THREE.ShapeUtils.area(pts)) : 0;
-}
-
-function construireCadre(forme: FormeCadre, or: THREE.Material) {
-  const shapes: THREE.Shape[] = [];
-  let ouverture: THREE.Vector2[] = [];
-  for (const f of forme.formes) {
-    const s = new THREE.Shape(versPoints(f.contour));
-    for (const t of f.trous) {
-      const p = versPoints(t);
-      if (aire(p) > aire(ouverture)) ouverture = p;
-      s.holes.push(new THREE.Path(p));
-    }
-    shapes.push(s);
-  }
-  const prof = 0.07;
-  const geo = new THREE.ExtrudeGeometry(shapes, {
-    depth: prof,
-    bevelEnabled: true,
-    bevelThickness: 0.018,
-    bevelSize: 0.012,
-    bevelSegments: 3,
-    curveSegments: 1,
-  });
-  geo.translate(0, 0, -prof / 2);
-  geo.computeVertexNormals();
-  const cadre = new THREE.Mesh(geo, or);
-  cadre.position.set(0, PORTAIL_Y, 0);
-  cadre.castShadow = true;
-  return { cadre, ouverture };
-}
-
-function construireMembrane(texMonde: THREE.Texture, ouverture: THREE.Vector2[] | null) {
-  const geo =
-    ouverture && ouverture.length > 8
-      ? new THREE.ShapeGeometry(new THREE.Shape(ouverture), 1)
-      : new THREE.CircleGeometry(1, 64).scale(PORTAIL_L * 0.45, PORTAIL_H * 0.46, 1);
-  const mat = new THREE.ShaderMaterial({
-    uniforms: {
-      uMonde: { value: texMonde },
-      uResolution: { value: new THREE.Vector2(1, 1) },
-      uTemps: { value: 0 },
-      uOuverture: { value: 0 },
-      uSurvol: { value: 0 },
-      uTaille: { value: new THREE.Vector2(PORTAIL_L, PORTAIL_H) },
-    },
-    vertexShader: /* glsl */ `
-      uniform vec2 uTaille; varying vec2 vUv;
-      void main() {
-        vUv = position.xy / uTaille + 0.5;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }`,
-    fragmentShader: /* glsl */ `
-      uniform sampler2D uMonde; uniform vec2 uResolution;
-      uniform float uTemps; uniform float uOuverture; uniform float uSurvol;
-      varying vec2 vUv;
-      float h(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
-      float b(vec2 p){ vec2 i=floor(p), f=fract(p); vec2 u=f*f*(3.0-2.0*f);
-        return mix(mix(h(i),h(i+vec2(1,0)),u.x), mix(h(i+vec2(0,1)),h(i+vec2(1,1)),u.x), u.y); }
-      float fbm(vec2 p){ float v=0.0, a=0.5; for(int i=0;i<4;i++){ v+=a*b(p); p*=2.03; a*=0.5; } return v; }
-      void main() {
-        vec2 c = vUv - 0.5;
-        float d = length(c / vec2(0.45, 0.46));
-        float ferme = 1.0 - uOuverture;
-        vec2 suv = gl_FragCoord.xy / uResolution;
-        float onde = sin(d * 24.0 - uTemps * 2.0) * 0.004 * ferme;
-        vec3 col = texture2D(uMonde, suv + normalize(c + 1e-4) * onde).rgb;
-        float n = fbm(vUv * 3.0 + vec2(uTemps * 0.05, -uTemps * 0.035));
-        vec3 voile = mix(vec3(0.01, 0.12, 0.11), vec3(0.9, 0.35, 0.6), smoothstep(0.5, 0.9, n));
-        col = mix(col, voile, (0.04 + 0.25 * smoothstep(0.55, 1.0, d)) * (1.0 - 0.6 * uSurvol) * ferme);
-        float eclat = uOuverture * (1.0 - uOuverture) * 4.0;
-        col += vec3(1.0, 0.75, 0.5) * smoothstep(0.82, 1.0, d) * (0.08 + 0.35 * uSurvol + 1.6 * eclat);
-        col += vec3(1.0, 0.7, 0.85) * eclat * 0.2;
-        gl_FragColor = vec4(col, 1.0);
-      }`,
-  });
-  const m = new THREE.Mesh(geo, mat);
-  m.position.set(0, PORTAIL_Y, -0.005);
-  return m;
-}
-
-// ---------------------------------------------------------------------------
-// Le seuil : antichambre de marbre dans la brume
-// ---------------------------------------------------------------------------
-
-function construireSeuil(alea: () => number, leger: boolean, or: THREE.Material) {
-  const scene = new THREE.Scene();
-  const nuit = new THREE.Color(0x020b0c);
-  scene.background = nuit;
-  scene.fog = new THREE.FogExp2(nuit, 0.06);
-  scene.environmentIntensity = 0.55;
-
-  // Sol de marbre poli en damier
-  const marbre = textureMarbre(alea);
-  marbre.repeat.set(25, 25);
-  const sol = new THREE.Mesh(
-    new THREE.PlaneGeometry(60, 60),
-    new THREE.MeshPhysicalMaterial({ map: marbre, roughness: 0.2, metalness: 0.0, clearcoat: 1, clearcoatRoughness: 0.06, envMapIntensity: 0.9 }),
-  );
-  sol.rotation.x = -Math.PI / 2;
-  sol.receiveShadow = true;
-  scene.add(sol);
-
-  // Socle : deux marches de marbre au nez doré
-  const matMarche = new THREE.MeshStandardMaterial({ color: 0x0a2c29, roughness: 0.22, envMapIntensity: 0.8 });
-  for (let i = 0; i < 2; i++) {
-    const largeur = 3.6 - i * 0.5;
-    const prof = 1.5 - i * 0.45;
-    const marche = new THREE.Mesh(new THREE.BoxGeometry(largeur, 0.15, prof), matMarche);
-    marche.position.set(0, 0.075 + i * 0.15, 0.2 - i * 0.12);
-    marche.castShadow = marche.receiveShadow = true;
-    const nez = new THREE.Mesh(new THREE.BoxGeometry(largeur + 0.01, 0.02, 0.03), or);
-    nez.position.set(0, 0.14 + i * 0.15, 0.2 - i * 0.12 + prof / 2);
-    scene.add(marche, nez);
-  }
-
-  // Colonnes de marbre qui se perdent dans la brume
-  const matColonne = new THREE.MeshPhysicalMaterial({ color: 0x0c2422, roughness: 0.3, clearcoat: 0.6, envMapIntensity: 0.7 });
-  const fut = new THREE.CylinderGeometry(0.32, 0.36, 9, 24);
-  const chapiteau = new THREE.BoxGeometry(1, 0.3, 1);
-  for (const cote of [-1, 1]) {
-    for (let i = 0; i < 4; i++) {
-      const g = new THREE.Group();
-      const f = new THREE.Mesh(fut, matColonne);
-      f.position.y = 4.5;
-      const base = new THREE.Mesh(chapiteau, matColonne);
-      base.position.y = 0.15;
-      const anneau = new THREE.Mesh(new THREE.TorusGeometry(0.37, 0.03, 8, 32), or);
-      anneau.rotation.x = Math.PI / 2;
-      anneau.position.y = 0.4;
-      f.castShadow = f.receiveShadow = true;
-      g.add(f, base, anneau);
-      g.position.set(cote * (2.7 + i * 1.3), 0, -0.8 - i * 3.4);
-      scene.add(g);
-    }
-  }
-
-  // Lumières
-  scene.add(new THREE.HemisphereLight(0x2a5d63, 0x020606, 0.25));
-  const projecteur = new THREE.SpotLight(0xffe0b0, 420, 24, 0.45, 0.7, 2);
-  projecteur.position.set(0, 9, 4.2);
-  projecteur.target.position.set(0, 1.2, 0);
-  projecteur.castShadow = !leger;
-  projecteur.shadow.mapSize.set(1024, 1024);
-  projecteur.shadow.bias = -0.0004;
-  scene.add(projecteur, projecteur.target);
-
-  const lueurMonde = new THREE.PointLight(0x7fe0cc, 6, 9, 2);
-  lueurMonde.position.set(0, 1.6, 0.6);
-  const lueurRose = new THREE.PointLight(0xff8fc8, 3, 7, 2);
-  lueurRose.position.set(0, 3.0, 0.5);
-  scene.add(lueurMonde, lueurRose);
-
-  // Faisceau visible du projecteur et poussière d'or
-  const rayon = faisceau(new THREE.Color(1.0, 0.85, 0.6), 10, 3.2, 0.55);
-  rayon.position.copy(projecteur.position);
-  rayon.lookAt(projecteur.target.position);
-  rayon.rotateX(-Math.PI / 2);
-  scene.add(rayon);
-  const poussiere = nuee(leger ? 90 : 180, { x: [-2.5, 2.5], y: [0.3, 6], z: [-1, 4] }, [new THREE.Color(1.6, 1.3, 0.9)], 0.6, alea);
-  scene.add(poussiere);
-
-  const brumes = [brume(30, 20, new THREE.Color(0x9fc9c2), 0.22), brume(40, 26, new THREE.Color(0x6c9e98), 0.16)];
-  brumes[0].position.set(0, 0.25, 0);
-  brumes[1].position.set(0, 0.7, -2);
-  scene.add(...brumes);
-
-  return { scene, poussiere, brumes, rayon };
 }
 
 // ---------------------------------------------------------------------------
@@ -2992,47 +2766,11 @@ export async function lancerMonde(o: OptionsMonde): Promise<Monde> {
 
   const camera = new THREE.PerspectiveCamera(45, 1, 0.05, 600);
 
-  // Éclairage d'ambiance (HDRI) pour les reflets de l'or et du marbre
+  // Éclairage d'ambiance (HDRI) pour les reflets de l'or et de l'eau
   const pmrem = new THREE.PMREMGenerator(renderer);
   const hdri = hdriDepuisDataUri(hdriCoucher as unknown as string);
   const environnement = pmrem.fromEquirectangular(hdri).texture;
   hdri.dispose();
-
-  const or = new THREE.MeshPhysicalMaterial({
-    color: 0xe0b464,
-    metalness: 1,
-    roughness: 0.28,
-    clearcoat: 0.5,
-    clearcoatRoughness: 0.18,
-    envMapIntensity: 1.3,
-  });
-
-  // Le monde vu à travers le portail (rendu à résolution réduite)
-  const vueMonde = new THREE.WebGLRenderTarget(2, 2, { type: THREE.HalfFloatType });
-
-  const seuil = construireSeuil(alea, leger, or);
-  seuil.scene.environment = environnement;
-
-  // Cadre doré en relief (repli : image plate si le contour manque)
-  let ouverture: THREE.Vector2[] | null = null;
-  try {
-    const forme = (await (await fetch(o.formePortail)).json()) as FormeCadre;
-    const res = construireCadre(forme, or);
-    ouverture = res.ouverture;
-    seuil.scene.add(res.cadre);
-  } catch {
-    const tex = await new THREE.TextureLoader().loadAsync(o.imagePortail);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    const plan = new THREE.Mesh(
-      new THREE.PlaneGeometry(PORTAIL_L, PORTAIL_H),
-      new THREE.MeshStandardMaterial({ map: tex, transparent: true, metalness: 0.6, roughness: 0.35 }),
-    );
-    plan.position.set(0, PORTAIL_Y, 0.01);
-    seuil.scene.add(plan);
-  }
-  const membrane = construireMembrane(vueMonde.texture, ouverture);
-  seuil.scene.add(membrane);
-  const membraneMat = membrane.material as THREE.ShaderMaterial;
 
   const monde = await construireMonde(alea, leger, o.dossierRessources);
   monde.scene.environment = environnement;
@@ -3040,25 +2778,23 @@ export async function lancerMonde(o: OptionsMonde): Promise<Monde> {
   // Chaîne de rendu
   const cible = new THREE.WebGLRenderTarget(2, 2, { type: THREE.HalfFloatType, samples: leger ? 0 : 4 });
   const composer = new EffectComposer(renderer, cible);
-  const passeRendu = new RenderPass(seuil.scene, camera);
   const halo = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.55, 0.6, 0.8);
-  const HALO = 0.55;
   const cinema = new ShaderPass(PasseCinema);
   const peinture = new ShaderPass({ ...PassePeinture, defines: { RAYON: leger ? 2 : 3 } });
-  composer.addPass(passeRendu);
+  composer.addPass(new RenderPass(monde.scene, camera));
   composer.addPass(halo);
   composer.addPass(cinema);
   composer.addPass(new OutputPass());
   composer.addPass(peinture);
 
-  // Sur le chemin en damier, face à la scène ; le Loing et le château au loin
+  // Sur le chemin en damier, face à la scène ; le Loing et le château au loin.
+  // Avant d'entrer, on est un peu en retrait : on voit le monde à travers le miroir.
   const regardMonde = new THREE.Vector3(0, 2.4, -40);
   const positionMonde = new THREE.Vector3(0, 1.7, -4.5);
+  const positionDepart = new THREE.Vector3(0, 2.1, 1.5);
   const directionVue = regardMonde.clone().sub(positionMonde).normalize();
 
   // --- Cadrage ---
-  let portrait = false;
-  let zDepart = 6.6;
   function cadrer() {
     const l = o.canvas.clientWidth || window.innerWidth;
     const h = o.canvas.clientHeight || window.innerHeight;
@@ -3066,74 +2802,46 @@ export async function lancerMonde(o: OptionsMonde): Promise<Monde> {
     renderer.setSize(l, h, false);
     composer.setPixelRatio(ratio);
     composer.setSize(l, h);
-    vueMonde.setSize(Math.floor(l * ratio * 0.6), Math.floor(h * ratio * 0.6));
-    membraneMat.uniforms.uResolution.value.set(l * ratio, h * ratio);
     camera.aspect = l / h;
     peinture.uniforms.uTexel.value.set(1 / (l * ratio), 1 / (h * ratio));
     peinture.uniforms.uPas.value = 1.6 * ratio;
-    portrait = camera.aspect < 0.8;
+    const portrait = camera.aspect < 0.8;
     camera.fov = portrait ? 62 : 45;
     regardMonde.x = portrait ? -2 : 0;
     directionVue.copy(regardMonde).sub(positionMonde).normalize();
-    zDepart = portrait ? 7.0 : 6.6;
     camera.updateProjectionMatrix();
-    const pointRatio = ratio * (h / 900);
-    (seuil.poussiere.material as THREE.ShaderMaterial).uniforms.uRatio.value = pointRatio;
-    (monde.lucioles.material as THREE.ShaderMaterial).uniforms.uRatio.value = pointRatio;
+    (monde.lucioles.material as THREE.ShaderMaterial).uniforms.uRatio.value = ratio * (h / 900);
   }
   cadrer();
 
-  // --- État ---
-  type Etat = "seuil" | "traversee" | "monde";
-  let etat: Etat = o.dejaEntre ? "monde" : "seuil";
-  let debutTraversee = 0;
-  const DUREE = 3.4;
-  let survol = 0;
-  let survolCible = 0;
+  // --- Entrée : la caméra avance pendant qu'on plonge dans le miroir ---
+  const horloge = new THREE.Timer();
+  let avancee = o.dejaEntre ? 1 : 0; // 0 = devant le miroir, 1 = dans le monde
+  let debutEntree = -1;
+  let dureeEntree = 2.6;
+  function entrer(duree = 2.6) {
+    if (debutEntree >= 0 || avancee >= 1) return;
+    dureeEntree = duree;
+    debutEntree = horloge.getElapsed();
+  }
+  function passer() {
+    avancee = 1;
+    debutEntree = -1;
+  }
+
+  // --- Interactions ---
   const pointeur = new THREE.Vector2();
   const pointeurLisse = new THREE.Vector2();
   let defilement = 0;
-
-  const regard = new THREE.Vector3();
-  const regardSeuil = () => new THREE.Vector3(0, portrait ? 1.25 : 1.85, 0);
-
-  const trajet = () =>
-    new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0, 1.65, zDepart),
-      new THREE.Vector3(0, 1.95, 2.6),
-      new THREE.Vector3(0, PORTAIL_Y - 0.1, 0.2),
-      new THREE.Vector3(0, 1.85, -2.2),
-      positionMonde.clone(),
-    ]);
-  let courbe = trajet();
-
-  // --- Interactions ---
-  const raycaster = new THREE.Raycaster();
   function surMouvement(e: PointerEvent) {
-    const r = o.canvas.getBoundingClientRect();
-    pointeur.set(((e.clientX - r.left) / r.width) * 2 - 1, -(((e.clientY - r.top) / r.height) * 2 - 1));
-    if (etat === "seuil") {
-      raycaster.setFromCamera(pointeur, camera);
-      const touche = raycaster.intersectObject(membrane).length > 0;
-      survolCible = touche ? 1 : 0;
-      o.canvas.style.cursor = touche ? "pointer" : "";
-    }
-  }
-  function surClic(e: PointerEvent) {
-    if (etat !== "seuil") return;
-    surMouvement(e);
-    if (survolCible > 0) entrer();
+    pointeur.set((e.clientX / window.innerWidth) * 2 - 1, -((e.clientY / window.innerHeight) * 2 - 1));
   }
   function surDefilement() {
     defilement = Math.min(1, window.scrollY / Math.max(1, o.canvas.clientHeight));
   }
-  o.canvas.addEventListener("pointermove", surMouvement);
-  o.canvas.addEventListener("pointerdown", surClic);
+  window.addEventListener("pointermove", surMouvement, { passive: true });
   window.addEventListener("scroll", surDefilement, { passive: true });
-  const observateurTaille = new ResizeObserver(() => {
-    cadrer();
-    courbe = trajet();
-  });
+  const observateurTaille = new ResizeObserver(cadrer);
   observateurTaille.observe(o.canvas);
 
   let visible = true;
@@ -3143,24 +2851,6 @@ export async function lancerMonde(o: OptionsMonde): Promise<Monde> {
   });
   observateurVue.observe(o.canvas);
   document.addEventListener("visibilitychange", demarrer);
-
-  const horloge = new THREE.Timer();
-
-  function entrer() {
-    if (etat !== "seuil") return;
-    etat = "traversee";
-    debutTraversee = horloge.getElapsed();
-    o.canvas.style.cursor = "";
-    o.surDepart();
-  }
-  function arriver() {
-    etat = "monde";
-    passeRendu.scene = monde.scene;
-    o.surEntree();
-  }
-  function passer() {
-    if (etat !== "monde") arriver();
-  }
 
   // --- Qualité adaptative : si l'appareil peine, on baisse la résolution ---
   let images = 0;
@@ -3181,6 +2871,8 @@ export async function lancerMonde(o: OptionsMonde): Promise<Monde> {
   // --- Boucle ---
   let boucle = 0;
   let premiereImage = true;
+  const regard = new THREE.Vector3();
+  const position = new THREE.Vector3();
 
   function image() {
     boucle = 0;
@@ -3189,50 +2881,28 @@ export async function lancerMonde(o: OptionsMonde): Promise<Monde> {
     const t = horloge.getElapsed();
     ajusterQualite(t);
     pointeurLisse.lerp(pointeur, 0.04);
-    survol += (survolCible - survol) * 0.08;
 
-    (seuil.poussiere.material as THREE.ShaderMaterial).uniforms.uTemps.value = t;
-    seuil.brumes.forEach((b) => ((b.material as THREE.ShaderMaterial).uniforms.uTemps.value = t));
-    (seuil.rayon.material as THREE.ShaderMaterial).uniforms.uTemps.value = t;
     (monde.lucioles.material as THREE.ShaderMaterial).uniforms.uTemps.value = t;
     monde.brumes.forEach((b) => ((b.material as THREE.ShaderMaterial).uniforms.uTemps.value = t));
-    membraneMat.uniforms.uTemps.value = t;
-    membraneMat.uniforms.uSurvol.value = survol;
     cinema.uniforms.uTemps.value = t;
     monde.animes.forEach((f) => f(t));
 
-    if (etat === "seuil") {
-      camera.position.set(pointeurLisse.x * 0.45 + Math.sin(t * 0.25) * 0.08, 1.65 + pointeurLisse.y * 0.18, zDepart);
-      camera.lookAt(regard.copy(regardSeuil()));
-      halo.strength = HALO + survol * 0.15;
-      peinture.uniforms.uForce.value = 0.55;
-    } else if (etat === "traversee") {
-      const k = Math.min(1, (t - debutTraversee) / DUREE);
-      const e = lisse(k);
-      camera.position.copy(courbe.getPoint(e));
-      regard.lerpVectors(regardSeuil(), regardMonde, Math.min(1, e * 1.3));
-      camera.lookAt(regard);
-      membraneMat.uniforms.uOuverture.value = Math.min(1, k * 2);
-      halo.strength = HALO + Math.sin(Math.min(1, k * 1.5) * Math.PI) * 0.7;
-      peinture.uniforms.uForce.value = 0.55 + 0.45 * Math.min(1, k * 1.4);
-      if (passeRendu.scene !== monde.scene && camera.position.z < 0.12) passeRendu.scene = monde.scene;
-      if (k >= 1) arriver();
-    } else {
-      camera.position
-        .copy(positionMonde)
-        .addScaledVector(directionVue, defilement * 6)
-        .add(regard.set(pointeurLisse.x * 0.6, pointeurLisse.y * 0.22 + defilement * 0.4, 0));
-      regard.set(regardMonde.x + pointeurLisse.x * 3, regardMonde.y + pointeurLisse.y * 1.2, regardMonde.z);
-      camera.lookAt(regard);
-      halo.strength = HALO;
-      peinture.uniforms.uForce.value = 1;
+    if (debutEntree >= 0) {
+      avancee = Math.min(1, (t - debutEntree) / dureeEntree);
+      if (avancee >= 1) debutEntree = -1;
     }
+    const e = lisse(avancee);
+    position.lerpVectors(positionDepart, positionMonde, e);
+    // Devant le miroir, le monde respire doucement ; ensuite il suit la souris et le défilement
+    position.y += (1 - e) * Math.sin(t * 0.4) * 0.06;
+    camera.position
+      .copy(position)
+      .addScaledVector(directionVue, defilement * 6 * e)
+      .add(regard.set(pointeurLisse.x * 0.6, pointeurLisse.y * 0.22 + defilement * 0.4, 0));
+    regard.set(regardMonde.x + pointeurLisse.x * 3, regardMonde.y + pointeurLisse.y * 1.2, regardMonde.z);
+    camera.lookAt(regard);
+    halo.strength = 0.55 + Math.sin(Math.min(1, avancee * 1.4) * Math.PI) * 0.5;
 
-    if (passeRendu.scene === seuil.scene) {
-      renderer.setRenderTarget(vueMonde);
-      renderer.render(monde.scene, camera);
-      renderer.setRenderTarget(null);
-    }
     composer.render();
 
     if (premiereImage) {
@@ -3246,10 +2916,8 @@ export async function lancerMonde(o: OptionsMonde): Promise<Monde> {
     if (!boucle && visible && !document.hidden) boucle = requestAnimationFrame(image);
   }
 
-  if (etat === "monde") passeRendu.scene = monde.scene;
-  // Prépare les shaders avant la première image pour éviter un à-coup au clic
+  // Prépare les shaders avant la première image pour éviter un à-coup
   renderer.compile(monde.scene, camera);
-  renderer.compile(seuil.scene, camera);
   demarrer();
 
   return {
@@ -3259,6 +2927,7 @@ export async function lancerMonde(o: OptionsMonde): Promise<Monde> {
       cancelAnimationFrame(boucle);
       observateurTaille.disconnect();
       observateurVue.disconnect();
+      window.removeEventListener("pointermove", surMouvement);
       window.removeEventListener("scroll", surDefilement);
       document.removeEventListener("visibilitychange", demarrer);
       renderer.dispose();

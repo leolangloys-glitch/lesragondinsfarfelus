@@ -105,10 +105,17 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
   « pas assez en mode dessiné » → rendu **peinture numérique**, dans
   l'ambiance des images d'inspiration envoyées par l'équipe (forêt de
   champignons lumineux reflétée dans l'eau, lampions, îles flottantes, lune).
+- **Décision (novembre 2026)** : l'entrée reprend **exactement l'affiche de la
+  graphiste** (son miroir doré, son sol en damier, son escalier, fichiers de
+  `public/brouillon/`), pas une recréation en 3D. L'ancienne antichambre de
+  marbre en 3D est supprimée.
 - Fonctionnement (`src/pages/index.astro` + `src/scripts/monde.ts`, Three.js) :
-  - **seuil** : antichambre de marbre en damier, le miroir doré en relief ;
-    on voit le monde à travers ; boutons « Entrer » et « Passer » ;
-  - **traversée** : la caméra passe à travers le miroir ;
+  - **seuil** (2D) : l'affiche ; le monde 3D apparaît **à travers le miroir**
+    (le canvas est masqué par la forme de l'ouverture, tirée de
+    `cadre-or.json`), sous un voile vert qui garde le texte lisible et
+    s'éclaircit au survol ; clic sur le miroir ou « Entrer dans le miroir » ;
+  - **traversée** : l'affiche grandit autour de l'ouverture (on monte
+    l'escalier et on plonge dans le miroir) pendant que la caméra avance ;
   - **monde** : chemin en damier entre deux étangs miroirs, forêt de
     champignons géants (chapeaux violets, lamelles orange lumineuses),
     ragondins farfelus magiques (chapeau haut-de-forme, baguette, pelage à
@@ -132,6 +139,10 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
   de lune, martin-pêcheur, pic noir, effraie, renard, ragondin, fritillaire,
   citron, caloptéryx, lucioles, photo du château (ruines du domaine).
 - Rien n'est copié : on reprend une ambiance, pas une image.
+- **Avis de l'équipe sur la 3D** : « pas très beau », veut un rendu « fait par
+  un graphiste ». Piste recommandée : le monde **dessiné par un ou une
+  illustratrice en calques**, que le site anime (profondeur, lucioles, reflets,
+  brume, personnages qui bougent). En attente de la décision de l'équipe.
 - L'ancienne version 3D stylisée est dans `archives/3d/` (voir son LISEZMOI).
 - Pas de son pour l'instant (à décider, droits sur la musique nécessaires).
 
