@@ -426,12 +426,12 @@ const jours = [
       const echelleFin = 1.6 * Math.max(window.innerWidth / (rc.width * t.l * 0.8), window.innerHeight / (rc.height * t.h * 0.8));
       affiche!.style.transformOrigin = `${cx - ra.left}px ${cy - ra.top}px`;
       const debut = performance.now();
-      const ATTENTE = 220; // le temps de voir les vagues partir
-      const DUREE = 900;
+      const ATTENTE = eau ? 650 : 150; // le temps de voir la vague partir
+      const DUREE = 750;
       function pas(maintenant: number) {
         const k = Math.min(1, Math.max(0, (maintenant - debut - ATTENTE) / DUREE));
         affiche!.style.transform = `scale(${Math.pow(echelleFin, Math.pow(k, 2))})`;
-        voile!.style.opacity = String(Math.min(1, Math.max(0, (k - 0.45) / 0.5)));
+        voile!.style.opacity = String(Math.min(1, Math.max(0, (k - 0.55) / 0.4)));
         if (k < 1) requestAnimationFrame(pas);
         else entrerDansLeSite();
       }
@@ -458,7 +458,13 @@ const jours = [
     trou = await chargerTrou();
     if (!reduit && trou) {
       try {
-        eau = creerEau({ canvas, logo, affiche, surPret: () => affiche.classList.add("eau-active") });
+        eau = creerEau({
+          canvas,
+          logo,
+          affiche,
+          surPret: () => affiche.classList.add("eau-active"),
+          surEchec: () => affiche.classList.remove("eau-active"),
+        });
       } catch (erreur) {
         console.error("L'eau du miroir n'a pas pu s'animer :", erreur);
       }
@@ -586,7 +592,7 @@ const jours = [
 
   /* L'eau du miroir : même place que le cadre, découpée à la forme de l'ouverture */
   .affiche__eau {
-    z-index: 1;
+    z-index: 2;
     left: 9.08%;
     top: 14%;
     width: 81.13%;
@@ -601,7 +607,7 @@ const jours = [
   }
 
   .affiche__cadre {
-    z-index: 2;
+    z-index: 3;
     left: 9.08%;
     top: 14%;
     width: 81.13%;
@@ -611,7 +617,7 @@ const jours = [
   }
 
   .affiche__escalier {
-    z-index: 3;
+    z-index: 4;
     left: 35.38%;
     top: 81.42%;
     width: 32.67%;
@@ -621,7 +627,7 @@ const jours = [
   /* Dans le miroir, seul le titre, un peu plus grand que sur l'affiche */
   .affiche .portail {
     position: absolute;
-    z-index: 4;
+    z-index: 1;
     top: 49%;
     left: 0;
     right: 0;
@@ -631,10 +637,8 @@ const jours = [
     pointer-events: none;
   }
 
-  /* Quand l'eau est prête, c'est elle qui dessine le titre (pour qu'il ondule) */
-  .affiche.eau-active .portail {
-    opacity: 0;
-  }
+  /* Quand l'eau est prête, elle recouvre ce titre et le redessine (pour qu'il
+     ondule) ; si elle ne peut pas s'afficher, c'est lui qu'on voit. */
 
   .affiche .portail__logo {
     margin: 0 0 0 1.06cqw;

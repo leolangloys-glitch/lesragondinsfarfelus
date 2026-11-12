@@ -21,7 +21,8 @@ type Options = {
   canvas: HTMLCanvasElement;
   logo: HTMLImageElement;
   affiche: HTMLElement;
-  surPret: () => void; // première image dessinée : on peut cacher le logo HTML
+  surPret: () => void; // l'eau est dessinée : on peut l'afficher
+  surEchec: () => void; // l'eau ne peut pas (ou plus) s'afficher : on garde le titre normal
 };
 
 const NB_GOUTTES = 8;
@@ -111,63 +112,94 @@ function compiler(gl: WebGLRenderingContext, type: number, source: string) {
 }
 
 export function creerEau(o: Options): Eau | null {
-  const gl = o.canvas.getContext("webgl", { antialias: false, premultipliedAlpha: false, alpha: false });
+  // Canvas transparent et image conservée : si le téléphone efface le dessin,
+  // on voit le titre normal en dessous, jamais un miroir noir.
+  const gl = o.canvas.getContext("webgl", {
+    antialias: false,
+    premultipliedAlpha: false,
+    alpha: true,
+    preserveDrawingBuffer: true,
+  });
   if (!gl) return null;
 
-  const prog = gl.createProgram()!;
-  gl.attachShader(prog, compiler(gl, gl.VERTEX_SHADER, SOMMETS));
-  gl.attachShader(prog, compiler(gl, gl.FRAGMENT_SHADER, FRAGMENTS));
-  gl.linkProgram(prog);
-  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
-  gl.useProgram(prog);
+  type Ressources = {
+    uTaille: WebGLUniformLocation | null;
+    uTemps: WebGLUniformLocation | null;
+    uGouttes: WebGLUniformLocation | null;
+    uLogoRect: WebGLUniformLocation | null;
+    uFond: WebGLUniformLocation | null;
+    uUnite: WebGLUniformLocation | null;
+    texture: WebGLTexture | null;
+  };
 
-  const tampon = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, tampon);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-  const aPos = gl.getAttribLocation(prog, "aPos");
-  gl.enableVertexAttribArray(aPos);
-  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+  // Programme, géométrie et texture (refait si le téléphone perd le contexte WebGL)
+  function initialiser(): Ressources | null {
+    const prog = gl!.createProgram()!;
+    gl!.attachShader(prog, compiler(gl!, gl!.VERTEX_SHADER, SOMMETS));
+    gl!.attachShader(prog, compiler(gl!, gl!.FRAGMENT_SHADER, FRAGMENTS));
+    gl!.linkProgram(prog);
+    if (!gl!.getProgramParameter(prog, gl!.LINK_STATUS)) return null;
+    gl!.useProgram(prog);
+    const tampon = gl!.createBuffer();
+    gl!.bindBuffer(gl!.ARRAY_BUFFER, tampon);
+    gl!.bufferData(gl!.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl!.STATIC_DRAW);
+    const aPos = gl!.getAttribLocation(prog, "aPos");
+    gl!.enableVertexAttribArray(aPos);
+    gl!.vertexAttribPointer(aPos, 2, gl!.FLOAT, false, 0, 0);
+    const u = (nom: string) => gl!.getUniformLocation(prog, nom);
+    gl!.uniform1i(u("uLogo"), 0);
+    const texture = gl!.createTexture();
+    gl!.bindTexture(gl!.TEXTURE_2D, texture);
+    gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_MIN_FILTER, gl!.LINEAR);
+    gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_MAG_FILTER, gl!.LINEAR);
+    gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_WRAP_S, gl!.CLAMP_TO_EDGE);
+    gl!.texParameteri(gl!.TEXTURE_2D, gl!.TEXTURE_WRAP_T, gl!.CLAMP_TO_EDGE);
+    return {
+      uTaille: u("uTaille"),
+      uTemps: u("uTemps"),
+      uGouttes: u("uGouttes"),
+      uLogoRect: u("uLogoRect"),
+      uFond: u("uFond"),
+      uUnite: u("uUnite"),
+      texture,
+    };
+  }
 
-  const u = (nom: string) => gl.getUniformLocation(prog, nom);
-  const uTaille = u("uTaille");
-  const uTemps = u("uTemps");
-  const uGouttes = u("uGouttes");
-  const uLogoRect = u("uLogoRect");
-  const uFond = u("uFond");
-  const uUnite = u("uUnite");
-  gl.uniform1i(u("uLogo"), 0);
-
-  const texture = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  let r = initialiser();
+  if (!r) return null;
 
   const gouttes = new Float32Array(NB_GOUTTES * 4);
   let prochaine = 0;
   let finAnimation = 0;
   const debut = performance.now();
   const maintenant = () => (performance.now() - debut) / 1000;
-  let echelle = 1; // pixels du canvas par pixel CSS (sans le zoom de la traversée)
   let pret = false;
+  let perdu = false;
+  let fini = false;
+
+  function echec(erreur?: unknown) {
+    if (erreur) console.error("L'eau du miroir ne peut pas s'afficher :", erreur);
+    pret = false;
+    o.surEchec();
+  }
 
   // Géométrie : tout est recalculé à partir de la mise en page réelle
   function mesurer() {
+    if (!r || perdu) return false;
     const ratio = Math.min(window.devicePixelRatio || 1, 2);
     const rc = o.canvas.getBoundingClientRect();
     const ra = o.affiche.getBoundingClientRect();
     const rl = o.logo.getBoundingClientRect();
-    if (rc.width < 2) return false;
+    if (rc.width < 2 || rl.width < 2) return false;
     o.canvas.width = Math.round(rc.width * ratio);
     o.canvas.height = Math.round(rc.height * ratio);
-    echelle = o.canvas.width / rc.width;
+    const echelle = o.canvas.width / rc.width;
     gl!.viewport(0, 0, o.canvas.width, o.canvas.height);
-    gl!.uniform2f(uTaille, o.canvas.width, o.canvas.height);
-    gl!.uniform1f(uUnite, o.canvas.width / 600);
+    gl!.uniform2f(r.uTaille, o.canvas.width, o.canvas.height);
+    gl!.uniform1f(r.uUnite, o.canvas.width / 600);
     // centre et rayon du dégradé : (50 %, 49 %) de l'affiche, rayon 0,66 × sa largeur
     gl!.uniform3f(
-      uFond,
+      r.uFond,
       (ra.left + ra.width * 0.5 - rc.left) * echelle,
       (ra.top + ra.height * 0.49 - rc.top) * echelle,
       ra.width * 0.66 * echelle,
@@ -176,7 +208,7 @@ export function creerEau(o: Options): Eau | null {
     const ly = (rl.top - rc.top) * echelle;
     const lw = rl.width * echelle;
     const lh = rl.height * echelle;
-    gl!.uniform4f(uLogoRect, lx, ly, lw, lh);
+    gl!.uniform4f(r.uLogoRect, lx, ly, lw, lh);
     // le logo est redessiné à sa taille d'affichage pour rester net
     const toile = document.createElement("canvas");
     toile.width = Math.max(1, Math.round(lw));
@@ -184,7 +216,7 @@ export function creerEau(o: Options): Eau | null {
     const c = toile.getContext("2d")!;
     c.imageSmoothingQuality = "high";
     c.drawImage(o.logo, 0, 0, toile.width, toile.height);
-    gl!.bindTexture(gl!.TEXTURE_2D, texture);
+    gl!.bindTexture(gl!.TEXTURE_2D, r.texture);
     gl!.texImage2D(gl!.TEXTURE_2D, 0, gl!.RGBA, gl!.RGBA, gl!.UNSIGNED_BYTE, toile);
     return true;
   }
@@ -192,18 +224,24 @@ export function creerEau(o: Options): Eau | null {
   let boucle = 0;
   function image() {
     boucle = 0;
+    if (!r || perdu || fini) return;
     const t = maintenant();
-    gl!.uniform1f(uTemps, t);
-    gl!.uniform4fv(uGouttes, gouttes);
-    gl!.drawArrays(gl!.TRIANGLE_STRIP, 0, 4);
-    if (!pret) {
+    try {
+      gl!.uniform1f(r.uTemps, t);
+      gl!.uniform4fv(r.uGouttes, gouttes);
+      gl!.drawArrays(gl!.TRIANGLE_STRIP, 0, 4);
+    } catch (erreur) {
+      echec(erreur);
+      return;
+    }
+    if (!pret && !gl!.isContextLost()) {
       pret = true;
       o.surPret();
     }
     if (t < finAnimation && !document.hidden) boucle = requestAnimationFrame(image);
   }
   function relancer() {
-    if (!boucle) boucle = requestAnimationFrame(image);
+    if (!boucle && !fini) boucle = requestAnimationFrame(image);
   }
 
   function ajouter(xCanvas: number, yCanvas: number, force: number) {
@@ -224,39 +262,78 @@ export function creerEau(o: Options): Eau | null {
     ajouter(o.canvas.width * 0.5, o.canvas.height * 0.5, force);
   }
 
-  // De temps en temps, une goutte tombe toute seule
+  // De temps en temps, une goutte tombe toute seule (plus souvent sur les écrans
+  // tactiles, où il n'y a pas de survol à la souris)
+  const tactile = window.matchMedia("(hover: none)").matches;
   let minuteur = 0;
   function gouttePlusTard() {
+    const delai = tactile ? 1800 + Math.random() * 1800 : 3500 + Math.random() * 3000;
     minuteur = window.setTimeout(() => {
-      if (!document.hidden) {
+      if (!document.hidden && pret) {
         const a = Math.random() * Math.PI * 2;
-        const r = Math.random() * 0.28;
-        ajouter(o.canvas.width * (0.5 + Math.cos(a) * r), o.canvas.height * (0.5 + Math.sin(a) * r * 0.8), 0.7);
+        const d = Math.random() * 0.28;
+        ajouter(o.canvas.width * (0.5 + Math.cos(a) * d), o.canvas.height * (0.5 + Math.sin(a) * d * 0.8), tactile ? 0.9 : 0.7);
       }
       gouttePlusTard();
-    }, 3500 + Math.random() * 3000);
+    }, delai);
   }
 
-  const observateur = new ResizeObserver(() => {
-    if (mesurer()) relancer();
-  });
+  function dessinerDeNouveau() {
+    try {
+      if (mesurer()) relancer();
+    } catch (erreur) {
+      echec(erreur);
+    }
+  }
+
+  const observateur = new ResizeObserver(dessinerDeNouveau);
+
+  // Le téléphone peut retirer le WebGL (mémoire, appli en arrière-plan) : on
+  // montre le titre normal, puis on redessine l'eau quand il revient
+  function surPerte(e: Event) {
+    e.preventDefault();
+    perdu = true;
+    cancelAnimationFrame(boucle);
+    boucle = 0;
+    echec();
+  }
+  function surRetour() {
+    perdu = false;
+    r = initialiser();
+    if (r) dessinerDeNouveau();
+  }
+  function surVisibilite() {
+    if (!document.hidden) relancer();
+  }
+  o.canvas.addEventListener("webglcontextlost", surPerte);
+  o.canvas.addEventListener("webglcontextrestored", surRetour);
+  document.addEventListener("visibilitychange", surVisibilite);
 
   function demarrer() {
-    if (!mesurer()) return;
+    try {
+      if (!mesurer()) return;
+    } catch (erreur) {
+      echec(erreur);
+      return;
+    }
     observateur.observe(o.canvas);
     relancer();
     gouttePlusTard();
   }
-  if (o.logo.complete) demarrer();
+  if (o.logo.complete && o.logo.naturalWidth > 0) demarrer();
   else o.logo.addEventListener("load", demarrer, { once: true });
 
   return {
     goutte,
     goutteAuCentre,
     detruire() {
+      fini = true;
       cancelAnimationFrame(boucle);
       clearTimeout(minuteur);
       observateur.disconnect();
+      o.canvas.removeEventListener("webglcontextlost", surPerte);
+      o.canvas.removeEventListener("webglcontextrestored", surRetour);
+      document.removeEventListener("visibilitychange", surVisibilite);
     },
   };
 }

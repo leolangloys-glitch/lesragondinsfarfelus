@@ -125,11 +125,15 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
 - **L'eau du miroir** (`src/scripts/miroir-eau.ts`, WebGL sans bibliothèque) :
   au survol ou au toucher, de petites vagues partent comme un caillou tombé
   dans l'eau et le titre ondule ; une goutte tombe aussi toute seule de temps
-  en temps. Le canvas redessine le dégradé, le grain et le logo (à
-  l'identique), découpé à la forme de l'ouverture (`cadre-or.json`).
+  en temps (plus souvent sur téléphone). Le canvas redessine le dégradé, le
+  grain et le logo (à l'identique), découpé à la forme de l'ouverture
+  (`cadre-or.json`). Il est posé **au-dessus** du vrai titre HTML et
+  transparent s'il est effacé : si l'eau ne peut pas s'afficher (pas de WebGL,
+  téléphone qui perd le contexte WebGL…), on voit le titre normal, jamais un
+  miroir noir. Au clic, on laisse voir la vague (0,65 s) avant de plonger.
 - **Entrée** : uniquement en cliquant ou touchant le miroir (vrai bouton,
   clavier compris). Grosse vague, l'affiche grandit autour du miroir, tout passe
-  au noir et le site apparaît (titre puis infos), en environ 1,1 s. Tant que le
+  au noir et le site apparaît (titre puis infos), en environ 1,4 s. Tant que le
   miroir est affiché, le reste de la page est inaccessible (`inert`).
 - **Toute la 3D a été retirée** à la demande de l'équipe (« pas très beau ») :
   le haut de l'accueil est sur fond noir. La dernière version est archivée dans
