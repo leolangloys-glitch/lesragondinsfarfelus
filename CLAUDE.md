@@ -202,6 +202,25 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
   visuels ne sont pas validés. Il faut les y remettre à la main pour voir le
   site complet.
 
+## Mise en ligne (à faire)
+
+- Publication automatique prête : `.github/workflows/mise-en-ligne.yml` (à
+  chaque modification de `main`, le site est reconstruit et publié sur GitHub
+  Pages). Il refuse de publier si les visuels de `public/brouillon/` manquent.
+- Avant : compléter les mentions légales (structure, forme juridique, adresse,
+  SIRET/RNA, contact, directeur de la publication) ; accord de la graphiste
+  pour publier ses visuels (ils doivent alors entrer dans le dépôt, retirer
+  `public/brouillon/` du `.gitignore`) ; choisir l'extension du domaine.
+- GitHub : Settings > Pages > Source = « GitHub Actions » ; domaine
+  personnalisé dans Settings > Pages (+ fichier `public/CNAME`) ; « Enforce
+  HTTPS ». Puis fusionner la branche de travail dans `main` (après validation).
+- OVH, zone DNS du domaine : 4 enregistrements A vers 185.199.108.153,
+  185.199.109.153, 185.199.110.153, 185.199.111.153 (et AAAA
+  2606:50c0:8000::153, 8001::153, 8002::153, 8003::153), `www` en CNAME vers
+  `leolangloys-glitch.github.io.` ; supprimer l'ancien A / la redirection OVH.
+- Après : Google Search Console (validation par TXT chez OVH, envoyer
+  `sitemap-index.xml`), Bing Webmaster Tools, fiche Google du festival.
+
 ## Règles de travail
 
 - On s'inspire de la **structure** d'autres sites de festival, jamais de leur
