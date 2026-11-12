@@ -105,10 +105,10 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
   toutes les sections de l'accueil, le menu, le pied de page et toutes les pages.
 - Technique : l'entrée (`.entree`) est un écran fixe par-dessus la page ; tout
   le contenu de l'accueil reste dans le HTML (bon pour Google). Un petit script
-  dans le `<head>` décide avant l'affichage s'il faut montrer le miroir : oui à
-  la première arrivée ; pendant la même visite, revenir à l'accueil depuis une
-  autre page mène directement au site (`sessionStorage` « rf-entre »). Sans
-  JavaScript : le site s'affiche directement.
+  dans le `<head>` affiche le miroir **à chaque ouverture ou rechargement de
+  l'accueil** (demande de l'équipe, pour pouvoir le montrer). Seule exception :
+  l'adresse `/#site` mène directement au site. Sans JavaScript : le site
+  s'affiche directement.
 - L'affiche est reproduite **au pixel près** : miroir doré, sol en damier,
   escalier, positions relevées sur l'affiche de 848 × 1200 (commentaires de
   `.affiche` dans `index.astro`). Dans le miroir, **seul le titre** (le logo),

@@ -53,17 +53,12 @@ const jours = [
   donneesStructurees={evenementSchema()}
 >
   <!--
-    Avant d'afficher quoi que ce soit, on décide si l'on montre l'entrée par le
-    miroir : oui à la première arrivée sur le site (pendant la visite, revenir à
-    l'accueil depuis une autre page mène directement au site). Sans JavaScript,
-    pas de miroir : le site s'affiche directement.
+    Le miroir s'affiche à chaque ouverture (ou rechargement) de l'accueil.
+    Seule exception : l'adresse /#site, qui mène directement au site.
+    Sans JavaScript, pas de miroir : le site s'affiche directement.
   -->
   <script is:inline slot="tete">
-    try {
-      if (sessionStorage.getItem("rf-entre") !== "1") document.documentElement.classList.add("avec-miroir");
-    } catch (e) {
-      document.documentElement.classList.add("avec-miroir");
-    }
+    if (location.hash !== "#site") document.documentElement.classList.add("avec-miroir");
   </script>
 
   <!-- ===================== L'ENTRÉE : LE MIROIR DE L'AFFICHE ===================== -->
@@ -445,11 +440,6 @@ const jours = [
 
     // De l'autre côté du miroir : le site, sur fond noir
     function entrerDansLeSite() {
-      try {
-        sessionStorage.setItem("rf-entre", "1");
-      } catch {
-        /* navigation privée : sans importance */
-      }
       eau?.detruire();
       window.scrollTo(0, 0);
       caches.forEach((el) => (el.inert = false));
