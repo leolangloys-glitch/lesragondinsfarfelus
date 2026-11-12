@@ -1,7 +1,13 @@
-# Archives : l'entrée en 3D
+# Archives : les essais en 3D
 
-- `monde-stylise.ts` : toute première version 3D stylisée (Three.js),
-  remplacée par la version actuelle (`src/scripts/monde.ts`).
+Le monde en 3D a été retiré du site en novembre 2026 à la demande de l'équipe
+(« pas très beau »). La graphiste va dessiner le monde en illustrations.
 
-La version actuelle (rendu « peinture », étangs, champignons, château de
-Briquemault) est décrite dans `CLAUDE.md`, section « L'entrée dans le monde ».
+- `monde-peinture.ts` : dernière version (Three.js, rendu « peinture » :
+  étangs, champignons, ragondins magiques, château de Briquemault).
+- `monde-stylise.ts` : toute première version 3D stylisée.
+
+Pour les réutiliser : réinstaller `three`, `@dgreenheck/ez-tree` et
+`@pmndrs/assets`, récupérer les ressources `public/monde/` dans l'historique
+git (commit « Accueil identique à l'affiche… » ou antérieur), remettre le
+fichier dans `src/scripts/` et l'appeler depuis `src/pages/index.astro`.

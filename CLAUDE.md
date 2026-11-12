@@ -77,11 +77,12 @@ Confidentialité. Menus et liens externes : `src/data/site.ts`.
 
 | Page | Fichier |
 | --- | --- |
-| Accueil (entrée 3D, univers, programme, retour 2026, solidarité) | `src/pages/index.astro` |
+| Accueil : uniquement le miroir de l'affiche (voir plus bas) | `src/pages/index.astro` |
 | Programmation (3 jours, plateaux musique/magie, artistes « mystère ») | `programmation.astro` |
 | Billetterie (formules, gratuités, module du prestataire, FAQ) | `billetterie.astro` |
 | Cashless (étapes, recharge en ligne, FAQ) | `cashless.astro` |
-| Infos pratiques (dates, accès, camping, accessibilité, sur place, FAQ, contact) | `infos.astro` |
+| Infos pratiques (le festival en bref, dates, accès, camping, accessibilité, sur place, FAQ, contact) | `infos.astro` |
+| Venir au festival (temps de trajet, train, covoiturage, FAQ) | `venir.astro` |
 | Devenir bénévole | `benevoles.astro` |
 | Devenir partenaire (niveaux Lanterne / Étoile / Portail, provisoires) | `partenaires.astro` |
 | Le Domaine de Briquemault | `domaine.astro` |
@@ -93,83 +94,48 @@ outils externes : renseigner leurs liens dans `liensExternes` (`src/data/site.ts
 les boutons s'activent tout seuls. Les éléments à compléter sont marqués avec
 la classe `a-completer` (chercher `a-completer` dans `src/`).
 
-## L'entrée dans le monde (page d'accueil)
+## La page d'accueil : le miroir
 
-- **Demande de l'équipe** : la première chose qu'on voit est le **miroir de
-  la graphiste** (cadre doré) ; quand on clique dessus, on entre dans le monde
-  des Ragondins Farfelus. Couleurs **vert profond + rose clair**, site **très
-  bien référencé**. Le ragondin farfelu est l'image du festival.
-- **Historique des essais** : V2 (monde 3D violet, champignons, cartes) =
-  base retenue. Refusés : la version « berges du Loing » vue du pont, puis la
-  version en vraies photos (« pas une vraie photo de ragondin »). Ensuite :
-  « pas assez en mode dessiné » → rendu **peinture numérique**, dans
-  l'ambiance des images d'inspiration envoyées par l'équipe (forêt de
-  champignons lumineux reflétée dans l'eau, lampions, îles flottantes, lune).
-- **Décision (novembre 2026)** : l'accueil est **exactement l'affiche de la
-  graphiste**, au pixel près : miroir doré, sol en damier, escalier et textes
-  aux positions relevées sur l'affiche de 848 × 1200 (voir les commentaires de
-  `.affiche` dans `index.astro`). Dans l'affiche, le miroir n'est pas tout à
-  fait centré : marches et damier sont alignés sur le bas du miroir, un peu à
-  droite. C'est voulu, ne pas « recentrer ».
-- **Dans le miroir, seul le titre (le logo)**, un peu plus grand que sur
-  l'affiche et centré dans l'ouverture, « comme s'il n'y avait que ça d'écrit »
-  (demande de l'équipe). Les autres infos (badge, lieu, dates, genres, têtes
-  d'affiche) restent dans le HTML et s'affichent une fois dans le monde ; elles
-  sont aussi dans « Le festival en bref » plus bas.
-- **On n'entre dans le monde qu'en cliquant (ou touchant) le miroir** : rien
-  d'automatique, pas de saut direct au monde en revenant sur l'accueil. Le
-  miroir est un vrai bouton (clavier, lecteur d'écran) ; une petite phrase
-  invite à cliquer.
+- **Demande de l'équipe (novembre 2026)** : l'accueil, c'est **uniquement le
+  miroir** de l'affiche de la graphiste et la phrase « Cliquez sur le miroir
+  pour entrer » (« Touchez » sur téléphone). Pas d'en-tête, pas de pied de
+  page, pas de défilement, pas de boutons (`Base` avec `epure`).
+- L'affiche est reproduite **au pixel près** : miroir doré, sol en damier,
+  escalier, positions relevées sur l'affiche de 848 × 1200 (commentaires de
+  `.affiche` dans `index.astro`). Dans le miroir, **seul le titre** (le logo),
+  un peu plus grand que sur l'affiche, centré dans l'ouverture.
+- Dans l'affiche, le miroir n'est pas tout à fait centré : marches et damier
+  sont alignés sur le bas du miroir, un peu à droite. Pour que les carreaux
+  soient bien droits, l'affiche est décalée de 1,63 % : le point de fuite du
+  damier et l'escalier tombent pile au milieu de l'écran. Ne pas « recentrer »
+  le miroir.
 - Le sol est un SVG extensible qui reproduit celui de la graphiste (mêmes
   couleurs, même perspective, même découpe) pour remplir tout l'écran :
   `python3 -I outils/sol-damier.py public/brouillon/sol-damier.webp public/brouillon/sol-damier.svg`
   (à relancer si la graphiste change son sol).
+- **L'eau du miroir** (`src/scripts/miroir-eau.ts`, WebGL sans bibliothèque) :
+  au survol ou au toucher, de petites vagues partent comme un caillou tombé
+  dans l'eau et le titre ondule ; une goutte tombe aussi toute seule de temps
+  en temps. Le canvas redessine le dégradé, le grain et le logo (à
+  l'identique), découpé à la forme de l'ouverture (`cadre-or.json`).
+- **Entrée** : uniquement en cliquant ou touchant le miroir (vrai bouton,
+  clavier compris). Grosse vague, l'affiche grandit autour du miroir et tout
+  s'efface dans le noir, en environ 1,1 s.
+- **De l'autre côté du miroir : un fond noir**, pour l'instant. **Toute la 3D
+  a été retirée** à la demande de l'équipe (« pas très beau ») ; la dernière
+  version est archivée dans `archives/3d/monde-peinture.ts` (voir le LISEZMOI).
+  La graphiste va dessiner le monde **en illustrations par calques**, que le
+  site animera (profondeur, lucioles, reflets, brume, personnages).
+- Sans JavaScript : l'affiche seule. Avec « réduire les animations » : pas de
+  vagues ni de zoom, le noir arrive en fondu.
 - Note : l'affiche de la graphiste indique « 42350 », le bon code postal est
-  **45230** (le site affiche 45230).
-- Fonctionnement (`src/pages/index.astro` + `src/scripts/monde.ts`, Three.js) :
-  - **affiche** : l'affiche seule ; la 3D se prépare en arrière-plan sans
-    calculer d'image (`enAttente`, économise la batterie) ;
-  - **chargement** : clic avant que la 3D soit prête, le miroir scintille ;
-  - **traversée** : le monde apparaît dans l'ouverture du miroir (masque tiré
-    de `cadre-or.json`), l'affiche grandit autour de l'ouverture (on monte
-    l'escalier et on plonge dans le miroir) pendant que la caméra avance ;
-  - **monde** : chemin en damier entre deux étangs miroirs, forêt de
-    champignons géants (chapeaux violets, lamelles orange lumineuses),
-    ragondins farfelus magiques (chapeau haut-de-forme, baguette, pelage à
-    constellations) sur des nénuphars géants, libellules, papillons, colibris,
-    fritillaires à damier, œufs à pois, lampions-champignons, cartes à jouer,
-    lucioles ; au loin le Loing et son pont, la scène et sa sphère armillaire
-    dorée, le **château de Briquemault** (d'après la photo de l'équipe : deux
-    tours rondes en ruine sans toit, mur en briques à arcades, douves à
-    nénuphars, lavande, peupliers), une île flottante et sa cascade, des
-    poissons fluo, une grande lune.
-  - Par-dessus : l'« affiche » centrée (logo, festival de musique et de magie,
-    Domaine | dates, genres, « Têtes d'affiche dévoilées très bientôt » tant
-    qu'aucun nom n'est confirmé).
-  - Filtre peinture en fin de chaîne (`PassePeinture`) ; reflets : un seul
-    `Reflector` pour le Loing, les douves et les étangs (`construireEau`).
-  - Sans JavaScript, sans WebGL ou avec « réduire les animations » : l'affiche
-    reste seule (état « statique »), tout le texte est dans le HTML pour
-    Google. `?qualite=haute|basse` pour forcer la qualité de la 3D.
+  **45230**.
 - Inspirations envoyées par l'équipe (ne pas utiliser telles quelles, droits
   inconnus) : forêt de champignons lumineux, îles flottantes, jardin au clair
   de lune, martin-pêcheur, pic noir, effraie, renard, ragondin, fritillaire,
-  citron, caloptéryx, lucioles, photo du château (ruines du domaine).
-- Rien n'est copié : on reprend une ambiance, pas une image.
-- **Avis de l'équipe sur la 3D** : « pas très beau », veut un rendu « fait par
-  un graphiste ». Piste recommandée : le monde **dessiné par un ou une
-  illustratrice en calques**, que le site anime (profondeur, lucioles, reflets,
-  brume, personnages qui bougent). **L'équipe a choisi cette piste** : la
-  graphiste va faire des illustrations. La 3D actuelle reste en attendant.
-- L'ancienne version 3D stylisée est dans `archives/3d/` (voir son LISEZMOI).
+  citron, caloptéryx, lucioles, photo du château (ruines du domaine : deux
+  tours rondes sans toit, mur en briques à arcades, douves, lavande, peupliers).
 - Pas de son pour l'instant (à décider, droits sur la musique nécessaires).
-
-## Ressources 3D
-
-- `public/monde/` : herbe, fleurs, rochers et textures de sol (démo ez-tree,
-  MIT) ; crédits dans `public/monde/CREDITS.md`. Arbres générés par ez-tree,
-  HDRI Poly Haven (CC0). Tout le reste (champignons, ragondins, château,
-  animaux) est dessiné par le code.
 
 ## Référencement et « GEO » (priorité de l'équipe)
 
@@ -182,8 +148,11 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
   Paris, l'Île-de-France, le Loiret, l'Yonne et le Cher (données `trajets`
   dans `site.ts`), train, covoiturage, FAQ. **Temps de trajet, gares et
   navettes : estimations à faire valider par l'équipe.**
-- Accueil : phrase d'introduction factuelle (qui, quoi, où, quand) et fiche
-  « Le festival en bref », faciles à citer par Google et les assistants IA.
+- **Accueil épuré = moins de contenu pour Google** (choix assumé de l'équipe).
+  Compensation : titre, description et données structurées complètes, une
+  courte description lue par les lecteurs d'écran, des liens « accès direct »
+  vers toutes les pages qui n'apparaissent qu'au clavier, et la fiche
+  « Le festival en bref » déplacée sur la page Infos pratiques.
 - Données structurées (`site.ts`) : `WebSite` + `Organization` (accueil),
   `Festival` avec les trois jours, lieu géolocalisé, `Place` (domaine, venir),
   `FAQPage` (infos, venir), fil d'Ariane sur toutes les pages intérieures.
@@ -195,6 +164,8 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
 - Plan du site généré automatiquement (`@astrojs/sitemap`, avec date de mise
   à jour).
 - Logo de l'accueil en deux tailles (`srcset`) pour charger vite sur téléphone.
+- Quand le monde illustré arrivera, y remettre des liens visibles vers les
+  pages (billetterie, programmation…) : c'est important pour le référencement.
 - Adresses officielles avec barre finale : les liens internes s'écrivent
   `/programmation/`, jamais `/programmation`.
 - Adresse du site provisoire `https://lesragondinsfarfelus.fr` : à corriger
@@ -219,8 +190,7 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
 - Aperçu partageable (Artifact) : `npm run build` puis
   `python3 -I outils/apercu.py dist <dossier>` produit des pages autonomes
   (CSS et JS intégrés, images publiées à côté).
-- Poids : environ 8 Mo en tout ; la 3D (Three.js + ressources du monde) ne se
-  charge que sur l'accueil, après l'affichage du texte.
+- Poids : environ 1,3 Mo en tout (plus de 3D ni de Three.js).
 - `public/brouillon/` : visuels provisoires de la graphiste. **Ce dossier est
   exclu du dépôt** (`.gitignore`) tant que le dépôt est public et que les
   visuels ne sont pas validés. Il faut les y remettre à la main pour voir le

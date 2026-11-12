@@ -21,6 +21,8 @@ interface Props {
   nomCourt?: string;
   /** false pour les pages à ne pas référencer (404) */
   indexer?: boolean;
+  /** Page « nue » : ni en-tête ni pied de page (l'accueil, qui n'est que le miroir) */
+  epure?: boolean;
 }
 
 const {
@@ -31,6 +33,7 @@ const {
   accueil = false,
   nomCourt,
   indexer = true,
+  epure = false,
 } = Astro.props;
 
 const titreComplet = accueil ? titre : `${titre} · ${festival.nom}`;
@@ -87,12 +90,12 @@ const { latitude, longitude } = festival.lieu;
 
     {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
   </head>
-  <body>
-    <a class="lien-evitement" href="#contenu">Aller au contenu</a>
-    <Entete />
+  <body class:list={{ epure }}>
+    {!epure && <a class="lien-evitement" href="#contenu">Aller au contenu</a>}
+    {!epure && <Entete />}
     <main id="contenu">
       <slot />
     </main>
-    <PiedDePage />
+    {!epure && <PiedDePage />}
   </body>
 </html>
