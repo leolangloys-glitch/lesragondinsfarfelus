@@ -1,55 +1,78 @@
 ---
 import Base from "../layouts/Base.astro";
-import { evenementSchema } from "../data/site";
+import { evenementSchema, festival } from "../data/site";
 
-// L'accueil n'est que le miroir de l'affiche : rien d'autre à voir ni à faire
-// que « Cliquez sur le miroir pour entrer » (demande de l'équipe).
-// Pour Google, les lecteurs d'écran et la navigation au clavier, la page garde
-// son titre, une courte description (lue par les lecteurs d'écran) et des liens
-// d'accès direct qui n'apparaissent qu'au clavier.
-const accesDirect = [
-  { libelle: "Programmation", href: "/programmation/" },
-  { libelle: "Billetterie", href: "/billetterie/" },
-  { libelle: "Infos pratiques", href: "/infos/" },
-  { libelle: "Venir au festival", href: "/venir/" },
-  { libelle: "Cashless", href: "/cashless/" },
-  { libelle: "Devenir bénévole", href: "/benevoles/" },
-  { libelle: "Devenir partenaire", href: "/partenaires/" },
-  { libelle: "Le Domaine de Briquemault", href: "/domaine/" },
-  { libelle: "Espace presse", href: "/presse/" },
+// Textes provisoires : à relire et valider par l'équipe avant la mise en ligne.
+const univers = [
+  {
+    titre: "La musique",
+    texte:
+      "Jazz, jazz manouche, rock, pop et DJ sets jusqu'au bout de la nuit, sur plusieurs scènes nichées dans le domaine.",
+    icone: "musique",
+  },
+  {
+    titre: "La magie",
+    texte:
+      "De grands numéros d'illusion sur scène et des magiciens qui surgissent au milieu du public, à quelques centimètres de vous.",
+    icone: "magie",
+  },
+  {
+    titre: "La nature",
+    texte:
+      "Dix hectares de nature préservée au bord du Loing, transformés le temps d'un week-end en monde onirique.",
+    icone: "nature",
+  },
+];
+
+const jours = [
+  {
+    jour: "Vendredi",
+    date: "28 mai",
+    titre: "L'éveil",
+    texte: "Ouverture du camping, premiers concerts en fin d'après-midi, puis DJ sets jusque tard dans la nuit.",
+  },
+  {
+    jour: "Samedi",
+    date: "29 mai",
+    titre: "La grande nuit",
+    texte: "Magiciens sur scène et en close-up, concerts toute la journée et grande soirée avec nos têtes d'affiche.",
+  },
+  {
+    jour: "Dimanche",
+    date: "30 mai",
+    titre: "La journée des familles",
+    texte: "Artistes pour les enfants, magie à hauteur d'yeux, jeux et animations pour tous les âges.",
+  },
 ];
 ---
 
 <Base
   accueil
-  epure
   titre="Les Ragondins Farfelus · Festival musique et magie, Loiret, mai 2027"
   description="Festival de musique et de magie les 28, 29 et 30 mai 2027 au Domaine de Briquemault (Loiret), à 1 h 30 de Paris : concerts, DJ sets, magiciens, camping."
   donneesStructurees={evenementSchema()}
 >
-  <nav class="acces-direct" aria-label="Accès direct aux pages du site">
-    <ul>
-      {
-        accesDirect.map((lien) => (
-          <li>
-            <a href={lien.href}>{lien.libelle}</a>
-          </li>
-        ))
-      }
-    </ul>
-  </nav>
-
   <!--
-    L'affiche de la graphiste, au pixel près (positions relevées sur l'affiche
-    de 848 × 1200), avec seulement le titre dans le miroir.
-    États (attribut data-etat) :
-      statique  : l'affiche seule (sans JavaScript)
-      affiche   : le miroir est cliquable ; l'eau du miroir ondule au survol
-      traversee : vagues, puis on plonge dans le miroir (rapide)
-      monde     : de l'autre côté du miroir (pour l'instant : un fond noir,
-                  en attendant les illustrations de la graphiste)
+    Avant d'afficher quoi que ce soit, on décide si l'on montre l'entrée par le
+    miroir : oui à la première arrivée sur le site (pendant la visite, revenir à
+    l'accueil depuis une autre page mène directement au site). Sans JavaScript,
+    pas de miroir : le site s'affiche directement.
   -->
-  <section class="ouverture" data-etat="statique" aria-labelledby="titre-festival">
+  <script is:inline slot="tete">
+    try {
+      if (sessionStorage.getItem("rf-entre") !== "1") document.documentElement.classList.add("avec-miroir");
+    } catch (e) {
+      document.documentElement.classList.add("avec-miroir");
+    }
+  </script>
+
+  <!-- ===================== L'ENTRÉE : LE MIROIR DE L'AFFICHE ===================== -->
+  <!--
+    L'affiche de la graphiste au pixel près, avec seulement le titre dans le miroir.
+    États (data-etat) : affiche (on attend le clic) · traversee (vagues, on plonge
+    dans le miroir, tout passe au noir) ; ensuite l'entrée disparaît et le site apparaît.
+  -->
+  <div class="entree" data-etat="affiche">
     <div class="affiche">
       <img class="affiche__sol" src="/brouillon/sol-damier.svg" alt="" width="6660" height="1596" />
       <canvas class="affiche__eau" aria-hidden="true"></canvas>
@@ -64,25 +87,21 @@ const accesDirect = [
       <img class="affiche__escalier" src="/brouillon/escalier.webp" alt="" width="419" height="244" />
 
       <div class="portail">
-        <h1 id="titre-festival" class="portail__logo">
+        <div class="portail__logo">
           <img
             src="/brouillon/logo.webp"
             srcset="/brouillon/logo-petit.webp 564w, /brouillon/logo.webp 1200w"
             sizes="(max-width: 700px) 70vw, 540px"
-            alt="Les Ragondins Farfelus, festival de musique et de magie dans le Loiret"
+            alt=""
             width="1200"
             height="717"
             fetchpriority="high"
           />
-        </h1>
-        <p class="sr-only">
-          Festival de musique et de magie, les 28, 29 et 30 mai 2027 au Domaine de Briquemault, à
-          Sainte-Geneviève-des-Bois, dans le Loiret.
-        </p>
+        </div>
       </div>
 
       <button class="affiche__miroir" type="button" hidden>
-        <span class="sr-only">Entrer dans le miroir</span>
+        <span class="sr-only">Entrer dans le site des Ragondins Farfelus</span>
       </button>
 
       <p class="affiche__indice" hidden aria-hidden="true">
@@ -92,23 +111,268 @@ const accesDirect = [
     </div>
 
     <div class="voile-noir" aria-hidden="true"></div>
+  </div>
+
+  <!-- ===================== LE HAUT DE L'ACCUEIL (fond noir) ===================== -->
+  <section class="haut" aria-labelledby="titre-festival">
+    <div class="portail">
+      <h1 id="titre-festival" class="portail__logo" tabindex="-1">
+        <img
+          src="/brouillon/logo.webp"
+          srcset="/brouillon/logo-petit.webp 564w, /brouillon/logo.webp 1200w"
+          sizes="(max-width: 700px) 80vw, 500px"
+          alt="Les Ragondins Farfelus, festival de musique et de magie dans le Loiret"
+          width="1200"
+          height="717"
+        />
+      </h1>
+      <p class="portail__badge">Festival de musique et de magie</p>
+      <div class="portail__infos">
+        <p class="portail__lieu">
+          Domaine de Briquemault
+          <span>45230 Sainte-Geneviève-des-Bois</span>
+        </p>
+        <p class="portail__dates">
+          <span><time datetime="2027-05-28">28</time>-29-<time datetime="2027-05-30">30</time></span>
+          <span>mai 2027</span>
+        </p>
+      </div>
+      <p class="portail__genres">Magie · DJ sets · Concerts jazz et rock</p>
+      <p class="portail__affiche">Têtes d'affiche dévoilées très bientôt</p>
+    </div>
+
+    <div class="haut__actions">
+      <a class="bouton bouton--rose" href="/billetterie/">Billetterie</a>
+      <a class="bouton bouton--contour" href="/programmation/">Découvrir la programmation</a>
+    </div>
+
+    <a class="haut__suite" href="#experience" aria-label="Découvrir le festival">
+      <span aria-hidden="true"></span>
+    </a>
+  </section>
+
+  <!-- ===================== L'EXPÉRIENCE ===================== -->
+  <section class="section experience" id="experience" aria-labelledby="titre-experience">
+    <div class="contenu">
+      <span class="surtitre">Le festival</span>
+      <h2 id="titre-experience">Là où la musique rencontre l'illusion</h2>
+      <p class="intro">
+        <strong>Les Ragondins Farfelus</strong> est un festival de musique et de magie qui se tient les
+        28, 29 et 30 mai 2027 au Domaine de Briquemault, à Sainte-Geneviève-des-Bois, dans le Loiret,
+        à 1&nbsp;h&nbsp;30 de Paris. Un monde mystérieux, onirique et hors du temps qui s'éveille une
+        fois par an&nbsp;: trois jours d'expérience immersive entre nature, musique puissante et magie,
+        au profit de l'association Handi'Chiens.
+      </p>
+
+      <section class="en-bref" aria-labelledby="titre-en-bref">
+        <h3 id="titre-en-bref">Le festival en bref</h3>
+        <dl>
+          <div><dt>Quoi</dt><dd>Festival de musique (jazz, jazz manouche, rock, pop, DJ sets) et de magie (scène et close-up)</dd></div>
+          <div><dt>Quand</dt><dd>Vendredi 28, samedi 29 et dimanche 30 mai 2027 · 2<sup>e</sup> édition</dd></div>
+          <div><dt>Où</dt><dd>{festival.lieu.nom}, {festival.lieu.codePostal} {festival.lieu.commune} (Loiret, Centre-Val de Loire)</dd></div>
+          <div><dt>À combien</dt><dd>1&nbsp;h&nbsp;30 de Paris, 1&nbsp;h&nbsp;15 d'Orléans, 25&nbsp;min de Montargis et de Gien · <a href="/venir/">Comment venir</a></dd></div>
+          <div><dt>Pour qui</dt><dd>Tout public&nbsp;; journée des familles le dimanche&nbsp;; entrée gratuite pour les moins de 11&nbsp;ans et les personnes en situation de handicap</dd></div>
+          <div><dt>Dormir</dt><dd>Camping sur place dès le vendredi après-midi</dd></div>
+          <div><dt>Pour la bonne cause</dt><dd>Au profit de l'association Handi'Chiens</dd></div>
+        </dl>
+      </section>
+
+      <ul class="arches">
+        {
+          univers.map((u) => (
+            <li class="arche">
+              <span class="arche__icone" aria-hidden="true">
+                {u.icone === "musique" && (
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 36V10l20-4v26" />
+                    <circle cx="13" cy="36" r="5" />
+                    <circle cx="33" cy="32" r="5" />
+                  </svg>
+                )}
+                {u.icone === "magie" && (
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M24 4c1.5 9 4 11.5 13 13-9 1.5-11.5 4-13 13-1.5-9-4-11.5-13-13 9-1.5 11.5-4 13-13Z" />
+                    <path d="M38 30c.7 4 1.8 5.2 6 6-4.2.8-5.3 2-6 6-.7-4-1.8-5.2-6-6 4.2-.8 5.3-2 6-6Z" />
+                  </svg>
+                )}
+                {u.icone === "nature" && (
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 40C10 20 22 8 40 8c0 18-12 30-30 32Z" />
+                    <path d="M10 40 30 18" />
+                  </svg>
+                )}
+              </span>
+              <h3>{u.titre}</h3>
+              <p>{u.texte}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== PROGRAMME ===================== -->
+  <section class="section programme" id="programme" aria-labelledby="titre-programme">
+    <div class="contenu">
+      <span class="surtitre">Programmation</span>
+      <h2 id="titre-programme">Trois jours, trois ambiances</h2>
+      <p class="intro">Les artistes seront dévoilés au fil des semaines. Restez à l'affût&nbsp;!</p>
+
+      <ol class="jours">
+        {
+          jours.map((j) => (
+            <li class="jour">
+              <p class="jour__date">
+                <span class="jour__nom">{j.jour}</span>
+                <span class="texte-or">{j.date}</span>
+              </p>
+              <h3>{j.titre}</h3>
+              <p>{j.texte}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="boutons">
+        <a class="bouton bouton--contour" href="/programmation/">Toute la programmation</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== BILLETTERIE ===================== -->
+  <section class="section billetterie" aria-labelledby="titre-billetterie">
+    <div class="contenu billetterie__carte">
+      <div>
+        <span class="surtitre">Billetterie</span>
+        <h2 id="titre-billetterie">Ouverture prochaine</h2>
+        <p>
+          Pass jour, pass 3 jours, camping : toutes les formules seront disponibles à l'ouverture de
+          la billetterie.
+        </p>
+        <div class="boutons">
+          <a class="bouton bouton--rose" href="/billetterie/">Voir les formules</a>
+        </div>
+      </div>
+      <p class="billetterie__gratuit">
+        <strong>Entrée gratuite</strong> pour les moins de 11&nbsp;ans et les personnes en situation
+        de handicap.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== RETOUR SUR 2026 ===================== -->
+  <section class="section retour" aria-labelledby="titre-retour">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Retour sur 2026</span>
+        <h2 id="titre-retour">La première fois que le portail s'est ouvert</h2>
+        <p class="intro">
+          Les 30 et 31 mai 2026, le Domaine de Briquemault accueillait la toute première édition des
+          Ragondins Farfelus. Magie, jazz, rock, guinguette et DJ sets&nbsp;: retour en images.
+        </p>
+      </div>
+      <ul class="retour__photos" aria-label="Photos de l'édition 2026 (à venir)">
+        <li><span>Photo à venir</span></li>
+        <li><span>Photo à venir</span></li>
+        <li><span>Photo à venir</span></li>
+        <li><span>Vidéo à venir</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== SOLIDARITÉ ===================== -->
+  <section class="section solidarite" aria-labelledby="titre-solidarite">
+    <div class="contenu solidarite__grille">
+      <div>
+        <span class="surtitre">Un festival solidaire</span>
+        <h2 id="titre-solidarite">Au profit de Handi'Chiens</h2>
+      </div>
+      <div>
+        <p class="intro">
+          Les Ragondins Farfelus soutiennent l'association Handi'Chiens, qui éduque et remet
+          gratuitement des chiens d'assistance à des personnes en situation de handicap.
+        </p>
+        <p>
+          Chaque billet, chaque verre partagé au bar contribue à offrir un compagnon à quatre pattes
+          à celles et ceux qui en ont besoin.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LE LIEU ===================== -->
+  <section class="section lieu" aria-labelledby="titre-lieu">
+    <div class="contenu">
+      <span class="surtitre">Le lieu</span>
+      <h2 id="titre-lieu">Le Domaine de Briquemault</h2>
+      <p class="intro">
+        Un domaine chargé d'histoire au cœur du Loiret, entre Montargis et Gien, avec ses ruines de
+        château fort, son orangerie et sa guinguette, qui ouvre ses portes au festival le temps d'un
+        week-end. À 1&nbsp;h&nbsp;30 de Paris et 1&nbsp;h&nbsp;15 d'Orléans.
+      </p>
+
+      <dl class="chiffres">
+        <div>
+          <dt>Hectares de nature</dt>
+          <dd class="texte-or">10</dd>
+        </div>
+        <div>
+          <dt>De Paris</dt>
+          <dd class="texte-or">1 h 30</dd>
+        </div>
+        <div>
+          <dt>Jours de festival</dt>
+          <dd class="texte-or">3</dd>
+        </div>
+      </dl>
+
+      <div class="boutons">
+        <a class="bouton bouton--contour" href="/domaine/">Découvrir le domaine</a>
+        <a class="bouton bouton--contour" href="/venir/">Comment venir</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== REJOINDRE L'AVENTURE ===================== -->
+  <section class="rejoindre" aria-labelledby="titre-rejoindre">
+    <div class="contenu rejoindre__contenu">
+      <div>
+        <h2 id="titre-rejoindre">Rejoignez l'aventure</h2>
+        <p>
+          Bénévoles, entreprises, médias : il y a mille façons de faire partie du monde des
+          Ragondins.
+        </p>
+      </div>
+      <div class="rejoindre__boutons">
+        <a class="bouton bouton--vert" href="/benevoles/">Devenir bénévole</a>
+        <a class="bouton bouton--vert" href="/partenaires/">Devenir partenaire</a>
+      </div>
+    </div>
   </section>
 </Base>
 
 <script>
   import { creerEau, type Eau } from "../scripts/miroir-eau";
 
-  const ouverture = document.querySelector<HTMLElement>(".ouverture");
+  const racine = document.documentElement;
+  const entree = document.querySelector<HTMLElement>(".entree");
   const affiche = document.querySelector<HTMLElement>(".affiche");
   const cadre = document.querySelector<HTMLImageElement>(".affiche__cadre");
   const miroir = document.querySelector<HTMLButtonElement>(".affiche__miroir");
   const indice = document.querySelector<HTMLElement>(".affiche__indice");
   const canvas = document.querySelector<HTMLCanvasElement>(".affiche__eau");
-  const logo = document.querySelector<HTMLImageElement>(".portail__logo img");
+  const logo = document.querySelector<HTMLImageElement>(".affiche .portail__logo img");
   const voile = document.querySelector<HTMLElement>(".voile-noir");
+  const titre = document.querySelector<HTMLElement>("#titre-festival");
   const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   type Trou = { cx: number; cy: number; l: number; h: number };
+
+  // Tout ce qui est derrière l'entrée est mis de côté (clavier, lecteurs d'écran)
+  // tant qu'on n'est pas passé par le miroir
+  const derriere = () => [
+    ...Array.from(document.querySelectorAll<HTMLElement>("body > *:not(main):not(script)")),
+    ...Array.from(document.querySelectorAll<HTMLElement>("main > *:not(.entree)")),
+  ];
 
   // L'ouverture du miroir (le plus grand « trou » du cadre) : masque de l'eau
   // et centre du zoom quand on entre
@@ -133,25 +397,30 @@ const accesDirect = [
   }
 
   async function demarrer() {
-    if (!ouverture || !affiche || !cadre || !miroir || !canvas || !logo || !voile) return;
+    if (!racine.classList.contains("avec-miroir")) return;
+    if (!entree || !affiche || !cadre || !miroir || !canvas || !logo || !voile) {
+      racine.classList.remove("avec-miroir");
+      return;
+    }
     let eau: Eau | null = null;
     let trou: Trou | null = null;
-
-    ouverture.dataset.etat = "affiche";
+    const caches = derriere();
+    caches.forEach((el) => (el.inert = true));
     miroir.hidden = false;
     if (indice) indice.hidden = false;
 
     // On plonge dans le miroir : vagues, l'affiche grandit autour de
-    // l'ouverture, et tout s'efface dans le noir. Le tout en un peu plus d'une seconde.
+    // l'ouverture, tout passe au noir, puis le site apparaît.
     function plonger(x?: number, y?: number) {
-      if (ouverture!.dataset.etat !== "affiche") return;
-      ouverture!.dataset.etat = "traversee";
+      if (entree!.dataset.etat !== "affiche") return;
+      entree!.dataset.etat = "traversee";
       if (eau) {
         if (x !== undefined && y !== undefined) eau.goutte(x, y, 1.8);
         else eau.goutteAuCentre(1.8);
       }
       if (reduit) {
-        setTimeout(arriver, 300);
+        voile!.style.opacity = "1";
+        setTimeout(entrerDansLeSite, 300);
         return;
       }
       const rc = cadre!.getBoundingClientRect();
@@ -169,17 +438,25 @@ const accesDirect = [
         affiche!.style.transform = `scale(${Math.pow(echelleFin, Math.pow(k, 2))})`;
         voile!.style.opacity = String(Math.min(1, Math.max(0, (k - 0.45) / 0.5)));
         if (k < 1) requestAnimationFrame(pas);
-        else arriver();
+        else entrerDansLeSite();
       }
       requestAnimationFrame(pas);
     }
 
-    function arriver() {
-      ouverture!.dataset.etat = "monde";
-      affiche!.style.transform = "";
-      affiche!.style.transformOrigin = "";
-      voile!.style.opacity = "";
+    // De l'autre côté du miroir : le site, sur fond noir
+    function entrerDansLeSite() {
+      try {
+        sessionStorage.setItem("rf-entre", "1");
+      } catch {
+        /* navigation privée : sans importance */
+      }
       eau?.detruire();
+      window.scrollTo(0, 0);
+      caches.forEach((el) => (el.inert = false));
+      racine.classList.add("vient-d-entrer");
+      racine.classList.remove("avec-miroir");
+      titre?.focus({ preventScroll: true });
+      setTimeout(() => racine.classList.remove("vient-d-entrer"), 2500);
     }
 
     miroir.addEventListener("click", (e) => {
@@ -199,7 +476,7 @@ const accesDirect = [
         // Au survol, de petites vagues suivent la souris
         let derniere = 0;
         miroir.addEventListener("pointermove", (e) => {
-          if (e.pointerType !== "mouse" || ouverture.dataset.etat !== "affiche") return;
+          if (e.pointerType !== "mouse" || entree.dataset.etat !== "affiche") return;
           const t = performance.now();
           if (t - derniere < 90) return;
           derniere = t;
@@ -214,33 +491,33 @@ const accesDirect = [
 </script>
 
 <style is:global>
-  /* L'accueil tient sur un écran : on ne peut pas descendre */
-  html:has(body.epure),
-  body.epure {
-    height: 100%;
+  /* Pendant l'entrée par le miroir, la page ne défile pas */
+  html.avec-miroir,
+  html.avec-miroir body {
     overflow: hidden;
     overscroll-behavior: none;
-    background: #072223;
   }
 
-  /* De l'autre côté du miroir : un noir profond, sans le grain du site */
-  body.epure:has(.ouverture[data-etat="monde"])::before {
-    display: none;
+  /* Le site apparaît en douceur quand on sort du miroir */
+  html.vient-d-entrer .entete {
+    animation: rf-apparaitre 1.2s 0.3s ease-out both;
+  }
+
+  @keyframes rf-apparaitre {
+    from {
+      opacity: 0;
+    }
   }
 </style>
 
 <style>
-  /* ---------- L'affiche de la graphiste et le miroir ---------- */
-  /*
-    Toutes les positions sont celles de l'affiche (848 × 1200), en % de l'affiche.
-    --l : largeur de l'affiche. Sur téléphone, l'affiche déborde un peu à gauche et
-    à droite (là où il n'y a que du fond vert) pour que le miroir soit plus grand.
-  */
-  .ouverture {
+  /* ---------- L'entrée : plein écran par-dessus le site ---------- */
+  .entree {
     --l: min(calc(100vw / 0.86), calc(100svh * 0.685), 900px);
-    position: relative;
-    height: 100svh;
-    display: flex;
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
     align-items: center;
     justify-content: center;
     background: #072223;
@@ -248,6 +525,16 @@ const accesDirect = [
     isolation: isolate;
   }
 
+  :global(html.avec-miroir) .entree {
+    display: flex;
+  }
+
+  /* ---------- L'affiche de la graphiste et le miroir ---------- */
+  /*
+    Toutes les positions sont celles de l'affiche (848 × 1200), en % de l'affiche.
+    --l : largeur de l'affiche. Sur téléphone, l'affiche déborde un peu à gauche et
+    à droite (là où il n'y a que du fond vert) pour que le miroir soit plus grand.
+  */
   /*
     Le point de fuite du damier et l'escalier sont à 51,63 % de la largeur de
     l'affiche : on décale légèrement l'affiche pour qu'ils tombent pile au milieu
@@ -342,7 +629,7 @@ const accesDirect = [
   }
 
   /* Dans le miroir, seul le titre, un peu plus grand que sur l'affiche */
-  .portail {
+  .affiche .portail {
     position: absolute;
     z-index: 4;
     top: 49%;
@@ -359,12 +646,12 @@ const accesDirect = [
     opacity: 0;
   }
 
-  .portail__logo {
+  .affiche .portail__logo {
     margin: 0 0 0 1.06cqw;
     width: 60cqw;
   }
 
-  .portail__logo img {
+  .affiche .portail__logo img {
     display: block;
     width: 100%;
     height: auto;
@@ -443,28 +730,28 @@ const accesDirect = [
     pointer-events: none;
   }
 
-  .ouverture[data-etat="traversee"] .affiche {
+  .entree[data-etat="traversee"] .affiche {
     will-change: transform;
   }
 
-  .ouverture[data-etat="traversee"] .affiche__indice {
+  .entree[data-etat="traversee"] .affiche__indice {
     opacity: 0;
   }
 
-  .ouverture[data-etat="traversee"] .affiche__miroir {
+  .entree[data-etat="traversee"] .affiche__miroir {
     cursor: default;
   }
 
   /* ----- De l'autre côté du miroir : pour l'instant, le noir ----- */
-  .ouverture[data-etat="monde"] {
+  .entree[data-etat="monde"] {
     background: #000;
   }
 
-  .ouverture[data-etat="monde"] .affiche {
+  .entree[data-etat="monde"] .affiche {
     display: none;
   }
 
-  .ouverture[data-etat="monde"] .voile-noir {
+  .entree[data-etat="monde"] .voile-noir {
     opacity: 1;
     transition: none;
   }
@@ -478,44 +765,467 @@ const accesDirect = [
       transition: opacity 0.3s ease;
     }
 
-    .ouverture[data-etat="traversee"] .voile-noir {
+    .entree[data-etat="traversee"] .voile-noir {
       opacity: 1;
     }
-  }
-
-  /* ----- Accès direct (n'apparaît qu'au clavier) ----- */
-  .acces-direct ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .acces-direct a {
-    position: absolute;
-    left: -10000px;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-  }
-
-  .acces-direct a:focus {
-    position: fixed;
-    z-index: 100;
-    top: 1rem;
-    left: 1rem;
-    width: auto;
-    height: auto;
-    padding: 0.75rem 1.25rem;
-    border-radius: 999px;
-    background: var(--creme);
-    color: var(--vert);
-    font-weight: 600;
-    text-decoration: none;
   }
 
   @keyframes respirer {
     50% {
       opacity: 0.55;
     }
+  }
+
+  /* ---------- Le haut de l'accueil : le titre et les infos, sur fond noir ---------- */
+  .haut {
+    position: relative;
+    min-height: 100svh;
+    padding: calc(var(--hauteur-entete) + 1.5rem) var(--marge) 5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    text-align: center;
+  }
+
+  .haut .portail {
+    width: min(92vw, 640px);
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .haut .portail__logo {
+    margin: 0;
+    width: 78cqw;
+    outline: none;
+  }
+
+  .haut .portail__logo img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .portail__badge {
+    margin: 5cqw 0 0;
+    padding: 0.35em 1.1em;
+    border: 1.5px solid var(--creme);
+    border-radius: 999px;
+    font-size: clamp(0.72rem, 3.1cqw, 1rem);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .portail__infos {
+    margin-top: 5.5cqw;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 4cqw;
+    width: 100%;
+  }
+
+  .portail__infos::before {
+    content: "";
+    grid-column: 2;
+    grid-row: 1;
+    width: 1.5px;
+    height: 100%;
+    background: var(--creme);
+    opacity: 0.8;
+  }
+
+  .portail__lieu,
+  .portail__dates {
+    margin: 0;
+    grid-row: 1;
+    line-height: 1.05;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .portail__lieu {
+    grid-column: 1;
+    font-size: clamp(0.8rem, 4.1cqw, 1.35rem);
+  }
+
+  .portail__lieu span {
+    display: block;
+    margin-top: 0.45em;
+    font-size: max(0.6rem, 0.5em);
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+
+  .portail__dates {
+    grid-column: 3;
+  }
+
+  .portail__dates span:first-child {
+    display: block;
+    font-size: clamp(1.3rem, 8cqw, 2.7rem);
+    letter-spacing: 0.02em;
+  }
+
+  .portail__dates span:last-child {
+    font-size: clamp(0.85rem, 4.6cqw, 1.5rem);
+  }
+
+  .portail__genres {
+    margin: 5cqw 0 0;
+    text-wrap: balance;
+    font-size: clamp(0.72rem, 3.2cqw, 1rem);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--rose);
+  }
+
+  .portail__affiche {
+    margin: 3.5cqw 0 0;
+    font-size: clamp(0.8rem, 3.6cqw, 1.15rem);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--creme);
+  }
+
+  .haut__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1rem;
+    margin-top: 2.25rem;
+  }
+
+  .haut__actions .bouton--contour {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .haut__suite {
+    position: absolute;
+    bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-left: -1.375rem;
+    border-radius: 50%;
+    border: 1.5px solid rgba(243, 226, 176, 0.6);
+    animation: flotter 2.4s ease-in-out infinite;
+  }
+
+  .haut__suite span {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-right: 2px solid var(--creme);
+    border-bottom: 2px solid var(--creme);
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  /* En sortant du miroir, le titre puis les infos apparaissent dans le noir */
+  :global(html.vient-d-entrer) .haut .portail {
+    animation: apparition 1.4s ease-out both;
+  }
+
+  :global(html.vient-d-entrer) .haut__actions {
+    animation: monter 1s 0.6s ease-out both;
+  }
+
+  @keyframes apparition {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+  }
+
+  @keyframes monter {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+  }
+
+  @keyframes flotter {
+    50% {
+      transform: translateY(0.4rem);
+    }
+  }
+
+  /* ---------- L'expérience : trois arches ---------- */
+  .en-bref {
+    margin: 2.5rem auto 0;
+    max-width: 52rem;
+    padding: 1.5rem clamp(1.25rem, 4vw, 2rem);
+    border: 1px solid rgba(243, 226, 176, 0.25);
+    border-radius: 1.25rem;
+    background: rgba(8, 61, 61, 0.45);
+    text-align: left;
+  }
+
+  .en-bref h3 {
+    margin: 0 0 1rem;
+    font-size: 1.15rem;
+  }
+
+  .en-bref dl {
+    margin: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .en-bref div {
+    display: grid;
+    grid-template-columns: minmax(7rem, 9rem) 1fr;
+    gap: 0.25rem 1rem;
+  }
+
+  .en-bref dt {
+    font-weight: 700;
+    color: var(--rose);
+  }
+
+  .en-bref dd {
+    margin: 0;
+    color: var(--creme-doux);
+  }
+
+  @media (max-width: 34rem) {
+    .en-bref div {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .experience {
+    background: var(--vert-nuit);
+  }
+
+  .arches {
+    list-style: none;
+    margin: 3.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  }
+
+  .arche {
+    padding: 3rem 1.75rem 2rem;
+    text-align: center;
+    border: 1.5px solid rgba(243, 226, 176, 0.45);
+    border-radius: 999px 999px var(--rayon) var(--rayon);
+    background: linear-gradient(180deg, rgba(44, 122, 111, 0.28), rgba(8, 61, 61, 0.4));
+  }
+
+  .arche__icone {
+    display: inline-grid;
+    place-items: center;
+    width: 4rem;
+    height: 4rem;
+    margin-bottom: 1rem;
+    color: var(--or-clair);
+  }
+
+  .arche__icone svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .arche p {
+    color: var(--creme-doux);
+    margin: 0;
+  }
+
+  /* ---------- Programme ---------- */
+  .programme {
+    background: var(--vert);
+  }
+
+  .jours {
+    list-style: none;
+    margin: 3rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  }
+
+  .jour {
+    padding: 2rem 1.75rem;
+    border-radius: var(--rayon);
+    background: var(--vert-surface);
+    border-top: 4px solid var(--rose);
+  }
+
+  .jour__date {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    font-family: var(--font-titre);
+    font-size: 1.9rem;
+    font-weight: 600;
+  }
+
+  .jour__nom {
+    font-family: var(--font-texte);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--rose);
+  }
+
+  .jour p:last-child {
+    margin: 0;
+    color: var(--creme-doux);
+  }
+
+  /* ---------- Billetterie ---------- */
+  .billetterie {
+    background: var(--vert);
+    padding-top: 0;
+  }
+
+  .billetterie__carte {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    padding: clamp(2rem, 5vw, 3.5rem);
+    border-radius: var(--rayon);
+    border: 1.5px solid var(--or);
+    background: radial-gradient(ellipse at top left, rgba(44, 122, 111, 0.45), transparent 60%),
+      var(--vert-nuit);
+  }
+
+  .billetterie__carte p {
+    margin: 0;
+    color: var(--creme-doux);
+  }
+
+  .billetterie__gratuit {
+    padding: 1.5rem;
+    border-radius: var(--rayon);
+    background: rgba(255, 160, 203, 0.12);
+    border: 1px solid rgba(255, 160, 203, 0.5);
+    font-size: 1.1rem;
+  }
+
+  .billetterie__gratuit strong {
+    color: var(--rose);
+  }
+
+  /* ---------- Retour sur 2026 ---------- */
+  .retour {
+    background: var(--vert-nuit);
+  }
+
+  .retour__photos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  }
+
+  .retour__photos li {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 5;
+    border-radius: 999px 999px var(--rayon) var(--rayon);
+    border: 1.5px dashed rgba(243, 226, 176, 0.4);
+    background: radial-gradient(ellipse at 50% 30%, rgba(44, 122, 111, 0.45), rgba(8, 61, 61, 0.2));
+    color: var(--creme-doux);
+    font-size: 0.9rem;
+  }
+
+  /* ---------- Solidarité ---------- */
+  .solidarite {
+    background: var(--vert);
+  }
+
+  .solidarite__grille {
+    display: grid;
+    gap: 1.5rem 4rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    align-items: start;
+  }
+
+  .solidarite p:last-child {
+    color: var(--creme-doux);
+  }
+
+  /* ---------- Le lieu ---------- */
+  .lieu {
+    background:
+      radial-gradient(ellipse 60% 70% at 85% 30%, rgba(44, 122, 111, 0.5), transparent 70%),
+      var(--vert-nuit);
+  }
+
+  .chiffres {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 1.5rem;
+    margin: 3rem 0 0;
+  }
+
+  .chiffres div {
+    display: flex;
+    flex-direction: column-reverse;
+    border-left: 2px solid var(--rose);
+    padding-left: 1.25rem;
+  }
+
+  .chiffres dt {
+    color: var(--creme-doux);
+  }
+
+  .chiffres dd {
+    margin: 0;
+    font-family: var(--font-titre);
+    font-size: clamp(2.6rem, 6vw, 3.8rem);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  /* ---------- Rejoindre ---------- */
+  .rejoindre {
+    background: var(--rose);
+    color: var(--vert);
+    padding: clamp(3.5rem, 8vw, 5.5rem) var(--marge);
+  }
+
+  .rejoindre__contenu {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 3rem;
+  }
+
+  .rejoindre h2 {
+    margin-bottom: 0.25em;
+  }
+
+  .rejoindre p {
+    margin: 0;
+    max-width: 36rem;
+    font-size: 1.15rem;
+  }
+
+  .rejoindre__boutons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
   }
 </style>

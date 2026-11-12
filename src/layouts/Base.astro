@@ -89,6 +89,7 @@ const { latitude, longitude } = festival.lieu;
     <meta name="twitter:image" content={imageAbsolue} />
 
     {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
+    <slot name="tete" />
   </head>
   <body class:list={{ epure }}>
     {!epure && <a class="lien-evitement" href="#contenu">Aller au contenu</a>}

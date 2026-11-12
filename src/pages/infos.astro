@@ -48,7 +48,6 @@ const questions: Question[] = [
     intro="Comment venir, où dormir, que prévoir : voici tout ce qu'il faut savoir avant de franchir le portail."
   >
     <nav class="sommaire" aria-label="Sur cette page">
-      <a href="#en-bref">En bref</a>
       <a href="#dates">Dates</a>
       <a href="#venir">Venir</a>
       <a href="#camping">Camping</a>
@@ -58,32 +57,6 @@ const questions: Question[] = [
       <a href="#contact">Contact</a>
     </nav>
   </EnTetePage>
-
-  <section class="section fond-vert" id="en-bref" aria-labelledby="titre-en-bref">
-    <div class="contenu">
-      <div class="titre-section">
-        <span class="surtitre">Le festival</span>
-        <h2 id="titre-en-bref">Le festival en bref</h2>
-        <p class="intro">
-          <strong>Les Ragondins Farfelus</strong> est un festival de musique et de magie qui se tient
-          les 28, 29 et 30 mai 2027 au Domaine de Briquemault, à Sainte-Geneviève-des-Bois, dans le
-          Loiret, à 1&nbsp;h&nbsp;30 de Paris, au profit de l'association Handi'Chiens.
-        </p>
-      </div>
-    <div class="en-bref">
-      
-      <dl>
-        <div><dt>Quoi</dt><dd>Festival de musique (jazz, jazz manouche, rock, pop, DJ sets) et de magie (scène et close-up)</dd></div>
-        <div><dt>Quand</dt><dd>Vendredi 28, samedi 29 et dimanche 30 mai 2027 · 2<sup>e</sup> édition</dd></div>
-        <div><dt>Où</dt><dd>{festival.lieu.nom}, {festival.lieu.codePostal} {festival.lieu.commune} (Loiret, Centre-Val de Loire)</dd></div>
-        <div><dt>À combien</dt><dd>1&nbsp;h&nbsp;30 de Paris, 1&nbsp;h&nbsp;15 d'Orléans, 25&nbsp;min de Montargis et de Gien · <a href="/venir/">Comment venir</a></dd></div>
-        <div><dt>Pour qui</dt><dd>Tout public&nbsp;; journée des familles le dimanche&nbsp;; entrée gratuite pour les moins de 11&nbsp;ans et les personnes en situation de handicap</dd></div>
-        <div><dt>Dormir</dt><dd>Camping sur place dès le vendredi après-midi</dd></div>
-        <div><dt>Pour la bonne cause</dt><dd>Au profit de l'association Handi'Chiens</dd></div>
-      </dl>
-    </div>
-    </div>
-  </section>
 
   <section class="section fond-nuit" id="dates" aria-labelledby="titre-dates">
     <div class="contenu">
@@ -244,49 +217,6 @@ const questions: Question[] = [
 </Base>
 
 <style>
-  .en-bref {
-    margin: 2.5rem auto 0;
-    max-width: 52rem;
-    padding: 1.5rem clamp(1.25rem, 4vw, 2rem);
-    border: 1px solid rgba(243, 226, 176, 0.25);
-    border-radius: 1.25rem;
-    background: rgba(8, 61, 61, 0.45);
-    text-align: left;
-  }
-
-  .en-bref h3 {
-    margin: 0 0 1rem;
-    font-size: 1.15rem;
-  }
-
-  .en-bref dl {
-    margin: 0;
-    display: grid;
-    gap: 0.6rem;
-  }
-
-  .en-bref div {
-    display: grid;
-    grid-template-columns: minmax(7rem, 9rem) 1fr;
-    gap: 0.25rem 1rem;
-  }
-
-  .en-bref dt {
-    font-weight: 700;
-    color: var(--rose);
-  }
-
-  .en-bref dd {
-    margin: 0;
-    color: var(--creme-doux);
-  }
-
-  @media (max-width: 34rem) {
-    .en-bref div {
-      grid-template-columns: 1fr;
-    }
-  }
-
   .sommaire {
     display: flex;
     flex-wrap: wrap;

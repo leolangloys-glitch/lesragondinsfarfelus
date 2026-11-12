@@ -77,11 +77,11 @@ Confidentialité. Menus et liens externes : `src/data/site.ts`.
 
 | Page | Fichier |
 | --- | --- |
-| Accueil : uniquement le miroir de l'affiche (voir plus bas) | `src/pages/index.astro` |
+| Accueil : entrée par le miroir, puis le haut sur fond noir (titre, infos), le festival en bref, programme, billetterie, retour 2026, solidarité, le lieu | `src/pages/index.astro` |
 | Programmation (3 jours, plateaux musique/magie, artistes « mystère ») | `programmation.astro` |
 | Billetterie (formules, gratuités, module du prestataire, FAQ) | `billetterie.astro` |
 | Cashless (étapes, recharge en ligne, FAQ) | `cashless.astro` |
-| Infos pratiques (le festival en bref, dates, accès, camping, accessibilité, sur place, FAQ, contact) | `infos.astro` |
+| Infos pratiques (dates, accès, camping, accessibilité, sur place, FAQ, contact) | `infos.astro` |
 | Venir au festival (temps de trajet, train, covoiturage, FAQ) | `venir.astro` |
 | Devenir bénévole | `benevoles.astro` |
 | Devenir partenaire (niveaux Lanterne / Étoile / Portail, provisoires) | `partenaires.astro` |
@@ -94,12 +94,21 @@ outils externes : renseigner leurs liens dans `liensExternes` (`src/data/site.ts
 les boutons s'activent tout seuls. Les éléments à compléter sont marqués avec
 la classe `a-completer` (chercher `a-completer` dans `src/`).
 
-## La page d'accueil : le miroir
+## La page d'accueil : l'entrée par le miroir
 
-- **Demande de l'équipe (novembre 2026)** : l'accueil, c'est **uniquement le
-  miroir** de l'affiche de la graphiste et la phrase « Cliquez sur le miroir
-  pour entrer » (« Touchez » sur téléphone). Pas d'en-tête, pas de pied de
-  page, pas de défilement, pas de boutons (`Base` avec `epure`).
+- **Demande de l'équipe (novembre 2026)** : quand on arrive sur le site, on ne
+  voit **que le miroir** de l'affiche de la graphiste et la phrase « Cliquez sur
+  le miroir pour entrer » (« Touchez » sur téléphone) : pas de menu, pas de
+  défilement. **En cliquant sur le miroir, on entre dans le site** : le haut de
+  l'accueil sur **fond noir** (logo, festival de musique et de magie, lieu,
+  dates, genres, têtes d'affiche, boutons Billetterie et Programmation), puis
+  toutes les sections de l'accueil, le menu, le pied de page et toutes les pages.
+- Technique : l'entrée (`.entree`) est un écran fixe par-dessus la page ; tout
+  le contenu de l'accueil reste dans le HTML (bon pour Google). Un petit script
+  dans le `<head>` décide avant l'affichage s'il faut montrer le miroir : oui à
+  la première arrivée ; pendant la même visite, revenir à l'accueil depuis une
+  autre page mène directement au site (`sessionStorage` « rf-entre »). Sans
+  JavaScript : le site s'affiche directement.
 - L'affiche est reproduite **au pixel près** : miroir doré, sol en damier,
   escalier, positions relevées sur l'affiche de 848 × 1200 (commentaires de
   `.affiche` dans `index.astro`). Dans le miroir, **seul le titre** (le logo),
@@ -119,15 +128,16 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
   en temps. Le canvas redessine le dégradé, le grain et le logo (à
   l'identique), découpé à la forme de l'ouverture (`cadre-or.json`).
 - **Entrée** : uniquement en cliquant ou touchant le miroir (vrai bouton,
-  clavier compris). Grosse vague, l'affiche grandit autour du miroir et tout
-  s'efface dans le noir, en environ 1,1 s.
-- **De l'autre côté du miroir : un fond noir**, pour l'instant. **Toute la 3D
-  a été retirée** à la demande de l'équipe (« pas très beau ») ; la dernière
-  version est archivée dans `archives/3d/monde-peinture.ts` (voir le LISEZMOI).
-  La graphiste va dessiner le monde **en illustrations par calques**, que le
-  site animera (profondeur, lucioles, reflets, brume, personnages).
-- Sans JavaScript : l'affiche seule. Avec « réduire les animations » : pas de
-  vagues ni de zoom, le noir arrive en fondu.
+  clavier compris). Grosse vague, l'affiche grandit autour du miroir, tout passe
+  au noir et le site apparaît (titre puis infos), en environ 1,1 s. Tant que le
+  miroir est affiché, le reste de la page est inaccessible (`inert`).
+- **Toute la 3D a été retirée** à la demande de l'équipe (« pas très beau ») :
+  le haut de l'accueil est sur fond noir. La dernière version est archivée dans
+  `archives/3d/monde-peinture.ts` (voir le LISEZMOI). La graphiste va dessiner le
+  monde **en illustrations par calques**, que le site animera (profondeur,
+  lucioles, reflets, brume, personnages), probablement derrière ce fond noir.
+- Avec « réduire les animations » : pas de vagues ni de zoom, le noir arrive
+  en fondu.
 - Note : l'affiche de la graphiste indique « 42350 », le bon code postal est
   **45230**.
 - Inspirations envoyées par l'équipe (ne pas utiliser telles quelles, droits
@@ -148,11 +158,9 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
   Paris, l'Île-de-France, le Loiret, l'Yonne et le Cher (données `trajets`
   dans `site.ts`), train, covoiturage, FAQ. **Temps de trajet, gares et
   navettes : estimations à faire valider par l'équipe.**
-- **Accueil épuré = moins de contenu pour Google** (choix assumé de l'équipe).
-  Compensation : titre, description et données structurées complètes, une
-  courte description lue par les lecteurs d'écran, des liens « accès direct »
-  vers toutes les pages qui n'apparaissent qu'au clavier, et la fiche
-  « Le festival en bref » déplacée sur la page Infos pratiques.
+- Accueil : phrase d'introduction factuelle (qui, quoi, où, quand) et fiche
+  « Le festival en bref », faciles à citer par Google et les assistants IA
+  (le miroir est par-dessus, mais tout ce contenu est dans le HTML).
 - Données structurées (`site.ts`) : `WebSite` + `Organization` (accueil),
   `Festival` avec les trois jours, lieu géolocalisé, `Place` (domaine, venir),
   `FAQPage` (infos, venir), fil d'Ariane sur toutes les pages intérieures.
@@ -164,8 +172,6 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
 - Plan du site généré automatiquement (`@astrojs/sitemap`, avec date de mise
   à jour).
 - Logo de l'accueil en deux tailles (`srcset`) pour charger vite sur téléphone.
-- Quand le monde illustré arrivera, y remettre des liens visibles vers les
-  pages (billetterie, programmation…) : c'est important pour le référencement.
 - Adresses officielles avec barre finale : les liens internes s'écrivent
   `/programmation/`, jamais `/programmation`.
 - Adresse du site provisoire `https://lesragondinsfarfelus.fr` : à corriger
