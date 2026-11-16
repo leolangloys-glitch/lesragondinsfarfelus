@@ -1,0 +1,53 @@
+---
+import Base from "../layouts/Base.astro";
+import EnTetePage from "../components/EnTetePage.astro";
+import { festival } from "../data/site";
+---
+
+<Base
+  titre="Mentions légales"
+  description="Mentions légales du site du festival Les Ragondins Farfelus."
+>
+  <EnTetePage surtitre="Informations légales" titre="Mentions légales" />
+
+  <section class="section fond-nuit">
+    <div class="contenu texte-long">
+      <h2>Éditeur du site</h2>
+      <p>
+        Le site du festival Les Ragondins Farfelus est édité par l'association
+        <strong>7 DE COEUR</strong>.<br />
+        Forme juridique&nbsp;: association déclarée<br />
+        Siège&nbsp;: Mairie de Sainte-Geneviève-des-Bois, 23 rue Louis d'Eichthal, 45230
+        Sainte-Geneviève-des-Bois<br />
+        SIRET&nbsp;: 104 227 723 00012<br />
+        Contact&nbsp;: <a href="mailto:contact@domainedebriquemault.com">contact@domainedebriquemault.com</a>
+      </p>
+
+      <h2>Directeur ou directrice de la publication</h2>
+      <p>Romane Carrier</p>
+
+      <h2>Hébergement</h2>
+      <p>
+        Le site est hébergé par GitHub, Inc. (service GitHub Pages), 88 Colin P. Kelly Jr. Street,
+        San Francisco, CA 94107, États-Unis.<br />
+        Le nom de domaine est enregistré auprès d'OVH SAS, 2 rue Kellermann, 59100 Roubaix, France.
+      </p>
+
+      <h2>Propriété intellectuelle</h2>
+      <p>
+        L'ensemble des contenus de ce site (textes, logos, illustrations, photographies, vidéos) est
+        protégé par le droit d'auteur. Toute reproduction sans autorisation préalable est interdite.
+      </p>
+      <p>
+        Identité visuelle, logo, affiche et illustrations&nbsp;: {festival.graphiste}<br />
+        Photographies&nbsp;: <em class="a-completer">crédits à compléter</em>
+      </p>
+
+      <h2>Données personnelles</h2>
+      <p>
+        Pour savoir comment vos données sont utilisées et comment exercer vos droits, consultez notre&#32;
+        <a href="/confidentialite/">politique de confidentialité</a>.
+      </p>
+    </div>
+  </section>
+</Base>

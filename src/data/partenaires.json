@@ -1,0 +1,95 @@
+{
+  "annee": "2026",
+  "liste": [
+    {
+      "nom": "Ciel 45",
+      "logo": "/medias/partenaires/ciel45.webp",
+      "lien": ""
+    },
+    {
+      "nom": "Brasserie Galilée",
+      "logo": "/medias/partenaires/brasserie-galilee.webp",
+      "lien": "https://www.brasserie-galilee.fr"
+    },
+    {
+      "nom": "L'Agence des Magiciens",
+      "logo": "/medias/partenaires/agence-des-magiciens.webp",
+      "lien": ""
+    },
+    {
+      "nom": "Communauté de communes Canaux et Forêts en Gâtinais",
+      "logo": "/medias/partenaires/3cfg.webp",
+      "lien": ""
+    },
+    {
+      "nom": "Fondation Lilian Thuram",
+      "logo": "/medias/partenaires/fondation-lilian-thuram.webp",
+      "lien": ""
+    },
+    {
+      "nom": "L-Acoustics",
+      "logo": "/medias/partenaires/l-acoustics.webp",
+      "lien": ""
+    },
+    {
+      "nom": "Amixia",
+      "logo": "/medias/partenaires/amixia.webp",
+      "lien": ""
+    },
+    {
+      "nom": "Ville de Châtillon-Coligny",
+      "logo": "/medias/partenaires/chatillon-coligny.webp",
+      "lien": ""
+    },
+    {
+      "nom": "Algam",
+      "logo": "/medias/partenaires/algam.webp",
+      "lien": ""
+    },
+    {
+      "nom": "Coca-Cola",
+      "logo": "/medias/partenaires/coca-cola.webp",
+      "lien": ""
+    },
+    {
+      "nom": "Empreinte Production",
+      "logo": "/medias/partenaires/empreinte-production.webp",
+      "lien": ""
+    },
+    {
+      "nom": "Super U",
+      "logo": "/medias/partenaires/super-u.webp",
+      "lien": ""
+    },
+    {
+      "nom": "Ville de Sainte-Geneviève-des-Bois",
+      "logo": "/medias/partenaires/sainte-genevieve-des-bois.webp",
+      "lien": ""
+    },
+    {
+      "nom": "Haxo Leasing",
+      "logo": "/medias/partenaires/haxo-leasing.webp",
+      "lien": ""
+    },
+    {
+      "nom": "Temps Pastel",
+      "logo": "/medias/partenaires/temps-pastel.webp",
+      "lien": ""
+    },
+    {
+      "nom": "Domaine de Briquemault",
+      "logo": "/medias/partenaires/domaine-de-briquemault.webp",
+      "lien": "https://domainedebriquemault.com"
+    },
+    {
+      "nom": "Schoen",
+      "logo": "/medias/partenaires/schoen.webp",
+      "lien": ""
+    },
+    {
+      "nom": "Mobilier Carrier",
+      "logo": "/medias/partenaires/mobilier-carrier.webp",
+      "lien": ""
+    }
+  ]
+}

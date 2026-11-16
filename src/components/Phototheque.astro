@@ -1,0 +1,160 @@
+---
+// Photothèque : grille de photos en arche ; un clic agrandit la photo.
+// Les photos se gèrent dans l'administration (/admin/, « Souvenirs 2026 »).
+// Sans photo : des cadres « à venir ».
+interface Photo {
+  image: string;
+  legende?: string;
+  credit?: string;
+}
+
+interface Props {
+  photos: Photo[];
+  vides?: number;
+  limite?: number;
+}
+
+const { photos, vides = 6, limite } = Astro.props;
+const liste = limite ? photos.slice(0, limite) : photos;
+---
+
+{
+  liste.length > 0 ? (
+    <ul class="phototheque">
+      {liste.map((p) => (
+        <li>
+          <button class="phototheque__photo" type="button" data-image={p.image} data-legende={[p.legende, p.credit && `Photo : ${p.credit}`].filter(Boolean).join(" · ")}>
+            <img src={p.image} alt={p.legende || "Photo de l'édition 2026"} loading="lazy" />
+          </button>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <ul class="phototheque phototheque--vide" aria-label="Photos à venir">
+      {Array.from({ length: vides }).map(() => (
+        <li>
+          <span>Photo à venir</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<dialog class="visionneuse" aria-label="Photo agrandie">
+  <form method="dialog">
+    <button class="visionneuse__fermer" type="submit" aria-label="Fermer">×</button>
+  </form>
+  <img alt="" />
+  <p class="visionneuse__legende"></p>
+</dialog>
+
+<script>
+  const visionneuse = document.querySelector<HTMLDialogElement>(".visionneuse");
+  document.querySelectorAll<HTMLButtonElement>(".phototheque__photo").forEach((bouton) => {
+    bouton.addEventListener("click", () => {
+      if (!visionneuse) return;
+      const img = visionneuse.querySelector("img")!;
+      img.src = bouton.dataset.image ?? "";
+      img.alt = bouton.querySelector("img")?.alt ?? "";
+      visionneuse.querySelector(".visionneuse__legende")!.textContent = bouton.dataset.legende ?? "";
+      visionneuse.showModal();
+    });
+  });
+  visionneuse?.addEventListener("click", (e) => {
+    if (e.target === visionneuse) visionneuse.close();
+  });
+</script>
+
+<style>
+  .phototheque {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(46%, 14rem), 1fr));
+  }
+
+  .phototheque li {
+    aspect-ratio: 4 / 5;
+    border-radius: 999px 999px var(--rayon) var(--rayon);
+    border: 1.5px solid rgba(243, 226, 176, 0.45);
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 30%, rgba(44, 122, 111, 0.55), rgba(5, 40, 40, 0.7));
+  }
+
+  .phototheque__photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
+  }
+
+  .phototheque__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .phototheque__photo:hover img,
+  .phototheque__photo:focus-visible img {
+    transform: scale(1.04);
+  }
+
+  .phototheque--vide li {
+    display: grid;
+    place-items: center;
+    color: var(--creme-doux);
+    font-size: 0.9rem;
+  }
+
+  .visionneuse {
+    max-width: min(92vw, 1100px);
+    max-height: 92vh;
+    padding: 0;
+    border: 1.5px solid var(--or);
+    border-radius: var(--rayon);
+    background: var(--vert-nuit);
+    color: var(--creme);
+  }
+
+  .visionneuse::backdrop {
+    background: rgba(0, 0, 0, 0.82);
+  }
+
+  .visionneuse img {
+    display: block;
+    max-width: 100%;
+    max-height: 80vh;
+    margin: 0 auto;
+  }
+
+  .visionneuse__legende {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .visionneuse__legende:empty {
+    display: none;
+  }
+
+  .visionneuse__fermer {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 0;
+    background: var(--creme);
+    color: var(--vert);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+</style>

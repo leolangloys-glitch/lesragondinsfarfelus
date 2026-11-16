@@ -1,0 +1,171 @@
+---
+// Formulaire qui fonctionne tout de suite, sans outil externe : à l'envoi, la
+// messagerie du visiteur s'ouvre avec un e-mail déjà rempli, adressé au
+// festival. Si un formulaire externe (Tally, Google Forms…) est renseigné dans
+// l'administration, on affiche plutôt un bouton qui y mène.
+import { contact } from "../data/site";
+
+export interface Champ {
+  nom: string;
+  libelle: string;
+  type?: "text" | "email" | "tel" | "url" | "textarea" | "select" | "date";
+  requis?: boolean;
+  options?: string[];
+  aide?: string;
+  autocomplete?: string;
+}
+
+interface Props {
+  id: string;
+  sujet: string;
+  champs: Champ[];
+  bouton: string;
+  lienExterne?: string;
+}
+
+const { id, sujet, champs, bouton, lienExterne } = Astro.props;
+const mailto = `mailto:${contact}?subject=${encodeURIComponent(sujet)}`;
+---
+
+{
+  lienExterne ? (
+    <p class="formulaire__externe">
+      <a class="bouton bouton--rose" href={lienExterne} rel="noopener">
+        {bouton}
+      </a>
+    </p>
+  ) : (
+    <form class="formulaire" id={id} action={mailto} method="post" enctype="text/plain" data-destinataire={contact} data-sujet={sujet}>
+      <div class="formulaire__champs">
+        {champs.map((c) => (
+          <div class:list={["formulaire__champ", { "formulaire__champ--large": c.type === "textarea" }]}>
+            <label for={`${id}-${c.nom}`}>
+              {c.libelle}
+              {c.requis && <span aria-hidden="true"> *</span>}
+            </label>
+            {c.type === "textarea" ? (
+              <textarea id={`${id}-${c.nom}`} name={c.libelle} rows="5" required={c.requis} />
+            ) : c.type === "select" ? (
+              <select id={`${id}-${c.nom}`} name={c.libelle} required={c.requis}>
+                <option value="">Choisir…</option>
+                {c.options?.map((o) => (
+                  <option>{o}</option>
+                ))}
+              </select>
+            ) : (
+              <input
+                id={`${id}-${c.nom}`}
+                name={c.libelle}
+                type={c.type ?? "text"}
+                required={c.requis}
+                autocomplete={c.autocomplete}
+              />
+            )}
+            {c.aide && <p class="formulaire__aide">{c.aide}</p>}
+          </div>
+        ))}
+      </div>
+      <p class="formulaire__note">
+        Les champs marqués d'une étoile sont obligatoires. En envoyant, votre messagerie s'ouvre avec
+        le message prêt&nbsp;: il ne reste qu'à l'envoyer. Vous pouvez aussi nous écrire directement à&#32;
+        <a href={`mailto:${contact}`}>{contact}</a>.
+      </p>
+      <button class="bouton bouton--rose" type="submit">
+        {bouton}
+      </button>
+      <p class="formulaire__merci" role="status" hidden>
+        Votre messagerie s'est ouverte avec votre demande&nbsp;: pensez à cliquer sur « Envoyer ». Si
+        rien ne s'est ouvert, écrivez-nous à <a href={`mailto:${contact}`}>{contact}</a>.
+      </p>
+    </form>
+  )
+}
+
+<script>
+  // Compose un e-mail lisible (« Champ : valeur », une ligne par champ)
+  document.querySelectorAll<HTMLFormElement>("form.formulaire").forEach((form) => {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const lignes: string[] = [];
+      for (const [nom, valeur] of new FormData(form)) {
+        if (String(valeur).trim()) lignes.push(`${nom} : ${String(valeur).trim()}`);
+      }
+      const corps = lignes.join("\n\n");
+      window.location.href = `mailto:${form.dataset.destinataire}?subject=${encodeURIComponent(form.dataset.sujet ?? "")}&body=${encodeURIComponent(corps)}`;
+      const merci = form.querySelector<HTMLElement>(".formulaire__merci");
+      if (merci) merci.hidden = false;
+    });
+  });
+</script>
+
+<style>
+  .formulaire {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .formulaire__champs {
+    display: grid;
+    gap: 1.1rem 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  }
+
+  .formulaire__champ--large {
+    grid-column: 1 / -1;
+  }
+
+  .formulaire label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+  }
+
+  .formulaire label span {
+    color: var(--rose);
+  }
+
+  .formulaire input,
+  .formulaire select,
+  .formulaire textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: 0.75rem;
+    border: 1.5px solid rgba(243, 226, 176, 0.45);
+    background: rgba(5, 40, 40, 0.65);
+    color: var(--creme);
+    font: inherit;
+  }
+
+  .formulaire textarea {
+    resize: vertical;
+  }
+
+  .formulaire input:focus-visible,
+  .formulaire select:focus-visible,
+  .formulaire textarea:focus-visible {
+    outline: 2px solid var(--rose);
+    outline-offset: 2px;
+  }
+
+  .formulaire__aide,
+  .formulaire__note {
+    margin: 0.35rem 0 0;
+    font-size: 0.875rem;
+    color: var(--creme-doux);
+  }
+
+  .formulaire .bouton {
+    justify-self: start;
+  }
+
+  .formulaire__merci {
+    margin: 0;
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+    border: 1.5px solid var(--rose);
+  }
+
+  .formulaire__externe {
+    margin: 0;
+  }
+</style>

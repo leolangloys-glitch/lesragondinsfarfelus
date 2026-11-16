@@ -1,0 +1,9 @@
+# Dépendances et fichiers générés
+node_modules/
+dist/
+.astro/
+
+# Divers
+.DS_Store
+*.log
+.env

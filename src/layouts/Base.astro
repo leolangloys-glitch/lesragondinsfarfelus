@@ -1,0 +1,102 @@
+---
+import "@fontsource-variable/outfit";
+import "@fontsource-variable/fraunces/full.css";
+import "../styles/global.css";
+import Entete from "../components/Entete.astro";
+import PiedDePage from "../components/PiedDePage.astro";
+import { festival, filArianeSchema, organisationSchema, siteWebSchema } from "../data/site";
+
+interface Props {
+  /** Titre de l'onglet et de Google (60 caractères max conseillés) */
+  titre: string;
+  /** Description pour Google et les partages (155 caractères max conseillés) */
+  description: string;
+  /** Image de partage (réseaux sociaux), chemin depuis public/ */
+  image?: string;
+  /** Données structurées schema.org pour Google */
+  donneesStructurees?: object | object[];
+  /** Page d'accueil : le titre n'est pas suffixé du nom du festival */
+  accueil?: boolean;
+  /** Nom court de la page pour le fil d'Ariane (par défaut : le titre) */
+  nomCourt?: string;
+  /** false pour les pages à ne pas référencer (404) */
+  indexer?: boolean;
+  /** Page « nue » : ni en-tête ni pied de page (l'accueil, qui n'est que le miroir) */
+  epure?: boolean;
+}
+
+const {
+  titre,
+  description,
+  image = "/brouillon/partage.jpg",
+  donneesStructurees,
+  accueil = false,
+  nomCourt,
+  indexer = true,
+  epure = false,
+} = Astro.props;
+
+const titreComplet = accueil ? titre : `${titre} · ${festival.nom}`;
+const canonique = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const imageAbsolue = Astro.site ? new URL(image, Astro.site).href : image;
+const propres = donneesStructurees ? (Array.isArray(donneesStructurees) ? donneesStructurees : [donneesStructurees]) : [];
+// Sur l'accueil : le site et l'organisateur ; ailleurs : le fil d'Ariane (Accueil › page)
+const communes = !indexer
+  ? []
+  : accueil
+    ? [siteWebSchema(), organisationSchema()]
+    : [filArianeSchema(nomCourt ?? titre, Astro.url.pathname)];
+const tout = [...communes, ...propres];
+const jsonLd = tout.length ? JSON.stringify(tout) : null;
+const { latitude, longitude } = festival.lieu;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{titreComplet}</title>
+    <meta name="description" content={description} />
+    <meta
+      name="robots"
+      content={indexer ? "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" : "noindex, follow"}
+    />
+    {canonique && <link rel="canonical" href={canonique} />}
+    {canonique && <link rel="alternate" hreflang="fr-FR" href={canonique} />}
+    {canonique && <link rel="alternate" hreflang="x-default" href={canonique} />}
+    <meta name="geo.region" content="FR-45" />
+    <meta name="geo.placename" content={`${festival.lieu.commune}, ${festival.lieu.departement}`} />
+    <meta name="geo.position" content={`${latitude};${longitude}`} />
+    <meta name="ICBM" content={`${latitude}, ${longitude}`} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#083d3d" />
+
+    <meta property="og:site_name" content={festival.nom} />
+    <meta property="og:title" content={titreComplet} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:image" content={imageAbsolue} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${festival.nom}, ${festival.accroche.toLowerCase()} · ${festival.dates.affichage}`} />
+    {canonique && <meta property="og:url" content={canonique} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={titreComplet} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageAbsolue} />
+
+    {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
+    <slot name="tete" />
+  </head>
+  <body class:list={{ epure }}>
+    {!epure && <a class="lien-evitement" href="#contenu">Aller au contenu</a>}
+    {!epure && <Entete />}
+    <main id="contenu">
+      <slot />
+    </main>
+    {!epure && <PiedDePage />}
+  </body>
+</html>

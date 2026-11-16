@@ -1,0 +1,123 @@
+---
+import Newsletter from "./Newsletter.astro";
+import { festival, liensExternes, menuPied } from "../data/site";
+
+const reseaux = [
+  { nom: "Instagram", href: liensExternes.instagram },
+  { nom: "Facebook", href: liensExternes.facebook },
+  { nom: "TikTok", href: liensExternes.tiktok },
+].filter((r) => r.href);
+---
+
+<Newsletter />
+
+<footer class="pied">
+  <div class="pied__grille">
+    <div class="pied__marque">
+      <img src="/brouillon/logo-petit.webp" alt={festival.nom} width="564" height="338" loading="lazy" />
+      <p>
+        {festival.accroche}<br />
+        {festival.dates.affichage}<br />
+        {festival.lieu.nom}, {festival.lieu.commune} ({festival.lieu.departement})
+      </p>
+      {
+        reseaux.length > 0 && (
+          <ul class="pied__reseaux">
+            {reseaux.map((r) => (
+              <li>
+                <a href={r.href} rel="noopener">
+                  {r.nom}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+
+    {
+      menuPied.map((colonne) => (
+        <nav aria-label={colonne.titre}>
+          <h2 class="pied__titre">{colonne.titre}</h2>
+          <ul>
+            {colonne.liens.map((lien) => (
+              <li>
+                <a href={lien.href}>{lien.libelle}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ))
+    }
+  </div>
+
+  <p class="pied__bas">
+    © 2027 {festival.nom} · Festival de musique et de magie · Édité par l'association {festival.editeur}
+    <br />
+    Identité visuelle&nbsp;: {festival.graphiste}
+  </p>
+</footer>
+
+<style>
+  .pied {
+    background: var(--vert-nuit);
+    border-top: 1px solid rgba(243, 226, 176, 0.18);
+    padding: 4rem var(--marge) calc(2rem + env(safe-area-inset-bottom, 0px));
+    color: var(--creme-doux);
+    font-size: 0.975rem;
+  }
+
+  .pied__grille {
+    max-width: var(--largeur-max);
+    margin: 0 auto;
+    display: grid;
+    gap: 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  }
+
+  .pied__marque img {
+    width: 11rem;
+    margin-bottom: 1rem;
+  }
+
+  .pied__titre {
+    font-family: var(--font-texte);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 1rem;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .pied__reseaux {
+    display: flex;
+    gap: 1rem;
+  }
+
+  a {
+    color: var(--creme);
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--rose);
+    text-decoration: underline;
+  }
+
+  .pied__bas {
+    max-width: var(--largeur-max);
+    margin: 3rem auto 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(243, 226, 176, 0.12);
+    font-size: 0.875rem;
+  }
+</style>

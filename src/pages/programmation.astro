@@ -1,0 +1,280 @@
+---
+import Base from "../layouts/Base.astro";
+import EnTetePage from "../components/EnTetePage.astro";
+import { getCollection } from "astro:content";
+import { evenementSchema, SITE } from "../data/site";
+
+// Les artistes viennent des fiches de l'administration (/admin/, « Artistes »).
+// Seules les fiches « publiées » apparaissent ; tant qu'un jour n'a pas tous
+// ses artistes, des cartes « mystère » complètent la liste.
+// Aucun nom d'artiste tant qu'il n'est pas confirmé par l'équipe.
+const artistes = (await getCollection("artistes", (a) => a.data.publie)).sort(
+  (a, b) => a.data.ordre - b.data.ordre || a.data.nom.localeCompare(b.data.nom, "fr"),
+);
+const evenement = {
+  ...evenementSchema(),
+  ...(artistes.length
+    ? {
+        performer: artistes.map((a) => ({
+          "@type": a.data.plateau === "musique" ? "MusicGroup" : "Person",
+          name: a.data.nom,
+          url: `${SITE}/artistes/${a.id}/`,
+        })),
+      }
+    : {}),
+};
+const jours = [
+  {
+    id: "vendredi",
+    jour: "Vendredi 28 mai",
+    titre: "L'éveil",
+    texte:
+      "Le portail s'ouvre en fin d'après-midi : installation au camping, premiers concerts, puis la nuit s'électrise avec les DJ sets.",
+    musique: 3,
+    magie: 1,
+  },
+  {
+    id: "samedi",
+    jour: "Samedi 29 mai",
+    titre: "La grande nuit",
+    texte:
+      "Une journée entière de concerts, des magiciens sur scène et au milieu du public, puis la grande soirée avec nos têtes d'affiche.",
+    musique: 4,
+    magie: 3,
+  },
+  {
+    id: "dimanche",
+    jour: "Dimanche 30 mai",
+    titre: "La journée des familles",
+    texte:
+      "De la musique toute la journée et, en plus, des spectacles de magie sur scène pour les enfants : un dimanche pour petits et grands ragondins.",
+    musique: 2,
+    magie: 2,
+  },
+];
+---
+
+<Base
+  titre="Programmation 2027 : concerts, DJ sets, magie"
+  nomCourt="Programmation 2027"
+  description="Programme des Ragondins Farfelus, 28-30 mai 2027 : DJ sets, pop, rock, électro et magie au Domaine de Briquemault (Loiret), à 1 h 30 de Paris."
+  donneesStructurees={evenement}
+>
+  <EnTetePage
+    surtitre="Programmation 2027"
+    titre="Trois jours dans le monde des Ragondins"
+    intro="Les artistes sont dévoilés au fil des semaines. Inscrivez-vous à la newsletter pour être parmi les premiers à les découvrir."
+  >
+    <nav class="jours-nav" aria-label="Choisir un jour">
+      {jours.map((j) => <a href={`#${j.id}`}>{j.jour.split(" ")[0]}</a>)}
+    </nav>
+  </EnTetePage>
+
+  <section class="section fond-nuit" aria-labelledby="titre-plateaux">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Deux plateaux</span>
+        <h2 id="titre-plateaux">La musique et la magie, main dans la main</h2>
+      </div>
+      <div class="grille grille--large">
+        <article class="carte">
+          <h3>Le plateau musique</h3>
+          <p class="texte-doux">
+            DJ sets, pop, rock et électro, des premiers rayons de l'après-midi jusqu'au cœur de la
+            nuit.
+          </p>
+        </article>
+        <article class="carte">
+          <h3>Le plateau magie</h3>
+          <p class="texte-doux">
+            Une magie fun, impressionnante et pleine de surprises&nbsp;: sur scène et en close-up, des magiciens viennent
+            vous surprendre au détour d'une allée. Le dimanche, des spectacles de magie pour les enfants.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  {
+    jours.map((j, i) => (
+      <section class={`section ${i % 2 === 0 ? "fond-vert" : "fond-nuit"}`} id={j.id} aria-labelledby={`titre-${j.id}`}>
+        <div class="contenu">
+          <div class="titre-section">
+            <span class="surtitre">{j.jour}</span>
+            <h2 id={`titre-${j.id}`}>{j.titre}</h2>
+            <p class="intro">{j.texte}</p>
+          </div>
+          <ul class="artistes">
+            {artistes
+              .filter((a) => a.data.jour === j.id)
+              .map((a) => (
+                <li class:list={["artiste", "artiste--reel", { "artiste--magie": a.data.plateau === "magie" }]}>
+                  <a href={`/artistes/${a.id}/`}>
+                    {a.data.photo ? (
+                      <img class="artiste__photo" src={a.data.photo} alt="" loading="lazy" />
+                    ) : (
+                      <span class="artiste__mystere" aria-hidden="true">✦</span>
+                    )}
+                    <span class="artiste__plateau">{a.data.plateau === "musique" ? "Musique" : "Magie"}</span>
+                    <span class="artiste__nom">{a.data.nom}</span>
+                    <span class="artiste__revelation">
+                      {[a.data.style, a.data.horaire].filter(Boolean).join(" · ") || "Découvrir"}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            {Array.from({
+              length: Math.max(0, j.musique - artistes.filter((a) => a.data.jour === j.id && a.data.plateau === "musique").length),
+            }).map(() => (
+              <li class="artiste">
+                <span class="artiste__plateau">Musique</span>
+                <span class="artiste__mystere" aria-hidden="true">?</span>
+                <span class="artiste__nom">Artiste mystère</span>
+                <span class="artiste__revelation">Révélation prochaine</span>
+              </li>
+            ))}
+            {Array.from({
+              length: Math.max(0, j.magie - artistes.filter((a) => a.data.jour === j.id && a.data.plateau === "magie").length),
+            }).map(() => (
+              <li class="artiste artiste--magie">
+                <span class="artiste__plateau">Magie</span>
+                <span class="artiste__mystere" aria-hidden="true">?</span>
+                <span class="artiste__nom">Magicien mystère</span>
+                <span class="artiste__revelation">Révélation prochaine</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    ))
+  }
+
+  <section class="section fond-nuit" aria-labelledby="titre-horaires">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Horaires</span>
+        <h2 id="titre-horaires">Le programme heure par heure</h2>
+        <p class="intro">
+          Le détail des passages par scène sera publié ici avec la programmation complète.
+        </p>
+      </div>
+      <div class="boutons">
+        <a class="bouton bouton--rose" href="/billetterie/">Réserver mon billet</a>
+        <a class="bouton bouton--contour" href="/infos/">Infos pratiques</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .jours-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 2rem;
+  }
+
+  .jours-nav a {
+    padding: 0.55rem 1.2rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--or-clair);
+    color: var(--creme);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .jours-nav a:hover {
+    background: var(--creme);
+    color: var(--vert);
+  }
+
+  .artistes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+  }
+
+  .artiste {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 2.5rem 1rem 1.5rem;
+    border-radius: 999px 999px var(--rayon) var(--rayon);
+    border: 1.5px solid rgba(243, 226, 176, 0.4);
+    background: radial-gradient(ellipse at 50% 30%, rgba(44, 122, 111, 0.55), rgba(5, 40, 40, 0.6));
+    text-align: center;
+  }
+
+  .artiste--magie {
+    background: radial-gradient(ellipse at 50% 30%, rgba(255, 160, 203, 0.28), rgba(5, 40, 40, 0.6));
+  }
+
+  .artiste__plateau {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--rose);
+  }
+
+  .artiste__mystere {
+    font-family: var(--font-titre);
+    font-size: 4.5rem;
+    line-height: 1.1;
+    background: linear-gradient(180deg, var(--or-clair), var(--or-fonce));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .artiste__nom {
+    font-family: var(--font-titre);
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .artiste__revelation {
+    font-size: 0.875rem;
+    color: var(--creme-doux);
+  }
+
+  /* Artiste annoncé : toute la carte mène à sa page */
+  .artiste--reel {
+    padding: 0;
+    overflow: hidden;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .artiste--reel:hover,
+  .artiste--reel:focus-within {
+    transform: translateY(-3px);
+    border-color: var(--or-clair);
+  }
+
+  .artiste--reel a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    width: 100%;
+    padding: 0 0 1.5rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .artiste--reel .artiste__mystere {
+    padding-top: 2.5rem;
+  }
+
+  .artiste__photo {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    margin-bottom: 0.75rem;
+  }
+</style>

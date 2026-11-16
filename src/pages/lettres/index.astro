@@ -1,0 +1,107 @@
+---
+// Les newsletters publiées, de la plus récente à la plus ancienne.
+// Elles se rédigent dans l'administration (/admin/, « Newsletters »).
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import EnTetePage from "../../components/EnTetePage.astro";
+
+const lettres = (await getCollection("lettres", (l) => l.data.publie)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+const formatDate = (d: Date) => d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+---
+
+<Base
+  titre="Les newsletters du festival"
+  nomCourt="Les newsletters"
+  description="Toutes les newsletters des Ragondins Farfelus : programmation, billetterie, coulisses et surprises du festival de musique et de magie dans le Loiret."
+>
+  <EnTetePage
+    surtitre="Newsletter"
+    titre="Les nouvelles du monde des Ragondins"
+    intro="Programmation, billetterie, coulisses et surprises : retrouvez ici toutes nos lettres. Pour les recevoir en premier, inscrivez-vous en bas de page."
+  />
+
+  <section class="section fond-nuit" aria-labelledby="titre-lettres">
+    <div class="contenu">
+      <h2 id="titre-lettres" class="sr-only">Toutes les lettres</h2>
+      {
+        lettres.length > 0 ? (
+          <ul class="lettres">
+            {lettres.map((l) => (
+              <li class="lettre">
+                <a href={`/lettres/${l.id}/`}>
+                  {l.data.couverture && <img src={l.data.couverture} alt="" loading="lazy" />}
+                  <span class="lettre__texte">
+                    <span class="lettre__date">{formatDate(l.data.date)}</span>
+                    <span class="lettre__titre">{l.data.titre}</span>
+                    {l.data.chapo && <span class="texte-doux">{l.data.chapo}</span>}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="intro">La première lettre arrive bientôt. Inscrivez-vous pour ne pas la manquer&nbsp;!</p>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .lettres {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  }
+
+  .lettre a {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: var(--rayon);
+    border: 1.5px solid rgba(243, 226, 176, 0.35);
+    overflow: hidden;
+    background: rgba(8, 61, 61, 0.6);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .lettre a:hover,
+  .lettre a:focus-visible {
+    border-color: var(--or-clair);
+    transform: translateY(-3px);
+  }
+
+  .lettre img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  .lettre__texte {
+    display: grid;
+    gap: 0.4rem;
+    padding: 1.25rem 1.5rem 1.5rem;
+  }
+
+  .lettre__date {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--rose);
+  }
+
+  .lettre__titre {
+    font-family: var(--font-titre);
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--creme);
+  }
+</style>

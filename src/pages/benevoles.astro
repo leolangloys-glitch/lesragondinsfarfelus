@@ -1,0 +1,218 @@
+---
+import Base from "../layouts/Base.astro";
+import EnTetePage from "../components/EnTetePage.astro";
+import ModuleExterne from "../components/ModuleExterne.astro";
+import Faq from "../components/Faq.astro";
+import Video from "../components/Video.astro";
+import { liensExternes } from "../data/site";
+import souvenirs from "../data/souvenirs.json";
+
+// Les avantages des bénévoles (confirmés par l'équipe en novembre 2026)
+const avantages = [
+  {
+    titre: "Le festival en accès libre",
+    texte: "En dehors de vos créneaux, vous profitez du festival comme tout le monde : concerts, DJ sets, magie.",
+    icone: "✦",
+  },
+  {
+    titre: "Les repas offerts",
+    texte: "Pendant vos missions, on s'occupe de vous : vos repas sont pris en charge.",
+    icone: "❦",
+  },
+  {
+    titre: "Le t-shirt officiel",
+    texte: "Celui de la troupe des bénévoles : vous le garderez en souvenir.",
+    icone: "✿",
+  },
+  {
+    titre: "Une équipe en or",
+    texte: "Des rencontres, des fous rires et la fierté de faire vivre un festival unique dans le Loiret.",
+    icone: "❀",
+  },
+];
+
+const missions = [
+  { titre: "Accueil et billetterie", texte: "Être le premier sourire du festival et guider les visiteurs vers le portail." },
+  { titre: "Bar et restauration", texte: "Servir, trinquer, garder le rythme quand la foule a soif." },
+  { titre: "Scènes", texte: "Épauler les équipes techniques et accueillir les artistes." },
+  { titre: "Montage et démontage", texte: "Construire le monde des Ragondins avant tout le monde, et le ranger après." },
+  { titre: "Décors et scénographie", texte: "Donner vie à l'univers magique : lumières, installations, détails farfelus." },
+  { titre: "Camping et environnement", texte: "Veiller au confort des campeurs et à la propreté du domaine." },
+];
+
+const questions = [
+  {
+    q: "Faut-il de l'expérience ?",
+    r: "La plupart des missions ne demandent aucune expérience particulière : l'envie et la bonne humeur suffisent. Nous vous expliquons tout avant le festival.",
+  },
+  {
+    q: "Combien de temps dois-je donner ?",
+    r: "Vous choisissez vos créneaux en fonction de vos disponibilités. Le reste du temps, profitez du festival !",
+  },
+  {
+    q: "Y a-t-il un âge minimum ?",
+    r: "L'âge minimum sera précisé dans le formulaire d'inscription.",
+  },
+];
+---
+
+<Base
+  titre="Devenir bénévole dans un festival du Loiret"
+  nomCourt="Devenir bénévole"
+  description="Rejoignez les bénévoles des Ragondins Farfelus, 28-30 mai 2027 au Domaine de Briquemault (Loiret), près de Montargis : accueil, bar, scènes, décors…"
+>
+  <EnTetePage
+    surtitre="Bénévoles"
+    titre="Rejoignez la troupe des Ragondins"
+    intro="Sans bénévoles, pas de magie. Vivez le festival de l'intérieur, profitez-en en dehors de vos créneaux, repas offerts pendant vos missions, et repartez avec des souvenirs plein la tête."
+  >
+    <div class="boutons">
+      <a class="bouton bouton--rose" href="#inscription">Je m'inscris</a>
+    </div>
+  </EnTetePage>
+
+  <section class="section fond-vert avantages-section" aria-labelledby="titre-avantages">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">De l'autre côté du rideau</span>
+        <h2 id="titre-avantages">Ce que vous y gagnez</h2>
+      </div>
+      <ul class="avantages">
+        {
+          avantages.map((v) => (
+            <li class="avantage">
+              <span class="avantage__icone" aria-hidden="true">{v.icone}</span>
+              <h3>{v.titre}</h3>
+              <p>{v.texte}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="boutons">
+        <a class="bouton bouton--rose" href="#inscription">Je deviens bénévole</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-nuit" aria-labelledby="titre-aftermovie-benevoles">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Ils l'ont vécu en 2026</span>
+        <h2 id="titre-aftermovie-benevoles">L'aftermovie des bénévoles</h2>
+        <p class="intro">La première édition vue des coulisses, par celles et ceux qui l'ont fait vivre.</p>
+      </div>
+      <Video
+        lien={souvenirs.aftermovieBenevoles}
+        titre="L'aftermovie des bénévoles 2026"
+        bientot="Bientôt en ligne : la troupe 2026 en action !"
+      />
+    </div>
+  </section>
+
+  <section class="section fond-vert" aria-labelledby="titre-missions">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Les missions</span>
+        <h2 id="titre-missions">Trouvez votre rôle dans le spectacle</h2>
+      </div>
+      <div class="grille">
+        {
+          missions.map((m) => (
+            <article class="carte">
+              <h3>{m.titre}</h3>
+              <p class="texte-doux">{m.texte}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+
+
+  <section class="section fond-nuit" aria-labelledby="titre-deroule">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Comment ça se passe</span>
+        <h2 id="titre-deroule">De l'inscription au grand week-end</h2>
+      </div>
+      <ol class="etapes">
+        <li><h3>Inscrivez-vous</h3><p>Remplissez le formulaire en quelques minutes.</p></li>
+        <li><h3>On vous rappelle</h3><p>Nous choisissons ensemble votre mission et vos créneaux.</p></li>
+        <li><h3>Le briefing</h3><p>Avant le festival, on vous explique tout et on rencontre l'équipe.</p></li>
+        <li><h3>La magie opère</h3><p>Les 28, 29 et 30 mai, vous faites partie du spectacle.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section fond-vert" id="inscription" aria-labelledby="titre-inscription">
+    <div class="contenu">
+      <h2 id="titre-inscription" class="sr-only">Inscription</h2>
+      <ModuleExterne
+        titre="Le formulaire d'inscription"
+        texte="Les inscriptions bénévoles ouvriront prochainement. Vos informations servent uniquement à organiser le bénévolat du festival."
+        lien={liensExternes.formulaireBenevoles}
+        libelleBouton="Devenir bénévole"
+      />
+      <p class="note">
+        En savoir plus sur l'utilisation de vos données&nbsp;: <a href="/confidentialite/">politique de confidentialité</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section fond-nuit" aria-labelledby="titre-faq-benevoles">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Questions fréquentes</span>
+        <h2 id="titre-faq-benevoles">Avant de vous lancer</h2>
+      </div>
+      <Faq questions={questions} />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .avantages {
+    list-style: none;
+    margin: 0 0 2rem;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  }
+
+  .avantage {
+    padding: 2rem 1.5rem 1.75rem;
+    border-radius: 999px 999px var(--rayon) var(--rayon);
+    border: 1.5px solid var(--or);
+    background: radial-gradient(ellipse at 50% 20%, rgba(255, 160, 203, 0.2), rgba(5, 40, 40, 0.65));
+    text-align: center;
+  }
+
+  .avantage__icone {
+    display: block;
+    font-size: 2.4rem;
+    line-height: 1;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(180deg, var(--or-clair), var(--or-fonce));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .avantage h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+  }
+
+  .avantage p {
+    margin: 0;
+    color: var(--creme-doux);
+  }
+
+  .note {
+    margin: 1rem 0 0;
+    font-size: 0.9rem;
+    color: var(--creme-doux);
+  }
+</style>

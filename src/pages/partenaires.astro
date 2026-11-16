@@ -1,0 +1,287 @@
+---
+import Base from "../layouts/Base.astro";
+import EnTetePage from "../components/EnTetePage.astro";
+import Formulaire from "../components/Formulaire.astro";
+import LogosPartenaires from "../components/LogosPartenaires.astro";
+import partenaires from "../data/partenaires.json";
+import { liensExternes } from "../data/site";
+
+// Les trois façons de s'associer au festival (textes provisoires, à valider).
+const offres = [
+  {
+    id: "club",
+    surtitre: "L'expérience VIP",
+    titre: "Club Ragondins Farfelus",
+    texte:
+      "Offrez à vos clients, à vos équipes ou à vos proches une expérience inoubliable : un espace VIP au cœur du festival, un accueil aux petits soins et les meilleures places pour vivre la musique et la magie.",
+    points: ["Espace VIP réservé", "Accueil personnalisé", "Moments privilégiés avec la magie du festival"],
+  },
+  {
+    id: "mecenat",
+    surtitre: "Soutenir un projet culturel",
+    titre: "Mécénat",
+    texte:
+      "Devenez l'un des soutiens privilégiés du festival : contribuez à un projet culturel ambitieux au cœur du Loiret et associez votre nom à son histoire. Votre don ouvre droit à une réduction d'impôt.",
+    points: ["60 % de votre don en réduction d'impôt", "Un projet culturel fort et local", "Votre engagement mis en valeur"],
+    vedette: true,
+  },
+  {
+    id: "sponsoring",
+    surtitre: "Faire rayonner votre marque",
+    titre: "Sponsoring",
+    texte:
+      "Faites de votre marque l'un des visages du festival : une visibilité forte sur place, en ligne et sur nos supports, dans un décor hors du commun, avec des activations imaginées sur mesure.",
+    points: ["Visibilité sur place et en ligne", "Présence sur nos supports", "Activations sur mesure"],
+  },
+];
+---
+
+<Base
+  titre="Devenir partenaire : Club VIP, mécénat, sponsoring"
+  nomCourt="Devenir partenaire"
+  description="Club VIP, mécénat (60 % de réduction d'impôt) ou sponsoring : entreprises du Loiret et d'Île-de-France, associez-vous au festival de musique et de magie."
+>
+  <EnTetePage
+    surtitre="Partenaires et mécènes"
+    titre="Faites partie de la magie"
+    intro="Associez votre image à un festival de musique et de magie original, au cœur du Loiret, à 1 h 30 de Paris."
+  >
+    <div class="boutons">
+      <a class="bouton bouton--rose" href="#rejoindre">Rejoindre l'aventure</a>
+    </div>
+  </EnTetePage>
+
+  <section class="section fond-nuit" aria-labelledby="titre-offres">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Trois façons de nous rejoindre</span>
+        <h2 id="titre-offres">Choisissez votre place dans l'aventure</h2>
+      </div>
+      <ul class="offres">
+        {
+          offres.map((o) => (
+            <li class:list={["offre", { "offre--vedette": o.vedette }]} id={o.id}>
+              <span class="surtitre">{o.surtitre}</span>
+              <h3>{o.titre}</h3>
+              <p class="texte-doux">{o.texte}</p>
+              <ul class="liste">
+                {o.points.map((p) => (
+                  <li>{p}</li>
+                ))}
+              </ul>
+              <a class="bouton bouton--contour" href="#rejoindre">
+                Je suis intéressé
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section fond-vert" id="avantages-fiscaux" aria-labelledby="titre-fiscal">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Le mécénat en pratique</span>
+        <h2 id="titre-fiscal">Donner coûte moins qu'on ne le croit</h2>
+        <p class="intro">
+          L'association 7 DE COEUR, qui organise le festival, peut recevoir des dons ouvrant droit
+          à une réduction d'impôt. Pour chaque don, nous vous remettons un reçu fiscal.
+        </p>
+      </div>
+      <div class="fiscal">
+        <article class="carte fiscal__carte">
+          <span class="surtitre">Entreprises</span>
+          <p class="fiscal__taux">60&nbsp;%</p>
+          <p>
+            du montant de votre don en réduction d'impôt (sur les sociétés ou sur le revenu), dans
+            la limite de 20&nbsp;000&nbsp;€ ou de 0,5&nbsp;% du chiffre d'affaires hors taxes
+            (le montant le plus élevé). Ce qui dépasse est reportable sur les cinq années suivantes.
+          </p>
+          <p class="fiscal__exemple">Un don de 1&nbsp;000&nbsp;€ ne vous coûte que 400&nbsp;€.</p>
+        </article>
+        <article class="carte fiscal__carte">
+          <span class="surtitre">Particuliers</span>
+          <p class="fiscal__taux">66&nbsp;%</p>
+          <p>
+            du montant de votre don en réduction d'impôt sur le revenu, dans la limite de 20&nbsp;%
+            de votre revenu imposable.
+          </p>
+          <p class="fiscal__exemple">Un don de 100&nbsp;€ ne vous coûte que 34&nbsp;€.</p>
+        </article>
+      </div>
+      <p class="note">
+        Taux et plafonds fixés par la loi (articles 200 et 238 bis du Code général des impôts), en
+        vigueur en 2026. Les dons en nature ou en compétences (matériel, prestations, savoir-faire)
+        peuvent aussi être du mécénat&nbsp;: parlons-en.
+      </p>
+      <div class="boutons">
+        <a class="bouton bouton--rose" href="#rejoindre">Devenir mécène</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-vert" aria-labelledby="titre-pourquoi">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Pourquoi nous rejoindre</span>
+        <h2 id="titre-pourquoi">Un festival qui vous ressemble</h2>
+      </div>
+      <div class="grille">
+        <article class="carte">
+          <h3>Un public varié</h3>
+          <p class="texte-doux">Amateurs de musique et de magie, familles le dimanche, habitants du Loiret et visiteurs d'Île-de-France.</p>
+        </article>
+        <article class="carte">
+          <h3>Un lieu d'exception</h3>
+          <p class="texte-doux">Le Domaine de Briquemault, ses ruines de château fort et ses dix hectares au bord du Loing.</p>
+        </article>
+        <article class="carte">
+          <h3>Une image forte</h3>
+          <p class="texte-doux">Un univers créatif et premium, qui fait parler de lui sur place comme en ligne.</p>
+        </article>
+        <article class="carte">
+          <h3>Un ancrage local</h3>
+          <p class="texte-doux">Un événement qui fait vivre le territoire et rassemble ses acteurs.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-nuit" aria-labelledby="titre-soutiens">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Merci</span>
+        <h2 id="titre-soutiens">Ils nous ont soutenus en {partenaires.annee}</h2>
+        <p class="intro">
+          Entreprises, collectivités et fondations&nbsp;: sans eux, la première édition n'aurait pas
+          été la même. Merci&nbsp;!
+        </p>
+      </div>
+      <LogosPartenaires titre={`Partenaires ${partenaires.annee}`} />
+    </div>
+  </section>
+
+  <section class="section fond-vert" id="rejoindre" aria-labelledby="titre-rejoindre">
+    <div class="contenu rejoindre">
+      <div>
+        <span class="surtitre">Rejoignez l'aventure</span>
+        <h2 id="titre-rejoindre">Parlons de votre projet</h2>
+        <p class="intro">
+          Remplissez ce formulaire&nbsp;: nous revenons rapidement vers vous pour échanger sur votre
+          projet et vous expliquer comment fonctionnent le Club, le mécénat et le sponsoring.
+          Vous êtes un particulier et souhaitez faire un don&nbsp;? Ce formulaire est aussi
+          pour vous.
+        </p>
+      </div>
+      <div class="carte">
+        <Formulaire
+          id="partenariat"
+          sujet="Partenariat · Les Ragondins Farfelus 2027"
+          bouton="Envoyer ma demande"
+          lienExterne={liensExternes.formulairePartenaires}
+          champs={[
+            { nom: "nom", libelle: "Nom et prénom", requis: true, autocomplete: "name" },
+            { nom: "structure", libelle: "Entreprise ou structure (le cas échéant)", autocomplete: "organization" },
+            { nom: "email", libelle: "E-mail", type: "email", requis: true, autocomplete: "email" },
+            { nom: "telephone", libelle: "Téléphone", type: "tel", autocomplete: "tel" },
+            {
+              nom: "interet",
+              libelle: "Vous êtes intéressé par",
+              type: "select",
+              requis: true,
+              options: ["Le Club Ragondins Farfelus (VIP)", "Le mécénat (entreprise)", "Un don (particulier)", "Le sponsoring", "Un partenariat en nature", "Je ne sais pas encore"],
+            },
+            { nom: "message", libelle: "Votre projet", type: "textarea" },
+          ]}
+        />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .offres {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  }
+
+  .offre {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 3.75rem 1.75rem 2rem;
+    border-radius: 999px 999px var(--rayon) var(--rayon);
+    border: 1.5px solid rgba(243, 226, 176, 0.45);
+    background: radial-gradient(ellipse at 50% 15%, rgba(44, 122, 111, 0.5), rgba(5, 40, 40, 0.7));
+    text-align: center;
+  }
+
+  .offre--vedette {
+    border: 2px solid var(--or);
+    background: radial-gradient(ellipse at 50% 15%, rgba(255, 160, 203, 0.22), rgba(5, 40, 40, 0.7));
+  }
+
+  .offre .surtitre {
+    font-size: 0.72rem;
+  }
+
+  .offre h3 {
+    margin: 0.2rem 0 0.75rem;
+    font-size: clamp(1.4rem, 3vw, 1.7rem);
+  }
+
+  .offre .liste {
+    margin: 1rem 0 1.5rem;
+    text-align: left;
+  }
+
+  .offre .bouton {
+    margin-top: auto;
+    align-self: center;
+  }
+
+  .fiscal {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  }
+
+  .fiscal__carte {
+    text-align: center;
+  }
+
+  .fiscal__taux {
+    margin: 0.25rem 0 0.5rem;
+    font-family: var(--font-titre);
+    font-size: clamp(3rem, 9vw, 4.25rem);
+    line-height: 1;
+    background: linear-gradient(180deg, var(--or-clair), var(--or-fonce));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .fiscal__exemple {
+    margin-top: 1rem;
+    font-weight: 600;
+    color: var(--rose);
+  }
+
+  .note {
+    margin: 1.25rem 0 0;
+    font-size: 0.875rem;
+    color: var(--creme-doux);
+  }
+
+  .rejoindre {
+    display: grid;
+    gap: 2rem clamp(2rem, 5vw, 4rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    align-items: start;
+  }
+</style>

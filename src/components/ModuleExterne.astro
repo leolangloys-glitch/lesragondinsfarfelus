@@ -1,0 +1,81 @@
+---
+// Emplacement d'un outil externe (billetterie, cashless, formulaire…).
+// Quand le lien est renseigné dans src/data/site.ts, le bouton devient actif.
+interface Props {
+  titre: string;
+  texte: string;
+  lien?: string;
+  libelleBouton: string;
+  id?: string;
+}
+
+const { titre, texte, lien, libelleBouton, id } = Astro.props;
+---
+
+<div class="module" id={id}>
+  <div>
+    <h3>{titre}</h3>
+    <p>{texte}</p>
+  </div>
+  {
+    lien ? (
+      <a class="bouton bouton--rose" href={lien} rel="noopener">
+        {libelleBouton}
+      </a>
+    ) : (
+      <p class="module__bientot">
+        <span class="bouton bouton--rose" aria-disabled="true">
+          {libelleBouton}
+        </span>
+        <span>Ouverture prochaine</span>
+      </p>
+    )
+  }
+</div>
+
+<style>
+  .module {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 3rem;
+    padding: clamp(1.75rem, 5vw, 2.75rem);
+    border-radius: var(--rayon);
+    border: 1.5px solid var(--or);
+    background:
+      radial-gradient(ellipse at top left, rgba(44, 122, 111, 0.45), transparent 60%),
+      var(--vert-nuit);
+  }
+
+  .module > div {
+    flex: 1 1 18rem;
+    min-width: 0;
+  }
+
+  h3 {
+    margin-bottom: 0.4rem;
+  }
+
+  .module p {
+    margin: 0;
+    color: var(--creme-doux);
+  }
+
+  .module__bientot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .module__bientot .bouton {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .module__bientot .bouton:hover {
+    transform: none;
+  }
+</style>

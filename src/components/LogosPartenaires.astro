@@ -1,0 +1,97 @@
+---
+// Logos des partenaires qui ont soutenu le festival.
+// La liste se gère dans l'administration (/admin/, « Partenaires (logos) »),
+// qui écrit dans src/data/partenaires.json.
+import partenaires from "../data/partenaires.json";
+
+interface Props {
+  titre?: string;
+}
+
+const { titre = `Partenaires ${partenaires.annee}` } = Astro.props;
+const liste = partenaires.liste.filter((p) => p.nom);
+---
+
+{
+  liste.length > 0 ? (
+    <ul class="logos-partenaires" aria-label={titre}>
+      {liste.map((p) => {
+        const image = p.logo ? <img src={p.logo} alt={p.nom} loading="lazy" decoding="async" /> : <span>{p.nom}</span>;
+        return (
+          <li>
+            {p.lien ? (
+              <a href={p.lien} rel="sponsored noopener" title={p.nom}>
+                {image}
+              </a>
+            ) : (
+              image
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  ) : (
+    <ul class="logos-partenaires logos-partenaires--vide" aria-label="Logos des partenaires (à venir)">
+      {Array.from({ length: 6 }).map(() => <li>Logo à venir</li>)}
+    </ul>
+  )
+}
+
+<style>
+  .logos-partenaires {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.875rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(46%, 10.5rem), 1fr));
+  }
+
+  /* Cartes blanches arrondies, comme sur les visuels de l'équipe */
+  .logos-partenaires li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 6rem;
+    padding: 0.75rem 1rem;
+    border-radius: 1.25rem;
+    background: #fff;
+    color: #083d3d;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 0 0 1px rgba(243, 226, 176, 0.35);
+  }
+
+  .logos-partenaires a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 0.5rem;
+  }
+
+  .logos-partenaires a:focus-visible {
+    outline: 3px solid var(--rose);
+    outline-offset: 4px;
+  }
+
+  /* Le logo tient toujours dans la carte (6rem - 2 × 0,75rem de marge) */
+  .logos-partenaires img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 4.5rem;
+    object-fit: contain;
+  }
+
+  .logos-partenaires--vide li {
+    background: none;
+    border: 1.5px dashed rgba(243, 226, 176, 0.35);
+    box-shadow: none;
+    color: var(--creme-doux);
+    font-size: 0.875rem;
+    font-weight: 400;
+  }
+</style>

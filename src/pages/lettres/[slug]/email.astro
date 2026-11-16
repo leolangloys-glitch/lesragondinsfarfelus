@@ -1,0 +1,125 @@
+---
+// Une newsletter, version e-mail : à importer dans l'outil d'envoi (Brevo :
+// « Importer un modèle » depuis l'adresse de cette page). Mise en page en
+// tableaux et styles en ligne, pour s'afficher partout (Gmail, Outlook, Apple Mail…).
+// Cette page n'est pas faite pour Google (noindex, absente du plan du site).
+import { getCollection } from "astro:content";
+import { festival, SITE } from "../../../data/site";
+
+export async function getStaticPaths() {
+  const lettres = await getCollection("lettres", (l) => l.data.publie);
+  return lettres.map((lettre) => ({ params: { slug: lettre.id }, props: { lettre } }));
+}
+
+const { lettre } = Astro.props;
+const l = lettre.data;
+const absolu = (chemin: string) => (chemin ? new URL(chemin, SITE).href : "");
+const date = l.date.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+const enLigne = `${SITE}/lettres/${lettre.id}/`;
+
+// Le texte écrit dans l'administration, avec des styles en ligne pour les e-mails
+const police = "font-family:Arial,Helvetica,sans-serif;";
+const corps = (lettre.rendered?.html ?? "")
+  .replace(/(src|href)="\/(?!\/)/g, `$1="${SITE}/`)
+  .replace(/<p>/g, `<p style="${police}margin:0 0 16px;font-size:16px;line-height:1.6;color:#fff6d8;">`)
+  .replace(/<h2([^>]*)>/g, `<h2$1 style="font-family:Georgia,serif;margin:28px 0 12px;font-size:24px;line-height:1.25;color:#fff6d8;">`)
+  .replace(/<h3([^>]*)>/g, `<h3$1 style="font-family:Georgia,serif;margin:24px 0 10px;font-size:20px;line-height:1.3;color:#ffa0cb;">`)
+  .replace(/<a /g, `<a style="color:#ffa0cb;text-decoration:underline;" `)
+  .replace(/<img /g, `<img style="display:block;max-width:100%;height:auto;margin:8px 0 16px;border-radius:12px;" width="552" `)
+  .replace(/<(ul|ol)>/g, `<$1 style="${police}margin:0 0 16px;padding-left:22px;color:#fff6d8;font-size:16px;line-height:1.6;">`)
+  .replace(/<strong>/g, `<strong style="color:#ffffff;">`);
+---
+
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{l.titre}</title>
+  </head>
+  <body style="margin:0;padding:0;background:#052828;">
+    {l.chapo && <div style="display:none;max-height:0;overflow:hidden;">{l.chapo}</div>}
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#052828;">
+      <tr>
+        <td align="center" style="padding:24px 12px;">
+          <table
+            role="presentation"
+            width="600"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="width:100%;max-width:600px;background:#083d3d;border:1px solid #b8904f;border-radius:16px;"
+          >
+            <tr>
+              <td align="center" style={`padding:12px 24px 0;${police}font-size:12px;color:#e6dfc6;`}>
+                <a href={enLigne} style="color:#e6dfc6;">Voir cette lettre en ligne</a>
+              </td>
+            </tr>
+            <tr>
+              <td align="center" style="padding:20px 24px 8px;">
+                <a href={SITE}>
+                  <img src={absolu("/brouillon/logo-email.jpg")} width="240" alt={festival.nom} style="display:block;width:240px;max-width:80%;height:auto;border:0;" />
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td align="center" style={`padding:0 24px 8px;${police}font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#ffa0cb;`}>
+                Newsletter · {date}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:8px 24px 0;">
+                <h1 style="font-family:Georgia,serif;margin:0 0 16px;font-size:30px;line-height:1.2;color:#fff6d8;text-align:center;">{l.titre}</h1>
+                {l.chapo && <p style={`${police}margin:0 0 20px;font-size:18px;line-height:1.5;color:#e6dfc6;text-align:center;`}>{l.chapo}</p>}
+              </td>
+            </tr>
+            {
+              l.couverture && (
+                <tr>
+                  <td style="padding:0 24px 20px;">
+                    <img src={absolu(l.couverture)} width="552" alt="" style="display:block;width:100%;max-width:552px;height:auto;border-radius:12px;" />
+                  </td>
+                </tr>
+              )
+            }
+            <tr>
+              <td style="padding:0 24px 8px;" set:html={corps} />
+            </tr>
+            {
+              l.bouton_texte && l.bouton_lien && (
+                <tr>
+                  <td align="center" style="padding:8px 24px 28px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td align="center" style="border-radius:999px;background:#ffa0cb;">
+                          <a
+                            href={absolu(l.bouton_lien)}
+                            style={`display:inline-block;padding:14px 28px;${police}font-size:16px;font-weight:bold;color:#083d3d;text-decoration:none;border-radius:999px;`}
+                          >
+                            {l.bouton_texte}
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              )
+            }
+            <tr>
+              <td align="center" style={`padding:20px 24px 28px;border-top:1px solid #1d5a55;${police}font-size:13px;line-height:1.6;color:#e6dfc6;`}>
+                <strong style="color:#fff6d8;">{festival.nom}</strong> · Festival de musique et de magie<br />
+                {festival.dates.affichage} · {festival.lieu.nom}, {festival.lieu.commune} ({festival.lieu.departement})<br />
+                <a href={SITE} style="color:#ffa0cb;">lesragondinsfarfelus.com</a> ·
+                <a href={`${SITE}/billetterie/`} style="color:#ffa0cb;">Billetterie</a> ·
+                <a href={`${SITE}/programmation/`} style="color:#ffa0cb;">Programmation</a>
+                <br /><br />
+                Vous recevez cet e-mail car vous êtes inscrit à la newsletter du festival.<br />
+                <a href="{{ unsubscribe }}" style="color:#e6dfc6;">Se désinscrire</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

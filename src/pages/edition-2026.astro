@@ -1,0 +1,81 @@
+---
+// Retour sur la 1re édition : remerciements, aftermovie et photothèque.
+// L'aftermovie et les photos se gèrent dans l'administration
+// (/admin/, « Souvenirs 2026 », qui écrit dans src/data/souvenirs.json).
+import Base from "../layouts/Base.astro";
+import EnTetePage from "../components/EnTetePage.astro";
+import Video from "../components/Video.astro";
+import Phototheque from "../components/Phototheque.astro";
+import LogosPartenaires from "../components/LogosPartenaires.astro";
+import souvenirs from "../data/souvenirs.json";
+---
+
+<Base
+  titre="Édition 2026 : merci ! Aftermovie et photos"
+  nomCourt="Édition 2026"
+  description="Retour sur la 1re édition des Ragondins Farfelus, les 30 et 31 mai 2026 au Domaine de Briquemault (Loiret) : merci à tous, aftermovie et photos."
+>
+  <EnTetePage
+    surtitre="Édition 2026"
+    titre="Vous avez été nombreux. Merci encore !"
+    intro="Les 30 et 31 mai 2026, le miroir s'est ouvert pour la toute première fois au Domaine de Briquemault. Vous avez été nombreux à le franchir, et vous avez fait de ce premier week-end un moment magique. Merci à vous, festivaliers, artistes, bénévoles et partenaires !"
+  >
+    <div class="boutons">
+      <a class="bouton bouton--rose" href="#aftermovie">Voir l'aftermovie</a>
+      <a class="bouton bouton--contour" href="#photos">Les photos</a>
+    </div>
+  </EnTetePage>
+
+  <section class="section fond-nuit" id="aftermovie" aria-labelledby="titre-aftermovie">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">L'aftermovie</span>
+        <h2 id="titre-aftermovie">Revivez la première édition</h2>
+        <p class="intro">Musique, magie et nuits au bord du Loing : le film de la 1re édition.</p>
+      </div>
+      <Video lien={souvenirs.aftermovie} titre="L'aftermovie 2026" bientot="Bientôt publié : restez connectés !" />
+    </div>
+  </section>
+
+  <section class="section fond-vert" id="photos" aria-labelledby="titre-photos">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">La photothèque</span>
+        <h2 id="titre-photos">Les souvenirs en images</h2>
+        <p class="intro">Retrouvez-vous, partagez, et gardez un peu de magie avec vous.</p>
+      </div>
+      <Phototheque photos={souvenirs.photos} vides={6} />
+    </div>
+  </section>
+
+  <section class="section fond-nuit" id="partenaires" aria-labelledby="titre-partenaires">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Merci</span>
+        <h2 id="titre-partenaires">Ils nous ont soutenus</h2>
+        <p class="intro">Merci aux entreprises, collectivités et fondations qui ont cru à la première édition.</p>
+      </div>
+      <LogosPartenaires titre="Partenaires de l'édition 2026" />
+      <div class="boutons">
+        <a class="bouton bouton--contour" href="/partenaires/">Devenir partenaire en 2027</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-vert" aria-labelledby="titre-suite">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">La suite</span>
+        <h2 id="titre-suite">Rendez-vous les 28, 29 et 30 mai 2027</h2>
+        <p class="intro">
+          Le miroir se rouvrira pour trois jours de musique et de magie. On a hâte de vous y retrouver.
+        </p>
+      </div>
+      <div class="boutons">
+        <a class="bouton bouton--rose" href="/billetterie/">Billetterie</a>
+        <a class="bouton bouton--contour" href="/programmation/">La programmation 2027</a>
+        <a class="bouton bouton--contour" href="/benevoles/">Devenir bénévole</a>
+      </div>
+    </div>
+  </section>
+</Base>
