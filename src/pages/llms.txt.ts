@@ -2,6 +2,7 @@
 // Gemini…), généré à partir des mêmes données que le site pour rester à jour.
 import type { APIRoute } from "astro";
 import { festival, SITE, trajets } from "../data/site";
+import partenaires from "../data/partenaires.json";
 
 export const GET: APIRoute = () => {
   const distances = trajets
@@ -37,7 +38,7 @@ ${distances}
 - [Cashless](${SITE}/cashless/) : recharger son bracelet
 - [Le Domaine de Briquemault](${SITE}/domaine/) : le lieu
 - [Devenir bénévole](${SITE}/benevoles/)
-- [Devenir partenaire](${SITE}/partenaires/) : Club VIP, sponsoring et mécénat (dons ouvrant droit à une réduction d'impôt de 60 % pour les entreprises et 66 % pour les particuliers)
+- [Devenir partenaire](${SITE}/partenaires/) (partenaires ${partenaires.annee} : ${partenaires.liste.map((p) => p.nom).join(", ")}) : Club VIP, sponsoring et mécénat (dons ouvrant droit à une réduction d'impôt de 60 % pour les entreprises et 66 % pour les particuliers)
 - [Espace presse](${SITE}/presse/)
 `;
   return new Response(texte, { headers: { "Content-Type": "text/plain; charset=utf-8" } });

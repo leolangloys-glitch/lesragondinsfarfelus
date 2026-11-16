@@ -147,6 +147,22 @@ collections:
               - { label: Photo, name: image, widget: image }
               - { label: Légende, name: legende, widget: string, required: false }
               - { label: Crédit photo, name: credit, widget: string, required: false }
+      - name: partenaires
+        label: Partenaires (logos)
+        file: src/data/partenaires.json
+        media_folder: /public/medias/partenaires
+        public_folder: /medias/partenaires
+        fields:
+          - { label: Année affichée (« Ils nous ont soutenus en… »), name: annee, widget: string }
+          - label: Partenaires
+            name: liste
+            widget: list
+            summary: "{{nom}}"
+            hint: "Dans l'ordre d'affichage. Faites glisser pour changer l'ordre."
+            fields:
+              - { label: Nom, name: nom, widget: string, hint: "Sert aussi de texte alternatif au logo (accessibilité)." }
+              - { label: Logo, name: logo, widget: image, required: false, hint: "Idéalement un PNG ou SVG sur fond blanc, au moins 400 px de large." }
+              - { label: Site du partenaire (lien), name: lien, widget: string, required: false }
       - name: liens
         label: Liens et contact
         file: src/data/reglages.json

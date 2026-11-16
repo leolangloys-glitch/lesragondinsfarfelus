@@ -6,6 +6,7 @@ import Base from "../layouts/Base.astro";
 import EnTetePage from "../components/EnTetePage.astro";
 import Video from "../components/Video.astro";
 import Phototheque from "../components/Phototheque.astro";
+import LogosPartenaires from "../components/LogosPartenaires.astro";
 import souvenirs from "../data/souvenirs.json";
 ---
 
@@ -47,7 +48,21 @@ import souvenirs from "../data/souvenirs.json";
     </div>
   </section>
 
-  <section class="section fond-nuit" aria-labelledby="titre-suite">
+  <section class="section fond-nuit" id="partenaires" aria-labelledby="titre-partenaires">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Merci</span>
+        <h2 id="titre-partenaires">Ils nous ont soutenus</h2>
+        <p class="intro">Merci aux entreprises, collectivités et fondations qui ont cru à la première édition.</p>
+      </div>
+      <LogosPartenaires titre="Partenaires de l'édition 2026" />
+      <div class="boutons">
+        <a class="bouton bouton--contour" href="/partenaires/">Devenir partenaire en 2027</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-vert" aria-labelledby="titre-suite">
     <div class="contenu">
       <div class="titre-section">
         <span class="surtitre">La suite</span>

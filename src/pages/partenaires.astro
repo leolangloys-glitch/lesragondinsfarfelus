@@ -2,6 +2,8 @@
 import Base from "../layouts/Base.astro";
 import EnTetePage from "../components/EnTetePage.astro";
 import Formulaire from "../components/Formulaire.astro";
+import LogosPartenaires from "../components/LogosPartenaires.astro";
+import partenaires from "../data/partenaires.json";
 import { liensExternes } from "../data/site";
 
 // Les trois façons de s'associer au festival (textes provisoires, à valider).
@@ -150,12 +152,13 @@ const offres = [
     <div class="contenu">
       <div class="titre-section">
         <span class="surtitre">Merci</span>
-        <h2 id="titre-soutiens">Ils nous ont soutenus en 2026</h2>
-        <p class="intro">Sans eux, le festival n'aurait pas été le même.</p>
+        <h2 id="titre-soutiens">Ils nous ont soutenus en {partenaires.annee}</h2>
+        <p class="intro">
+          Entreprises, collectivités et fondations&nbsp;: sans eux, la première édition n'aurait pas
+          été la même. Merci&nbsp;!
+        </p>
       </div>
-      <ul class="logos" aria-label="Logos des partenaires (à venir)">
-        {Array.from({ length: 6 }).map(() => <li>Logo à venir</li>)}
-      </ul>
+      <LogosPartenaires titre={`Partenaires ${partenaires.annee}`} />
     </div>
   </section>
 
@@ -273,25 +276,6 @@ const offres = [
     margin: 1.25rem 0 0;
     font-size: 0.875rem;
     color: var(--creme-doux);
-  }
-
-  .logos {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
-  }
-
-  .logos li {
-    display: grid;
-    place-items: center;
-    min-height: 6.5rem;
-    border-radius: var(--rayon);
-    border: 1.5px dashed rgba(243, 226, 176, 0.35);
-    color: var(--creme-doux);
-    font-size: 0.875rem;
   }
 
   .rejoindre {

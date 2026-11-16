@@ -188,6 +188,15 @@ dans `src/`).
   la presse locale bloque les robots. L'équipe ajoute les articles dans
   l'administration. Les publications LinkedIn de particuliers ne sont **pas**
   reprises sans leur accord. Date limite des accréditations : à préciser.
+- **Partenaires 2026** (liste donnée par l'équipe, novembre 2026) : 18 logos
+  dans `src/data/partenaires.json` (modifiable dans l'administration,
+  « Partenaires (logos) », images dans `public/medias/partenaires/`),
+  affichés sur Partenaires et Édition 2026 (`LogosPartenaires.astro`) et cités
+  dans `llms.txt`. **Retirés à la demande de l'équipe : 7 DE COEUR
+  (l'organisateur) et AU 13.** Les logos ont été découpés dans une capture
+  d'écran (petite résolution) : à remplacer par les fichiers d'origine en
+  haute définition. Liens vers les sites : seulement Brasserie Galilée et le
+  Domaine (les autres à compléter), en `rel="sponsored"`.
 - **Édition 2026** : aucun chiffre de fréquentation publié (« vous avez été
   nombreux »). Aftermovies « bientôt publiés ».
 

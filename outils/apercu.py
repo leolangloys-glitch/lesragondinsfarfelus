@@ -8,7 +8,7 @@
 import base64, re, sys, pathlib, shutil
 dist = pathlib.Path(sys.argv[1]); sortie = pathlib.Path(sys.argv[2])
 if sortie.exists(): shutil.rmtree(sortie)
-for dossier in ("brouillon", "monde", "photos"):
+for dossier in ("brouillon", "medias", "monde", "photos"):
     if (dist / dossier).exists():
         shutil.copytree(dist / dossier, sortie / dossier)
 for glb in (sortie / "monde").glob("*.glb") if (sortie / "monde").exists() else []:
