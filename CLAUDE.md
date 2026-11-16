@@ -114,7 +114,7 @@ Comment venir, Presse, Contact, Mentions légales, Confidentialité. Menus :
 | Accueil : entrée par le miroir, puis le haut sur fond noir (titre, infos), le festival en bref, programme, billetterie, retour 2026 (4 photos + lien), le lieu | `src/pages/index.astro` |
 | Programmation (3 jours, plateaux musique/magie : les artistes publiés, complétés par des cartes « mystère ») | `programmation.astro` |
 | Une page par artiste (photo, texte, écoute, clip, liens), créée toute seule pour chaque fiche publiée | `artistes/[slug].astro` |
-| Billetterie (formules, gratuités, module du prestataire, FAQ) | `billetterie.astro` |
+| Billetterie : « Pass 3 jours + camping » mis en avant (grande carte), puis pass vendredi / samedi / dimanche en arches (ambiance, accroche, chiffres du programme, « pour qui », bouton « Être prévenu » vers la newsletter tant que la billetterie n'est pas ouverte, « Réserver » ensuite), « Dans tous les pass », gratuités, module du prestataire, FAQ. Textes vendeurs écrits en novembre 2026 à la demande de l'équipe, **tarifs et formules jour à confirmer** | `billetterie.astro` |
 | Cashless (étapes, recharge en ligne, FAQ) | `cashless.astro` |
 | Infos pratiques (dates, accès, camping, accessibilité, sur place, FAQ, contact) | `infos.astro` |
 | Venir au festival (temps de trajet, train, covoiturage, FAQ) | `venir.astro` |
