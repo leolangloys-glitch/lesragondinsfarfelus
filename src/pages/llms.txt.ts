@@ -9,7 +9,7 @@ export const GET: APIRoute = () => {
     .join("\n");
   const texte = `# ${festival.nom}
 
-> ${festival.nom} est un festival de musique et de magie. La 2e édition a lieu les ${festival.dates.affichage} au ${festival.lieu.nom}, ${festival.lieu.codePostal} ${festival.lieu.commune}, dans le ${festival.lieu.departement} (${festival.lieu.region}), entre Montargis et Gien, à environ 1 h 30 de Paris et 1 h 15 d'Orléans. Il est organisé par l'association ${festival.editeur}.
+> ${festival.nom} est un festival de musique et de magie. La 2e édition a lieu les ${festival.dates.affichage} au ${festival.lieu.nom}, ${festival.lieu.codePostal} ${festival.lieu.commune}, dans le ${festival.lieu.departement} (${festival.lieu.region}), entre Montargis et Gien, à environ 1 h 30 de Paris et 1 h 15 d'Orléans. Il est organisé par l'association ${festival.editeur}. Identité visuelle (logo, affiche) : ${festival.graphiste}.
 
 ## L'essentiel
 

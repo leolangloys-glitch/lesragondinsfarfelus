@@ -31,6 +31,8 @@ export const festival = {
   },
   // Association qui édite le site et organise le festival
   editeur: "7 DE COEUR",
+  // Graphiste : identité visuelle, logo, affiche (crédit sur le site)
+  graphiste: "Cécilie Larroya",
 };
 
 // Temps de trajet indicatifs en voiture (estimations, à vérifier par l'équipe).

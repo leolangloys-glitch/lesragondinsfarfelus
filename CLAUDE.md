@@ -48,7 +48,7 @@ sont des souhaits, pas une programmation.
 
 ## Direction artistique
 
-Une graphiste travaille sur la nouvelle identité (piste n°1 en cours, piste
+La graphiste, **Cécilie Larroya**, travaille sur la nouvelle identité (piste n°1 en cours, piste
 n°2 pas encore commencée). Tout ce qui suit est provisoire.
 
 - Couleurs (relevées sur la piste n°1) : vert `#083D3D`, rose `#FFA0CB`,
@@ -315,8 +315,11 @@ dans `src/`).
 - Reste côté équipe : GitHub Settings > Pages > Source = « GitHub Actions »,
   fusionner la branche de travail dans `main`, domaine personnalisé dans
   Settings > Pages, zone DNS chez OVH (sans toucher aux lignes MX, SPF et
-  e-mail), puis « Enforce HTTPS ». Encore à compléter : crédit de la graphiste
+  e-mail), puis « Enforce HTTPS ». Encore à compléter : crédits des photos
   (mentions légales), durées de conservation des données (confidentialité).
+- Crédit de la graphiste (Cécilie Larroya, `festival.graphiste` dans
+  `site.ts`) : mentions légales, pied de page de toutes les pages, ressources
+  de l'espace presse et `llms.txt`.
 - Ne jamais demander ni accepter les mots de passe OVH ou GitHub : l'équipe
   fait elle-même les réglages, on la guide.
 - GitHub : Settings > Pages > Source = « GitHub Actions » ; domaine
