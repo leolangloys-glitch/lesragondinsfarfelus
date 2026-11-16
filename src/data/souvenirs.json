@@ -1,7 +1,23 @@
 {
   "aftermovie": "",
   "aftermovieBenevoles": "",
-  "photos": [],
+  "photos": [
+    {
+      "image": "/medias/souvenirs/2026-concert-scene.webp",
+      "legende": "Concert sous les projecteurs, un soir de mai 2026",
+      "credit": "Domaine de Briquemault"
+    },
+    {
+      "image": "/medias/souvenirs/2026-concert-nuit.webp",
+      "legende": "La grande scène, au cœur de la nuit",
+      "credit": "Domaine de Briquemault"
+    },
+    {
+      "image": "/medias/souvenirs/2026-concert-guitare.webp",
+      "legende": "Solo de guitare sur la grande scène",
+      "credit": "Domaine de Briquemault"
+    }
+  ],
   "videosBenevoles": [
     {
       "video": "/medias/benevoles/2026-bar-danse.mp4",

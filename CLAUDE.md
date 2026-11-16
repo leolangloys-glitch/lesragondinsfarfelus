@@ -240,6 +240,14 @@ dans `src/`).
   (`src/components/Clips.astro`). Une photo recadrée pour retirer deux enfants
   au premier plan. Crédits photo à demander. Les longues vidéos vont sur
   YouTube.
+- **Photos du domaine** (novembre 2026, à la demande de l'équipe) : reprises
+  du site domainedebriquemault.com (lieux : forteresse, manoir, orangerie,
+  théâtre de verdure, tente bambou, guinguette, cascade, parc ; 3 photos de
+  concerts 2026), dans `public/medias/domaine/` et `public/medias/souvenirs/`,
+  crédit « Domaine de Briquemault » (page Domaine, photothèque 2026, mentions
+  légales). Textes des lieux réécrits pour le festival. Page Domaine : grande
+  photo panoramique, photo des tours dans l'histoire, section « Un domaine,
+  mille décors » (la forteresse illuminée en grand, « Nouveauté 2027 »).
 - **Édition 2026** : aucun chiffre de fréquentation publié (« vous avez été
   nombreux »). Aftermovies « bientôt publiés ».
 
