@@ -248,6 +248,10 @@ dans `src/`).
   légales). Textes des lieux réécrits pour le festival. Page Domaine : grande
   photo panoramique, photo des tours dans l'histoire, section « Un domaine,
   mille décors » (la forteresse illuminée en grand, « Nouveauté 2027 »).
+  Photos envoyées par l'équipe ensuite : cours illuminées rose et vert (carte
+  « Les cours illuminées »), concert de jour, régie, allée illuminée
+  (photothèque 2026 ; ordre de `souvenirs.photos` = les 4 premières sur
+  l'accueil). Photo de nuit de l'Orangerie : à renvoyer (non reçue en fichier).
 - **Édition 2026** : aucun chiffre de fréquentation publié (« vous avez été
   nombreux »). Aftermovies « bientôt publiés ».
 
