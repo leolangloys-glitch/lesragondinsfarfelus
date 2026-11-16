@@ -122,7 +122,7 @@ Comment venir, Presse, Contact, Mentions légales, Confidentialité. Menus :
 | Accueil : entrée par le miroir, puis le haut sur fond noir (titre, infos), le festival en bref, programme, billetterie, retour 2026 (4 photos + lien), le lieu | `src/pages/index.astro` |
 | Programmation (3 jours, plateaux musique/magie : les artistes publiés, complétés par des cartes « mystère ») | `programmation.astro` |
 | Une page par artiste (photo, texte, écoute, clip, liens), créée toute seule pour chaque fiche publiée | `artistes/[slug].astro` |
-| Billetterie : « Pass 3 jours + camping » mis en avant (grande carte), puis pass vendredi / samedi / dimanche en arches (ambiance, accroche, chiffres du programme, « pour qui », bouton « Être prévenu » vers la newsletter tant que la billetterie n'est pas ouverte, « Réserver » ensuite), « Dans tous les pass », gratuités, module du prestataire, FAQ. Textes vendeurs écrits en novembre 2026 à la demande de l'équipe, **tarifs et formules jour à confirmer** | `billetterie.astro` |
+| Billetterie : « Pass 3 jours + camping » mis en avant (grande carte), puis pass vendredi / samedi / dimanche en arches (ambiance, accroche, chiffres du programme, « pour qui », bouton « Être prévenu » vers la newsletter tant que la billetterie n'est pas ouverte, « Réserver » ensuite), « Dans tous les pass », gratuités, module du prestataire, FAQ. Textes vendeurs (novembre 2026) : les 3 jours aussi désirables, surprises chaque jour, dimanche « Le grand final » ; pass 1, 2 et 3 jours confirmés, camping avec tous les pass, **tarifs à venir** | `billetterie.astro` |
 | Cashless (étapes, recharge en ligne, FAQ) | `cashless.astro` |
 | Infos pratiques (dates, accès, camping, accessibilité, sur place, FAQ, contact) | `infos.astro` |
 | Venir au festival (temps de trajet, train, covoiturage, FAQ) | `venir.astro` |
@@ -443,16 +443,17 @@ dans `src/`).
 - **Certificat HTTPS** : resté bloqué à « 1 of 3, Certificate Requested »
   plusieurs heures (le site en https affichait une alerte) ; domaine retiré
   puis remis dans Settings > Pages le 16/11/2026 au soir, « DNS check
-  successful » aussitôt. Reste : cocher **« Enforce HTTPS »** dès que la case
-  n'est plus grisée. Si ça rebloque plus de 24 h : refaire Remove puis Save.
+  successful » aussitôt ; certificat prêt le soir même (case « Enforce
+  HTTPS » cochable). Vérifier qu'elle est bien **cochée**. Si ça rebloque plus de 24 h : refaire Remove puis Save.
   Le job `signaler` (IndexNow) échoue tant que le certificat n'est pas prêt
   (« SSL: no alternative certificate subject name »), sans gêner la mise en
   ligne.
 - **Google Search Console** : propriété « Domaine » validée par TXT chez OVH
   (16/11/2026). **Bing Webmaster Tools** : site importé depuis Search Console
-  (16/11/2026). Reste, une fois le HTTPS prêt : envoyer `sitemap-index.xml`
-  dans Search Console et « Demander l'indexation » de l'accueil,
-  `/programmation/` et `/domaine/`.
+  (16/11/2026). Plan du site : dans une propriété « Domaine », Search Console
+  exige l'adresse complète `https://lesragondinsfarfelus.com/sitemap-index.xml`
+  (pas seulement `sitemap-index.xml`). Reste : « Demander l'indexation » de
+  l'accueil, `/programmation/` et `/domaine/`.
 - Mentions légales et confidentialité : éditeur association **7 DE COEUR**,
   association déclarée, siège à la mairie de Sainte-Geneviève-des-Bois, SIRET
   104 227 723 00012, contact contact@domainedebriquemault.com (aussi contact
