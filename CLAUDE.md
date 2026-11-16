@@ -120,10 +120,13 @@ dans `src/`).
   enregistrement crée un commit sur **`main`**, le site se reconstruit tout seul
   (≈ 2 min). Elle ne fonctionne donc **qu'une fois le site fusionné dans
   `main` et en ligne**.
-- **Accès protégé par un code** : on se connecte avec un jeton GitHub
-  (« fine-grained personal access token », uniquement ce dépôt, droit
-  « Contents : Read and write »), que seuls les membres de l'équipe ayant
-  accès au dépôt peuvent créer. Le jeton reste sur leur ordinateur : ne jamais
+- **Accès protégé par un code** : on se connecte avec un jeton GitHub, que
+  seules les personnes ayant le droit d'écrire dans le dépôt peuvent créer.
+  Léo (propriétaire du dépôt) : jeton « fine-grained », uniquement ce dépôt,
+  droit « Contents : Read and write ». Romane, Lolo… : d'abord invités comme
+  collaborateurs (Settings > Collaborators), puis jeton « classic » avec la
+  case `public_repo` (un jeton fine-grained personnel ne donne pas accès au
+  dépôt de quelqu'un d'autre). Le jeton reste sur leur ordinateur : ne jamais
   le demander ni l'écrire dans le dépôt. Page `noindex` et interdite dans
   `robots.txt`.
 - Ce qu'on y modifie :
