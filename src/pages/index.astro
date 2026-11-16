@@ -2,6 +2,7 @@
 import Base from "../layouts/Base.astro";
 import { evenementSchema, festival } from "../data/site";
 import Phototheque from "../components/Phototheque.astro";
+import ConcoursCostume from "../components/ConcoursCostume.astro";
 import souvenirs from "../data/souvenirs.json";
 
 // Textes provisoires : à relire et valider par l'équipe avant la mise en ligne.
@@ -232,6 +233,9 @@ const jours = [
       </div>
     </div>
   </section>
+
+  <!-- ===================== CONCOURS DU MEILLEUR COSTUME ===================== -->
+  <ConcoursCostume court />
 
   <!-- ===================== BILLETTERIE ===================== -->
   <section class="section billetterie" aria-labelledby="titre-billetterie">

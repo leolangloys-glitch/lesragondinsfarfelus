@@ -40,6 +40,12 @@ mêmes informations.
   aux plus jeunes (pas « tout public »).
 - Billetterie : pass 3 jours avec camping et autres formules, « disponibles
   très prochainement ».
+- **Concours du meilleur costume** (demande de l'équipe, novembre 2026) : thème
+  de la magie au sens large, ingéniosité et créativité, LED, paillettes,
+  couleurs ; « les déguisements les plus créatifs seront choisis ». Section
+  complète sur Programmation (`#concours`), carte courte sur l'accueil, FAQ
+  Infos, `llms.txt` (`src/components/ConcoursCostume.astro`). **À confirmer** :
+  jour, déroulé, jury, récompenses (le site dit « annoncés très bientôt »).
 - L'équipe va reprendre tous les textes du site.
 
 **Aucun nom d'artiste n'est publié sur le site ni écrit dans ce dépôt tant

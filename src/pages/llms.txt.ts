@@ -31,7 +31,7 @@ ${distances}
 ## Pages
 
 - [Accueil](${SITE}/) : présentation du festival
-- [Programmation](${SITE}/programmation/) : les trois jours, la musique et la magie
+- [Programmation](${SITE}/programmation/) : les trois jours, la musique et la magie, et le concours du meilleur costume sur le thème de la magie (au sens large : LED, paillettes, couleurs ; les déguisements les plus créatifs sont choisis)
 - [Billetterie](${SITE}/billetterie/) : pass jour, pass 3 jours, camping, gratuités
 - [Venir au festival](${SITE}/venir/) : itinéraires depuis Paris, Orléans, Montargis, Gien, Auxerre…
 - [Infos pratiques](${SITE}/infos/) : horaires, camping, accessibilité, FAQ, contact

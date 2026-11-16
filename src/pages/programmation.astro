@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import ConcoursCostume from "../components/ConcoursCostume.astro";
 import EnTetePage from "../components/EnTetePage.astro";
 import { getCollection } from "astro:content";
 import { evenementSchema, SITE } from "../data/site";
@@ -149,7 +150,9 @@ const jours = [
     ))
   }
 
-  <section class="section fond-nuit" aria-labelledby="titre-horaires">
+  <ConcoursCostume />
+
+  <section class="section fond-vert" aria-labelledby="titre-horaires">
     <div class="contenu">
       <div class="titre-section">
         <span class="surtitre">Horaires</span>
