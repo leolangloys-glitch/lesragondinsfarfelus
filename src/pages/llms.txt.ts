@@ -1,7 +1,7 @@
 // llms.txt : résumé du festival pour les assistants IA (ChatGPT, Claude, Perplexity,
 // Gemini…), généré à partir des mêmes données que le site pour rester à jour.
 import type { APIRoute } from "astro";
-import { festival, SITE, trajets } from "../data/site";
+import { contact, festival, SITE, trajets } from "../data/site";
 import partenaires from "../data/partenaires.json";
 
 export const GET: APIRoute = () => {
@@ -23,6 +23,32 @@ export const GET: APIRoute = () => {
 - Public : vendredi et samedi plutôt pour un public adulte ; dimanche, journée des familles ouverte aux plus jeunes. Entrée gratuite pour les moins de 11 ans et les personnes en situation de handicap.
 - Hébergement : camping sur place dès le vendredi après-midi ; chambres d'hôtes au domaine.
 - Paiement sur place : bracelet cashless.
+- Concours du meilleur costume sur le thème de la magie, pris au sens large : on vient déguisé, LED, paillettes et couleurs bienvenues ; les déguisements les plus créatifs sont choisis.
+- Organisateur : association ${festival.editeur} (association déclarée, Sainte-Geneviève-des-Bois). Contact : ${contact}.
+
+## Le lieu : le Domaine de Briquemault
+
+Domaine historique de 10 hectares au bord du Loing, entre Montargis et Gien. Site attesté dès 1240 ; vestiges d'un château fort (XIIIe-XIVe siècles) entourés de douves. Les lieux du festival : la forteresse et les douves (illuminées en 2027, avec une scène sur pilotis), le manoir (projections lumineuses sur sa façade la nuit), l'Orangerie de Cristal (verrière de 400 m²), le théâtre de verdure, la tente bambou, l'espace guinguette, la cascade, le parc et les cours illuminées de rose et de vert. Plus d'infos : ${SITE}/domaine/
+
+## L'édition 2026
+
+La 1re édition a eu lieu les 30 et 31 mai 2026 au Domaine de Briquemault : concerts, DJ sets, magie, projections lumineuses sur le manoir. Photos et aftermovie : ${SITE}/edition-2026/
+
+## Bénévoles
+
+Le festival recrute des bénévoles (accueil et billetterie, bar et restauration, scènes, montage et démontage, décors, camping). Avantages : accès libre au festival en dehors des créneaux, repas offerts pendant les missions, t-shirt officiel. Inscription en ligne : ${SITE}/benevoles/
+
+## Questions fréquentes
+
+- Quand a lieu le festival ? Les 28, 29 et 30 mai 2027.
+- Où ? Au Domaine de Briquemault, 45230 Sainte-Geneviève-des-Bois (Loiret), à 1 h 30 de Paris, 1 h 15 d'Orléans, 25 min de Montargis et de Gien.
+- Quel genre de festival ? Un festival de musique (DJ sets, pop, rock, électro) et de magie (sur scène et en close-up).
+- Peut-on y aller en famille ? Oui, surtout le dimanche, journée des familles avec des spectacles de magie pour les enfants. Vendredi et samedi s'adressent plutôt aux adultes.
+- Peut-on camper ? Oui, le camping ouvre le vendredi ; un pass 3 jours avec camping sera proposé.
+- Les billets sont-ils en vente ? Le pass 3 jours avec camping et les autres formules sont annoncés très prochainement sur ${SITE}/billetterie/.
+- Qui joue ? Les têtes d'affiche seront dévoilées sur ${SITE}/programmation/.
+- Comment venir en train ? Gares de Montargis, Nogent-sur-Vernisson et Gien, depuis Paris-Bercy ou Paris-Gare de Lyon (ligne R) ; covoiturage conseillé.
+- L'entrée est-elle gratuite pour certains ? Oui pour les moins de 11 ans et les personnes en situation de handicap (règle de l'édition 2026).
 
 ## Venir au festival (temps indicatifs en voiture)
 
@@ -40,7 +66,11 @@ ${distances}
 - [Le Domaine de Briquemault](${SITE}/domaine/) : le lieu
 - [Devenir bénévole](${SITE}/benevoles/)
 - [Devenir partenaire](${SITE}/partenaires/) (partenaires ${partenaires.annee} : ${partenaires.liste.map((p) => p.nom).join(", ")}) : Club VIP, sponsoring et mécénat (dons ouvrant droit à une réduction d'impôt de 60 % pour les entreprises et 66 % pour les particuliers)
-- [Espace presse](${SITE}/presse/)
+- [Espace presse](${SITE}/presse/) : accréditations, revue de presse, contact presse
+- [Édition 2026](${SITE}/edition-2026/) : retour sur la 1re édition, photos, aftermovie
+- [Les newsletters](${SITE}/lettres/)
+
+Version complète du site en texte (toutes les pages) : ${SITE}/llms-full.txt
 `;
   return new Response(texte, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
 };

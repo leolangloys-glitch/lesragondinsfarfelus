@@ -93,6 +93,12 @@ export const liensExternes = {
 export const contact = reglages.contact;
 // Adresse qui reçoit les inscriptions bénévoles (vide = adresse de contact)
 export const emailBenevoles = reglages.emailBenevoles || reglages.contact;
+// Codes de vérification de Google Search Console et Bing Webmaster Tools
+// (balise « meta », collée dans l'administration, « Liens et contact »)
+export const verification = {
+  google: (reglages.verificationGoogle ?? "").trim(),
+  bing: (reglages.verificationBing ?? "").trim(),
+};
 
 export type Lien = { libelle: string; href: string };
 
@@ -173,8 +179,20 @@ export function organisationSchema() {
     "@id": `${SITE}/#organisation`,
     name: festival.nom,
     url: `${SITE}/`,
-    logo: `${SITE}/brouillon/logo.webp`,
+    logo: { "@type": "ImageObject", url: `${SITE}/brouillon/logo.webp`, width: 1200, height: 717 },
+    image: `${SITE}/brouillon/partage.jpg`,
     description: "Festival de musique et de magie dans le Loiret, à 1 h 30 de Paris, organisé par l'association 7 DE COEUR.",
+    foundingDate: "2026",
+    email: contact,
+    address: adressePostale,
+    areaServed: ["Loiret", "Centre-Val de Loire", "Île-de-France", "Paris"],
+    knowsAbout: ["festival de musique", "magie", "close-up", "DJ set", "rock", "électro", "pop"],
+    parentOrganization: {
+      "@type": "NGO",
+      name: festival.editeur,
+      description: "Association déclarée (loi 1901), éditrice du site et organisatrice du festival.",
+      identifier: { "@type": "PropertyValue", propertyID: "SIRET", value: "10422772300012" },
+    },
     ...(reseaux.length ? { sameAs: reseaux } : {}),
   };
 }
@@ -245,9 +263,14 @@ export function evenementSchema(siteUrl = SITE) {
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
     inLanguage: "fr-FR",
     url: `${siteUrl}/`,
-    image: [`${siteUrl}/brouillon/partage.jpg`],
+    image: [
+      `${siteUrl}/partage/festival-16x9.jpg`,
+      `${siteUrl}/partage/festival-4x3.jpg`,
+      `${siteUrl}/partage/festival-1x1.jpg`,
+    ],
     keywords:
-      "festival Loiret, festival musique et magie, festival près de Paris, festival Orléans, festival Montargis, festival Gien, festival rock électro, festival DJ set, festival magie, festival familial",
+      "festival Loiret, festival musique et magie, festival de magie, festival près de Paris, festival Île-de-France, festival Orléans, festival Montargis, festival Gien, festival Centre-Val de Loire, festival mai 2027, festival rock électro, festival DJ set, festival avec camping, festival familial, concours de costume",
+    audience: { "@type": "Audience", audienceType: "Adultes le vendredi et le samedi ; familles et enfants le dimanche" },
     isAccessibleForFree: false,
     location: lieuSchema(),
     offers: {
@@ -262,5 +285,28 @@ export function evenementSchema(siteUrl = SITE) {
       jour("2027-05-29", "Samedi : la grande nuit", "13 groupes, artistes et DJ, 5 à 6 magiciens sur scène et en close-up, soirée têtes d'affiche."),
       jour("2027-05-30", "Dimanche : la journée des familles", "5 groupes, artistes et DJ et 5 magiciens, avec des spectacles de magie sur scène pour les enfants."),
     ],
+  };
+}
+
+/** Données structurées de la 1re édition (30 et 31 mai 2026), passée. */
+export function edition2026Schema(images: string[], sponsors: { nom: string; lien?: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Festival",
+    "@id": `${SITE}/edition-2026/#festival-2026`,
+    name: `${festival.nom} 2026`,
+    description:
+      "Première édition du festival de musique et de magie Les Ragondins Farfelus, les 30 et 31 mai 2026 au Domaine de Briquemault (Loiret) : concerts, DJ sets, magie, projections lumineuses sur le manoir.",
+    startDate: "2026-05-30",
+    endDate: "2026-05-31",
+    eventStatus: "https://schema.org/EventScheduled",
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    inLanguage: "fr-FR",
+    url: `${SITE}/edition-2026/`,
+    image: images.map((i) => new URL(i, SITE).href),
+    location: { "@id": `${SITE}/domaine/#lieu`, "@type": "Place", name: festival.lieu.nom, address: adressePostale },
+    organizer: { "@type": "Organization", "@id": `${SITE}/#organisation`, name: festival.nom, url: `${SITE}/` },
+    sponsor: sponsors.map((s) => ({ "@type": "Organization", name: s.nom, ...(s.lien ? { url: s.lien } : {}) })),
+    superEvent: { "@type": "EventSeries", name: festival.nom, url: `${SITE}/` },
   };
 }

@@ -4,7 +4,7 @@ import "@fontsource-variable/fraunces/full.css";
 import "../styles/global.css";
 import Entete from "../components/Entete.astro";
 import PiedDePage from "../components/PiedDePage.astro";
-import { festival, filArianeSchema, organisationSchema, siteWebSchema } from "../data/site";
+import { festival, filArianeSchema, organisationSchema, siteWebSchema, verification } from "../data/site";
 
 interface Props {
   /** Titre de l'onglet et de Google (60 caractères max conseillés) */
@@ -72,6 +72,9 @@ const { latitude, longitude } = festival.lieu;
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#083d3d" />
+    {verification.google && <meta name="google-site-verification" content={verification.google} />}
+    {verification.bing && <meta name="msvalidate.01" content={verification.bing} />}
+    <link rel="alternate" type="text/plain" title="Résumé du festival pour les assistants IA" href="/llms.txt" />
 
     <meta property="og:site_name" content={festival.nom} />
     <meta property="og:title" content={titreComplet} />

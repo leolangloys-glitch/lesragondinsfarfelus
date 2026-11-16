@@ -6,7 +6,7 @@ import Video from "../components/Video.astro";
 import Formulaire from "../components/Formulaire.astro";
 import Clips from "../components/Clips.astro";
 import Phototheque from "../components/Phototheque.astro";
-import { emailBenevoles, liensExternes } from "../data/site";
+import { emailBenevoles, faqSchema, liensExternes, SITE } from "../data/site";
 import souvenirs from "../data/souvenirs.json";
 
 // Les avantages des bénévoles (confirmés par l'équipe en novembre 2026)
@@ -65,10 +65,24 @@ const questions = [
 <Base
   titre="Devenir bénévole dans un festival du Loiret"
   nomCourt="Devenir bénévole"
+  image="/partage/benevoles.jpg"
+  donneesStructurees={[
+    faqSchema(questions),
+    ...souvenirs.videosBenevoles.map((v) => ({
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      name: v.legende || "Les bénévoles du festival en 2026",
+      description: `${v.legende || "Les bénévoles"} : la troupe des bénévoles des Ragondins Farfelus pendant l'édition 2026, au Domaine de Briquemault (Loiret).`,
+      thumbnailUrl: new URL(v.affiche || "/brouillon/partage.jpg", SITE).href,
+      contentUrl: new URL(v.video, SITE).href,
+      uploadDate: "2026-06-01",
+      inLanguage: "fr-FR",
+    })),
+  ]}
   description="Rejoignez les bénévoles des Ragondins Farfelus, 28-30 mai 2027 au Domaine de Briquemault (Loiret), près de Montargis : accueil, bar, scènes, décors…"
 >
   <EnTetePage
-    surtitre="Bénévoles"
+    surtitre="Devenir bénévole en 2027"
     titre="Rejoignez la troupe des Ragondins"
     intro="Sans bénévoles, pas de magie. Vivez le festival de l'intérieur, profitez-en en dehors de vos créneaux, repas offerts pendant vos missions, et repartez avec des souvenirs plein la tête."
   >

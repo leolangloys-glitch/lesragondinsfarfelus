@@ -198,3 +198,5 @@ collections:
           - { label: Instagram, name: instagram, widget: string, required: false }
           - { label: Facebook, name: facebook, widget: string, required: false }
           - { label: TikTok, name: tiktok, widget: string, required: false }
+          - { label: Code de vérification Google Search Console, name: verificationGoogle, widget: string, required: false, hint: "Dans Search Console : Ajouter une propriété > Préfixe d'URL > Balise HTML. Collez seulement le code entre content=\"…\" (pas toute la balise)." }
+          - { label: Code de vérification Bing Webmaster Tools, name: verificationBing, widget: string, required: false, hint: "Dans Bing Webmaster Tools : Ajouter un site > Balise meta. Collez seulement le code entre content=\"…\"." }

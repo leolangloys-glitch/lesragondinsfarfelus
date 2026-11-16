@@ -64,7 +64,11 @@ const jours = [
     Sans JavaScript, pas de miroir : le site s'affiche directement.
   -->
   <script is:inline slot="tete">
-    if (location.hash !== "#site") document.documentElement.classList.add("avec-miroir");
+    if (
+      location.hash !== "#site" &&
+      !/^https?:\/\/([^/]*\.)?(google|bing|duckduckgo|qwant|ecosia|yahoo|yandex|brave|startpage|lilo|perplexity|chatgpt|openai|claude|copilot|gemini|mistral)\.[a-z.]+(\/|$)/i.test(document.referrer)
+    )
+      document.documentElement.classList.add("avec-miroir");
   </script>
 
   <!-- ===================== L'ENTRÉE : LE MIROIR DE L'AFFICHE ===================== -->

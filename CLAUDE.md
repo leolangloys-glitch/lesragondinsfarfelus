@@ -269,9 +269,15 @@ dans `src/`).
 - Technique : l'entrée (`.entree`) est un écran fixe par-dessus la page ; tout
   le contenu de l'accueil reste dans le HTML (bon pour Google). Un petit script
   dans le `<head>` affiche le miroir **à chaque ouverture ou rechargement de
-  l'accueil** (demande de l'équipe, pour pouvoir le montrer). Seule exception :
-  l'adresse `/#site` mène directement au site. Sans JavaScript : le site
-  s'affiche directement.
+  l'accueil** (demande de l'équipe, pour pouvoir le montrer). Exceptions :
+  l'adresse `/#site`, et les visiteurs qui arrivent **depuis un moteur de
+  recherche ou un assistant IA** (Google, Bing, DuckDuckGo, Qwant, Ecosia,
+  ChatGPT, Perplexity, Claude, Copilot, Gemini, Mistral… : test sur
+  `document.referrer`), qui arrivent directement sur le site : Google pénalise
+  les écrans qui cachent le contenu aux visiteurs venus de ses résultats
+  (« interstitiels intrusifs », novembre 2026). Adresse tapée, favori, lien
+  WhatsApp, Facebook, Instagram, e-mail : le miroir s'affiche. Sans
+  JavaScript : le site s'affiche directement.
 - L'affiche est reproduite **au pixel près** : miroir doré, sol en damier,
   escalier, positions relevées sur l'affiche de 848 × 1200 (commentaires de
   `.affiche` dans `index.astro`). Dans le miroir, **seul le titre** (le logo),
@@ -343,7 +349,37 @@ dans `src/`).
   `/programmation/`, jamais `/programmation`.
 - Adresse du site : `https://lesragondinsfarfelus.com` (dans `astro.config.mjs`,
   `public/robots.txt`, `src/data/site.ts` et `public/CNAME`).
-- Image de partage : `public/brouillon/partage.jpg` (1200×630).
+- Images de partage : `public/brouillon/partage.jpg` (accueil, affiche) et une
+  par page dans `public/partage/` (1200×630, photo + logo), fabriquées par
+  `python3 -I outils/images-partage.py` (liste des photos sources dans le
+  script) ; aussi `festival-16x9/4x3/1x1.jpg` pour les données « Festival »
+  (formats demandés par Google).
+- **Renforcement SEO/GEO (novembre 2026)** :
+  - titre principal (h1) des pages intérieures = surtitre avec mots-clés +
+    titre (« Billetterie du festival 2027 : Votre billet pour l'autre monde »),
+    même apparence (`EnTetePage.astro`) ;
+  - FAQ structurées aussi sur Billetterie, Cashless et Bénévoles ; vidéos des
+    bénévoles en `VideoObject` ; Domaine en `Place` + `TouristAttraction` avec
+    ses 9 lieux (`containsPlace`) et photos ; Édition 2026 en `Festival` passé
+    (30-31 mai 2026, photos, 18 partenaires en `sponsor`) ; Organisation
+    enrichie (association 7 DE COEUR en `parentOrganization` avec SIRET,
+    contact, adresse, date de création) ;
+  - `llms.txt` enrichi (lieux, 2026, bénévoles, questions fréquentes) et
+    **`/llms-full.txt`** : le texte de toutes les pages, et **photos ajoutées
+    au plan du site** (sitemap images), par l'intégration
+    `outils/referencement.mjs` (fin de construction, sans bibliothèque) ;
+  - `robots.txt` : plus de robots d'assistants autorisés (DuckAssistBot,
+    meta-externalagent, Amazonbot, MistralAI-User, CCBot…) ;
+  - **IndexNow** : après chaque mise en ligne, le job `signaler` du workflow
+    envoie toutes les adresses du plan du site à Bing (qui alimente ChatGPT,
+    Copilot, DuckDuckGo, Qwant), Yandex, Seznam, Naver. Clé publique :
+    `public/070ec91cfce7ceb1224b9c9875dcca25.txt` (ne pas supprimer) ;
+  - codes de vérification Google Search Console et Bing Webmaster Tools :
+    champs de l'administration (« Liens et contact »), balises `meta` ajoutées
+    automatiquement (`verification` dans `site.ts`) ;
+  - photos vérifiées sans doublon (comparaison visuelle de toutes les images ;
+    seules reprises voulues : logos partenaires sur 2 pages, 4 photos 2026
+    sur l'accueil).
 
 ## À décider
 
@@ -406,9 +442,12 @@ dans `src/`).
   de l'espace presse et `llms.txt`.
 - Ne jamais demander ni accepter les mots de passe OVH ou GitHub : l'équipe
   fait elle-même les réglages, on la guide.
-- Après : Google Search Console (validation par TXT chez OVH, envoyer
-  `sitemap-index.xml`), Bing Webmaster Tools, fiche Google du festival,
-  compte Brevo pour la newsletter, jetons d'accès à l'administration.
+- Après : Google Search Console (code de vérification dans l'administration,
+  ou TXT chez OVH ; envoyer `sitemap-index.xml`), Bing Webmaster Tools
+  (importer depuis Search Console), inscription du festival dans les agendas
+  (OpenAgenda, Tourisme Loiret, offices de tourisme de Montargis et Gien, JDS,
+  Facebook événement), compte Brevo pour la newsletter, jetons d'accès à
+  l'administration.
 
 ## Règles de travail
 
