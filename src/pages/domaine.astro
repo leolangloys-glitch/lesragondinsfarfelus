@@ -2,6 +2,66 @@
 import Base from "../layouts/Base.astro";
 import EnTetePage from "../components/EnTetePage.astro";
 import { festival, lieuSchema } from "../data/site";
+
+// Les lieux du domaine (photos : Domaine de Briquemault, reprises de son site
+// à la demande de l'équipe, novembre 2026). Textes écrits pour le festival.
+const lieux = [
+  {
+    nom: "La Forteresse & les Douves",
+    photo: "/medias/domaine/forteresse-nuit.webp",
+    alt: "Les tours du château fort illuminées la nuit, reflétées dans les douves",
+    texte: "Les vestiges du château fort médiéval, cernés de douves. En 2027, ils s'illuminent à la nuit tombée, avec une scène sur pilotis à leur pied.",
+    nouveau: true,
+  },
+  {
+    nom: "Le Manoir",
+    photo: "/medias/domaine/manoir-projections.webp",
+    alt: "Le manoir à la tombée de la nuit, sa façade couverte de projections lumineuses orange",
+    texte: "Le cœur du domaine. Pendant le festival, à la nuit tombée, sa façade s'anime de projections lumineuses.",
+  },
+  {
+    nom: "L'Orangerie de Cristal",
+    photo: "/medias/domaine/orangerie.webp",
+    alt: "La grande verrière de l'Orangerie de Cristal sur la pelouse",
+    texte: "Une verrière de 400 m² face au manoir, baignée de lumière le jour et scintillante la nuit.",
+  },
+  {
+    nom: "Le Théâtre de Verdure",
+    photo: "/medias/domaine/theatre-verdure.webp",
+    alt: "Les bâtiments du domaine au bord de l'eau, au crépuscule",
+    texte: "Un amphithéâtre végétal à ciel ouvert, au cœur du parc, fait pour les concerts.",
+  },
+  {
+    nom: "La Tente Bambou",
+    photo: "/medias/domaine/tente-bambou.webp",
+    alt: "Une grande tente ouverte, décorée de guirlandes lumineuses, au crépuscule",
+    texte: "Une grande tente ouverte sur la nature, pour rester à l'abri quoi qu'annonce le ciel.",
+  },
+  {
+    nom: "L'Espace Guinguette",
+    photo: "/medias/domaine/guinguette.webp",
+    alt: "La salle de la guinguette, ses poutres et ses grandes portes vitrées",
+    texte: "Le coin convivial du domaine, grand ouvert sur le parc.",
+  },
+  {
+    nom: "La Cascade",
+    photo: "/medias/domaine/cascade.webp",
+    alt: "Une cascade naturelle entre les arbres",
+    texte: "Une cascade naturelle qui chante au creux du parc.",
+  },
+  {
+    nom: "Les cours illuminées",
+    photo: "/medias/domaine/cours-illuminees.webp",
+    alt: "Une cour du domaine la nuit, murs éclairés de rose et de vert, guirlandes lumineuses et festivaliers",
+    texte: "Pendant le festival, les cours et les allées s'éclairent de rose et de vert sous les guirlandes.",
+  },
+  {
+    nom: "Le Parc",
+    photo: "/medias/domaine/parc.webp",
+    alt: "Les prairies et les arbres du parc, avec l'orangerie au loin",
+    texte: "Dix hectares d'arbres centenaires, de prairies et de cours d'eau, au bord du Loing.",
+  },
+];
 ---
 
 <Base
@@ -20,11 +80,30 @@ import { festival, lieuSchema } from "../data/site";
     </div>
   </EnTetePage>
 
+  <figure class="panorama">
+    <img
+      src="/medias/domaine/panorama.webp"
+      alt="Vue d'ensemble du domaine : la prairie, le manoir et ses dépendances sous les arbres"
+      width="2000"
+      height="924"
+      fetchpriority="high"
+    />
+  </figure>
+
   <section class="section fond-nuit" aria-labelledby="titre-histoire">
     <div class="contenu deux-colonnes">
       <div>
         <span class="surtitre">Huit siècles d'histoire</span>
         <h2 id="titre-histoire">Une forteresse devenue terre de fête</h2>
+        <figure class="histoire__photo">
+          <img
+            src="/medias/domaine/forteresse-jour.webp"
+            alt="Les deux tours rondes du château fort se reflètent dans les douves"
+            width="900"
+            height="1200"
+            loading="lazy"
+          />
+        </figure>
       </div>
       <div>
         <p class="intro">
@@ -55,7 +134,35 @@ import { festival, lieuSchema } from "../data/site";
     </div>
   </section>
 
-  <section class="section fond-nuit" aria-labelledby="titre-annee">
+  <section class="section fond-nuit" id="lieux" aria-labelledby="titre-lieux">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Les lieux</span>
+        <h2 id="titre-lieux">Un domaine, mille décors</h2>
+        <p class="intro">
+          Forteresse, manoir, orangerie, théâtre de verdure, cascade&nbsp;: tour d'horizon du monde
+          qui accueille les Ragondins Farfelus.
+        </p>
+      </div>
+      <ul class="lieux">
+        {
+          lieux.map((l) => (
+            <li class:list={["lieu", { "lieu--nouveau": l.nouveau }]}>
+              <img src={l.photo} alt={l.alt} loading="lazy" decoding="async" width="1000" height="667" />
+              <div class="lieu__texte">
+                {l.nouveau && <span class="lieu__badge">Nouveauté 2027</span>}
+                <h3>{l.nom}</h3>
+                <p>{l.texte}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="credit">Photos&nbsp;: Domaine de Briquemault et équipe du festival.</p>
+    </div>
+  </section>
+
+  <section class="section fond-vert" aria-labelledby="titre-annee">
     <div class="contenu">
       <div class="titre-section">
         <span class="surtitre">Toute l'année</span>
@@ -76,6 +183,121 @@ import { festival, lieuSchema } from "../data/site";
 </Base>
 
 <style>
+  .panorama {
+    margin: 0;
+  }
+
+  .panorama img {
+    display: block;
+    width: 100%;
+    height: clamp(14rem, 42vw, 34rem);
+    object-fit: cover;
+  }
+
+  .histoire__photo {
+    margin: 2rem 0 0;
+    max-width: 22rem;
+  }
+
+  .histoire__photo img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 999px 999px var(--rayon) var(--rayon);
+    border: 2px solid var(--or);
+  }
+
+  .lieux {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  }
+
+  .lieu {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--rayon);
+    border: 1.5px solid rgba(243, 226, 176, 0.3);
+    background: rgba(5, 40, 40, 0.55);
+  }
+
+  .lieu img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
+  .lieu__texte {
+    padding: 1.1rem 1.25rem 1.35rem;
+  }
+
+  .lieu h3 {
+    margin: 0 0 0.4rem;
+    font-size: 1.3rem;
+  }
+
+  .lieu p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--creme-doux);
+  }
+
+  /* La forteresse illuminée, nouveauté 2027 : en grand */
+  .lieu--nouveau {
+    grid-column: 1 / -1;
+    border: 2px solid var(--or);
+  }
+
+  @media (min-width: 48rem) {
+    .lieu--nouveau {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      align-items: center;
+    }
+
+    .lieu--nouveau img {
+      height: 100%;
+      aspect-ratio: auto;
+      min-height: 18rem;
+    }
+
+    .lieu--nouveau .lieu__texte {
+      padding: 2rem;
+    }
+
+    .lieu--nouveau h3 {
+      font-size: 1.8rem;
+    }
+
+    .lieu--nouveau p {
+      font-size: 1.05rem;
+    }
+  }
+
+  .lieu__badge {
+    display: inline-block;
+    margin-bottom: 0.6rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    background: var(--rose);
+    color: var(--vert);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .credit {
+    margin: 1.25rem 0 0;
+    font-size: 0.85rem;
+    color: var(--creme-doux);
+  }
+
   .deux-colonnes {
     display: grid;
     gap: 1.5rem 4rem;
