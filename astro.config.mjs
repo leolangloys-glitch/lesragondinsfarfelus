@@ -10,7 +10,8 @@ export default defineConfig({
   integrations: [
     sitemap({
       // Les pages légales n'ont pas besoin d'être mises en avant.
-      filter: (page) => !/mentions-legales|confidentialite/.test(page),
+      // ni les versions e-mail des newsletters (faites pour l'outil d'envoi).
+      filter: (page) => !/mentions-legales|confidentialite|\/lettres\/[^/]+\/email\//.test(page),
       // Date de dernière mise à jour (celle de la construction du site)
       lastmod: new Date(),
       i18n: { defaultLocale: "fr", locales: { fr: "fr-FR" } },

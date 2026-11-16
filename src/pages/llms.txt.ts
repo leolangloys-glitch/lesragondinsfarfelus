@@ -15,7 +15,7 @@ export const GET: APIRoute = () => {
 
 - Dates : vendredi 28, samedi 29 et dimanche 30 mai 2027 (1re édition : 30 et 31 mai 2026).
 - Lieu : ${festival.lieu.nom}, domaine historique de 10 hectares (site attesté dès 1240, ruines d'un château fort entouré de douves), au bord du Loing.
-- Musique : DJ sets, pop, rock et électro. Magie : une magie fun et pleine d'humour, sur scène et en close-up dans le public ; spectacles de magie pour les enfants le dimanche.
+- Musique : DJ sets, pop, rock et électro. Magie : une magie fun, impressionnante et pleine de surprises, sur scène et en close-up dans le public ; spectacles de magie pour les enfants le dimanche.
 - Programme : vendredi, ouverture du camping, concerts et DJ sets ; samedi, journée magie et concerts, soirée têtes d'affiche ; dimanche, journée des familles (musique et magie pour les enfants).
 - Têtes d'affiche : annoncées prochainement sur ${SITE}/programmation/.
 - Public : vendredi et samedi plutôt pour un public adulte ; dimanche, journée des familles ouverte aux plus jeunes. Entrée gratuite pour les moins de 11 ans et les personnes en situation de handicap.

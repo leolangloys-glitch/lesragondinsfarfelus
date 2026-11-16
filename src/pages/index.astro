@@ -1,6 +1,8 @@
 ---
 import Base from "../layouts/Base.astro";
 import { evenementSchema, festival } from "../data/site";
+import Phototheque from "../components/Phototheque.astro";
+import souvenirs from "../data/souvenirs.json";
 
 // Textes provisoires : à relire et valider par l'équipe avant la mise en ligne.
 const univers = [
@@ -13,7 +15,7 @@ const univers = [
   {
     titre: "La magie",
     texte:
-      "Une magie fun et pleine d'humour, sur scène et en close-up au milieu du public, à quelques centimètres de vous. Et le dimanche, de la magie pour les enfants.",
+      "Une magie fun, impressionnante et pleine de surprises, sur scène et en close-up au milieu du public, à quelques centimètres de vous. Et le dimanche, de la magie pour les enfants.",
     icone: "magie",
   },
   {
@@ -161,7 +163,7 @@ const jours = [
       <section class="en-bref" aria-labelledby="titre-en-bref">
         <h3 id="titre-en-bref">Le festival en bref</h3>
         <dl>
-          <div><dt>Quoi</dt><dd>Festival de musique (DJ sets, pop, rock, électro) et de magie (fun et pleine d'humour, sur scène et en close-up)</dd></div>
+          <div><dt>Quoi</dt><dd>Festival de musique (DJ sets, pop, rock, électro) et de magie (fun, impressionnante et pleine de surprises, sur scène et en close-up)</dd></div>
           <div><dt>Quand</dt><dd>Vendredi 28, samedi 29 et dimanche 30 mai 2027 · 2<sup>e</sup> édition</dd></div>
           <div><dt>Où</dt><dd>{festival.lieu.nom}, {festival.lieu.codePostal} {festival.lieu.commune} (Loiret, Centre-Val de Loire)</dd></div>
           <div><dt>À combien</dt><dd>1&nbsp;h&nbsp;30 de Paris, 1&nbsp;h&nbsp;15 d'Orléans, 25&nbsp;min de Montargis et de Gien · <a href="/venir/">Comment venir</a></dd></div>
@@ -259,15 +261,14 @@ const jours = [
         <h2 id="titre-retour">La première fois que le portail s'est ouvert</h2>
         <p class="intro">
           Les 30 et 31 mai 2026, le Domaine de Briquemault accueillait la toute première édition des
-          Ragondins Farfelus. Magie, concerts, guinguette et DJ sets&nbsp;: retour en images.
+          Ragondins Farfelus. Vous avez été nombreux&nbsp;: merci encore&nbsp;! L'aftermovie arrive
+          bientôt.
         </p>
       </div>
-      <ul class="retour__photos" aria-label="Photos de l'édition 2026 (à venir)">
-        <li><span>Photo à venir</span></li>
-        <li><span>Photo à venir</span></li>
-        <li><span>Photo à venir</span></li>
-        <li><span>Vidéo à venir</span></li>
-      </ul>
+      <Phototheque photos={souvenirs.photos} vides={4} limite={4} />
+      <div class="boutons">
+        <a class="bouton bouton--contour" href="/edition-2026/">Revivre l'édition 2026</a>
+      </div>
     </div>
   </section>
 

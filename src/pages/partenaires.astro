@@ -1,47 +1,87 @@
 ---
 import Base from "../layouts/Base.astro";
 import EnTetePage from "../components/EnTetePage.astro";
-import ModuleExterne from "../components/ModuleExterne.astro";
+import Formulaire from "../components/Formulaire.astro";
 import { liensExternes } from "../data/site";
 
-// Niveaux de partenariat proposés à titre d'exemple : noms, montants et
-// contreparties à définir par l'équipe.
-const niveaux = [
+// Les trois façons de s'associer au festival (textes provisoires, à valider).
+const offres = [
   {
-    nom: "Lanterne",
-    texte: "Pour les commerces et entreprises du territoire qui veulent soutenir le festival.",
-    contreparties: ["Logo sur le site et les réseaux", "Remerciements sur place", "Invitations"],
+    id: "club",
+    surtitre: "L'expérience VIP",
+    titre: "Club Ragondins Farfelus",
+    texte:
+      "Offrez à vos clients, à vos équipes ou à vos proches une expérience inoubliable : un espace VIP au cœur du festival, un accueil aux petits soins et les meilleures places pour vivre la musique et la magie.",
+    points: ["Espace VIP réservé", "Accueil personnalisé", "Moments privilégiés avec la magie du festival"],
   },
   {
-    nom: "Étoile",
-    texte: "Une présence visible sur tous les supports du festival.",
-    contreparties: ["Logo sur l'affiche et les supports imprimés", "Publications dédiées sur les réseaux", "Invitations et accès à l'espace partenaires"],
+    id: "mecenat",
+    surtitre: "Soutenir un projet culturel",
+    titre: "Mécénat",
+    texte:
+      "Devenez l'un des soutiens privilégiés du festival : contribuez à un projet culturel ambitieux au cœur du Loiret et associez votre nom à son histoire, tout en profitant des avantages fiscaux du mécénat*.",
+    points: ["Un projet culturel fort et local", "Votre engagement mis en valeur", "Avantages fiscaux du mécénat*"],
     vedette: true,
   },
   {
-    nom: "Portail",
-    texte: "Le partenariat majeur : associez votre nom à un temps fort du festival.",
-    contreparties: ["Visibilité premium sur scène et en ligne", "Activation de votre marque sur le festival", "Soirée privée et invitations VIP"],
+    id: "sponsoring",
+    surtitre: "Faire rayonner votre marque",
+    titre: "Sponsoring",
+    texte:
+      "Faites de votre marque l'un des visages du festival : une visibilité forte sur place, en ligne et sur nos supports, dans un décor hors du commun, avec des activations imaginées sur mesure.",
+    points: ["Visibilité sur place et en ligne", "Présence sur nos supports", "Activations sur mesure"],
   },
 ];
 ---
 
 <Base
-  titre="Devenir partenaire ou mécène du festival"
+  titre="Devenir partenaire : Club VIP, mécénat, sponsoring"
   nomCourt="Devenir partenaire"
-  description="Entreprises du Loiret et d'Île-de-France : devenez partenaire ou mécène des Ragondins Farfelus, festival de musique et de magie dans le Loiret."
+  description="Club Ragondins Farfelus, mécénat ou sponsoring : entreprises du Loiret et d'Île-de-France, associez-vous au festival de musique et de magie des Ragondins Farfelus."
 >
   <EnTetePage
     surtitre="Partenaires et mécènes"
     titre="Faites partie de la magie"
-    intro="Associez votre image à un festival de musique et de magie original, au cœur du Loiret."
+    intro="Associez votre image à un festival de musique et de magie original, au cœur du Loiret, à 1 h 30 de Paris."
   >
     <div class="boutons">
-      <a class="bouton bouton--rose" href="#contact-partenaires">Demander le dossier de partenariat</a>
+      <a class="bouton bouton--rose" href="#rejoindre">Rejoindre l'aventure</a>
     </div>
   </EnTetePage>
 
-  <section class="section fond-nuit" aria-labelledby="titre-pourquoi">
+  <section class="section fond-nuit" aria-labelledby="titre-offres">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Trois façons de nous rejoindre</span>
+        <h2 id="titre-offres">Choisissez votre place dans l'aventure</h2>
+      </div>
+      <ul class="offres">
+        {
+          offres.map((o) => (
+            <li class:list={["offre", { "offre--vedette": o.vedette }]} id={o.id}>
+              <span class="surtitre">{o.surtitre}</span>
+              <h3>{o.titre}</h3>
+              <p class="texte-doux">{o.texte}</p>
+              <ul class="liste">
+                {o.points.map((p) => (
+                  <li>{p}</li>
+                ))}
+              </ul>
+              <a class="bouton bouton--contour" href="#rejoindre">
+                Je suis intéressé
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="note">
+        * Sous réserve de l'éligibilité de l'association au régime du mécénat&nbsp;: les conditions
+        vous seront précisées lors de nos échanges.
+      </p>
+    </div>
+  </section>
+
+  <section class="section fond-vert" aria-labelledby="titre-pourquoi">
     <div class="contenu">
       <div class="titre-section">
         <span class="surtitre">Pourquoi nous rejoindre</span>
@@ -49,8 +89,8 @@ const niveaux = [
       </div>
       <div class="grille">
         <article class="carte">
-          <h3>Un public large</h3>
-          <p class="texte-doux">Familles, amateurs de musique et de magie, habitants du Loiret et visiteurs d'Île-de-France.</p>
+          <h3>Un public varié</h3>
+          <p class="texte-doux">Amateurs de musique et de magie, familles le dimanche, habitants du Loiret et visiteurs d'Île-de-France.</p>
         </article>
         <article class="carte">
           <h3>Un lieu d'exception</h3>
@@ -68,49 +108,7 @@ const niveaux = [
     </div>
   </section>
 
-  <section class="section fond-vert" aria-labelledby="titre-niveaux">
-    <div class="contenu">
-      <div class="titre-section">
-        <span class="surtitre">Les formules</span>
-        <h2 id="titre-niveaux">Trois façons de briller</h2>
-        <p class="intro">Les montants et contreparties sont détaillés dans notre dossier de partenariat.</p>
-      </div>
-      <ul class="niveaux">
-        {
-          niveaux.map((n) => (
-            <li class:list={["niveau", { "niveau--vedette": n.vedette }]}>
-              <h3>Partenaire {n.nom}</h3>
-              <p class="texte-doux">{n.texte}</p>
-              <ul class="liste">
-                {n.contreparties.map((c) => <li>{c}</li>)}
-              </ul>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
-  <section class="section fond-nuit" aria-labelledby="titre-nature">
-    <div class="contenu grille grille--large">
-      <div>
-        <span class="surtitre">Autres façons de nous aider</span>
-        <h2 id="titre-nature">Partenariat en nature et mécénat</h2>
-      </div>
-      <div>
-        <p class="intro">
-          Matériel, mobilier, son et lumière, boissons, transport, communication&nbsp;: votre
-          savoir-faire peut aussi faire partie du spectacle.
-        </p>
-        <p class="texte-doux">
-          Les entreprises et particuliers peuvent également soutenir le festival par un don. Les
-          conditions fiscales du mécénat vous seront précisées sur demande.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section fond-vert" aria-labelledby="titre-soutiens">
+  <section class="section fond-nuit" aria-labelledby="titre-soutiens">
     <div class="contenu">
       <div class="titre-section">
         <span class="surtitre">Merci</span>
@@ -123,48 +121,91 @@ const niveaux = [
     </div>
   </section>
 
-  <section class="section fond-nuit" id="contact-partenaires" aria-labelledby="titre-contact-partenaires">
-    <div class="contenu">
-      <h2 id="titre-contact-partenaires" class="sr-only">Nous contacter</h2>
-      <ModuleExterne
-        titre="Parlons de votre projet"
-        texte="Demandez notre dossier de partenariat : nous revenons vers vous rapidement pour imaginer ensemble votre participation."
-        lien={liensExternes.formulairePartenaires}
-        libelleBouton="Devenir partenaire"
-      />
+  <section class="section fond-vert" id="rejoindre" aria-labelledby="titre-rejoindre">
+    <div class="contenu rejoindre">
+      <div>
+        <span class="surtitre">Rejoignez l'aventure</span>
+        <h2 id="titre-rejoindre">Parlons de votre projet</h2>
+        <p class="intro">
+          Remplissez ce formulaire&nbsp;: nous revenons rapidement vers vous pour échanger sur votre
+          projet et vous expliquer comment fonctionnent le Club, le mécénat et le sponsoring.
+        </p>
+      </div>
+      <div class="carte">
+        <Formulaire
+          id="partenariat"
+          sujet="Partenariat · Les Ragondins Farfelus 2027"
+          bouton="Envoyer ma demande"
+          lienExterne={liensExternes.formulairePartenaires}
+          champs={[
+            { nom: "nom", libelle: "Nom et prénom", requis: true, autocomplete: "name" },
+            { nom: "structure", libelle: "Entreprise ou structure", requis: true, autocomplete: "organization" },
+            { nom: "email", libelle: "E-mail", type: "email", requis: true, autocomplete: "email" },
+            { nom: "telephone", libelle: "Téléphone", type: "tel", autocomplete: "tel" },
+            {
+              nom: "interet",
+              libelle: "Vous êtes intéressé par",
+              type: "select",
+              requis: true,
+              options: ["Le Club Ragondins Farfelus (VIP)", "Le mécénat", "Le sponsoring", "Un partenariat en nature", "Je ne sais pas encore"],
+            },
+            { nom: "message", libelle: "Votre projet", type: "textarea" },
+          ]}
+        />
+      </div>
     </div>
   </section>
 </Base>
 
 <style>
-  .niveaux {
+  .offres {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
     gap: 1.25rem;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
   }
 
-  .niveau {
-    padding: 2.25rem 1.75rem;
-    border-radius: var(--rayon);
-    background: var(--vert-surface);
-    border: 1px solid rgba(243, 226, 176, 0.18);
+  .offre {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 3.75rem 1.75rem 2rem;
+    border-radius: 999px 999px var(--rayon) var(--rayon);
+    border: 1.5px solid rgba(243, 226, 176, 0.45);
+    background: radial-gradient(ellipse at 50% 15%, rgba(44, 122, 111, 0.5), rgba(5, 40, 40, 0.7));
+    text-align: center;
   }
 
-  .niveau--vedette {
+  .offre--vedette {
     border: 2px solid var(--or);
-    background: radial-gradient(ellipse at top, rgba(243, 226, 176, 0.14), transparent 70%),
-      var(--vert-surface);
+    background: radial-gradient(ellipse at 50% 15%, rgba(255, 160, 203, 0.22), rgba(5, 40, 40, 0.7));
   }
 
-  .niveau h3 {
-    margin-bottom: 0.6rem;
+  .offre .surtitre {
+    font-size: 0.72rem;
   }
 
-  .niveau .texte-doux {
-    margin-bottom: 1.25rem;
+  .offre h3 {
+    margin: 0.2rem 0 0.75rem;
+    font-size: clamp(1.4rem, 3vw, 1.7rem);
+  }
+
+  .offre .liste {
+    margin: 1rem 0 1.5rem;
+    text-align: left;
+  }
+
+  .offre .bouton {
+    margin-top: auto;
+    align-self: center;
+  }
+
+  .note {
+    margin: 1.25rem 0 0;
+    font-size: 0.875rem;
+    color: var(--creme-doux);
   }
 
   .logos {
@@ -184,5 +225,12 @@ const niveaux = [
     border: 1.5px dashed rgba(243, 226, 176, 0.35);
     color: var(--creme-doux);
     font-size: 0.875rem;
+  }
+
+  .rejoindre {
+    display: grid;
+    gap: 2rem clamp(2rem, 5vw, 4rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    align-items: start;
   }
 </style>

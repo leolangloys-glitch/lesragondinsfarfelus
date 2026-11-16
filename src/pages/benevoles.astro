@@ -3,7 +3,33 @@ import Base from "../layouts/Base.astro";
 import EnTetePage from "../components/EnTetePage.astro";
 import ModuleExterne from "../components/ModuleExterne.astro";
 import Faq from "../components/Faq.astro";
+import Video from "../components/Video.astro";
 import { liensExternes } from "../data/site";
+import souvenirs from "../data/souvenirs.json";
+
+// Les avantages des bénévoles (confirmés par l'équipe en novembre 2026)
+const avantages = [
+  {
+    titre: "Le festival en accès libre",
+    texte: "En dehors de vos créneaux, vous profitez du festival comme tout le monde : concerts, DJ sets, magie.",
+    icone: "✦",
+  },
+  {
+    titre: "Les repas offerts",
+    texte: "Pendant vos missions, on s'occupe de vous : vos repas sont pris en charge.",
+    icone: "❦",
+  },
+  {
+    titre: "Le t-shirt officiel",
+    texte: "Celui de la troupe des bénévoles : vous le garderez en souvenir.",
+    icone: "✿",
+  },
+  {
+    titre: "Une équipe en or",
+    texte: "Des rencontres, des fous rires et la fierté de faire vivre un festival unique dans le Loiret.",
+    icone: "❀",
+  },
+];
 
 const missions = [
   { titre: "Accueil et billetterie", texte: "Être le premier sourire du festival et guider les visiteurs vers le portail." },
@@ -38,14 +64,52 @@ const questions = [
   <EnTetePage
     surtitre="Bénévoles"
     titre="Rejoignez la troupe des Ragondins"
-    intro="Sans bénévoles, pas de magie. Vivez le festival de l'intérieur, rencontrez une équipe en or et repartez avec des souvenirs plein la tête."
+    intro="Sans bénévoles, pas de magie. Vivez le festival de l'intérieur, profitez-en en dehors de vos créneaux, repas offerts pendant vos missions, et repartez avec des souvenirs plein la tête."
   >
     <div class="boutons">
       <a class="bouton bouton--rose" href="#inscription">Je m'inscris</a>
     </div>
   </EnTetePage>
 
-  <section class="section fond-nuit" aria-labelledby="titre-missions">
+  <section class="section fond-vert avantages-section" aria-labelledby="titre-avantages">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">De l'autre côté du rideau</span>
+        <h2 id="titre-avantages">Ce que vous y gagnez</h2>
+      </div>
+      <ul class="avantages">
+        {
+          avantages.map((v) => (
+            <li class="avantage">
+              <span class="avantage__icone" aria-hidden="true">{v.icone}</span>
+              <h3>{v.titre}</h3>
+              <p>{v.texte}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="boutons">
+        <a class="bouton bouton--rose" href="#inscription">Je deviens bénévole</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-nuit" aria-labelledby="titre-aftermovie-benevoles">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Ils l'ont vécu en 2026</span>
+        <h2 id="titre-aftermovie-benevoles">L'aftermovie des bénévoles</h2>
+        <p class="intro">La première édition vue des coulisses, par celles et ceux qui l'ont fait vivre.</p>
+      </div>
+      <Video
+        lien={souvenirs.aftermovieBenevoles}
+        titre="L'aftermovie des bénévoles 2026"
+        bientot="Bientôt en ligne : la troupe 2026 en action !"
+      />
+    </div>
+  </section>
+
+  <section class="section fond-vert" aria-labelledby="titre-missions">
     <div class="contenu">
       <div class="titre-section">
         <span class="surtitre">Les missions</span>
@@ -64,21 +128,7 @@ const questions = [
     </div>
   </section>
 
-  <section class="section fond-vert" aria-labelledby="titre-avantages">
-    <div class="contenu">
-      <div class="titre-section">
-        <span class="surtitre">De l'autre côté du rideau</span>
-        <h2 id="titre-avantages">Ce que vous y gagnez</h2>
-      </div>
-      <ul class="liste avantages">
-        <li>Le t-shirt officiel des bénévoles</li>
-        <li>L'accès au festival en dehors de vos créneaux <em class="a-completer">à confirmer</em></li>
-        <li>Les repas pendant vos missions <em class="a-completer">à confirmer</em></li>
-        <li>Une équipe soudée et des rencontres inoubliables</li>
-        <li>La fierté de faire vivre un festival unique dans le Loiret</li>
-      </ul>
-    </div>
-  </section>
+
 
   <section class="section fond-nuit" aria-labelledby="titre-deroule">
     <div class="contenu">
@@ -123,8 +173,41 @@ const questions = [
 
 <style>
   .avantages {
-    max-width: 40rem;
-    font-size: 1.1rem;
+    list-style: none;
+    margin: 0 0 2rem;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  }
+
+  .avantage {
+    padding: 2rem 1.5rem 1.75rem;
+    border-radius: 999px 999px var(--rayon) var(--rayon);
+    border: 1.5px solid var(--or);
+    background: radial-gradient(ellipse at 50% 20%, rgba(255, 160, 203, 0.2), rgba(5, 40, 40, 0.65));
+    text-align: center;
+  }
+
+  .avantage__icone {
+    display: block;
+    font-size: 2.4rem;
+    line-height: 1;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(180deg, var(--or-clair), var(--or-fonce));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .avantage h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+  }
+
+  .avantage p {
+    margin: 0;
+    color: var(--creme-doux);
   }
 
   .note {

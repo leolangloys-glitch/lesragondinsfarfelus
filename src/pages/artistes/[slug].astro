@@ -1,0 +1,265 @@
+---
+// Page d'un artiste : générée automatiquement pour chaque fiche « publiée »
+// dans l'administration (/admin/, « Artistes »).
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Video from "../../components/Video.astro";
+import { SITE } from "../../data/site";
+import { lecteurSpotify, nomPlateforme } from "../../lib/medias";
+
+export async function getStaticPaths() {
+  const artistes = await getCollection("artistes", (a) => a.data.publie);
+  return artistes.map((artiste) => ({
+    params: { slug: artiste.id },
+    props: {
+      artiste,
+      autres: artistes
+        .filter((a) => a.data.jour === artiste.data.jour && a.id !== artiste.id)
+        .sort((a, b) => a.data.ordre - b.data.ordre),
+    },
+  }));
+}
+
+const { artiste, autres } = Astro.props;
+const a = artiste.data;
+const { Content } = await render(artiste);
+
+const jours = { vendredi: "Vendredi 28 mai", samedi: "Samedi 29 mai", dimanche: "Dimanche 30 mai" };
+const plateau = a.plateau === "musique" ? "Musique" : "Magie";
+const spotify = lecteurSpotify(a.ecouter);
+const liens = [
+  a.ecouter && { libelle: `Écouter sur ${nomPlateforme(a.ecouter)}`, href: a.ecouter },
+  a.instagram && { libelle: "Instagram", href: a.instagram },
+  a.site && { libelle: "Site officiel", href: a.site },
+].filter(Boolean) as { libelle: string; href: string }[];
+
+const description = (a.accroche || `${a.nom}, ${plateau.toLowerCase()} au festival Les Ragondins Farfelus`)
+  .concat(` · ${jours[a.jour]} 2027 au Domaine de Briquemault (Loiret).`)
+  .slice(0, 158);
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": a.plateau === "musique" ? "MusicGroup" : "Person",
+  name: a.nom,
+  url: `${SITE}/artistes/${artiste.id}/`,
+  ...(a.accroche ? { description: a.accroche } : {}),
+  ...(a.photo ? { image: new URL(a.photo, SITE).href } : {}),
+  ...(a.style ? (a.plateau === "musique" ? { genre: a.style } : { jobTitle: a.style }) : {}),
+  ...(liens.length ? { sameAs: liens.map((l) => l.href) } : {}),
+  performerIn: { "@id": `${SITE}/#festival` },
+};
+---
+
+<Base
+  titre={`${a.nom} · ${plateau} · ${jours[a.jour].split(" ")[0]}`}
+  nomCourt={a.nom}
+  description={description}
+  image={a.photo || undefined}
+  donneesStructurees={schema}
+>
+  <article class="artiste-page">
+    <div class="artiste-page__contenu">
+      <p class="retour"><a href="/programmation/">← Toute la programmation</a></p>
+
+      <div class="artiste-page__grille">
+        <figure class="artiste-page__photo">
+          {
+            a.photo ? (
+              <img src={a.photo} alt={`${a.nom}`} />
+            ) : (
+              <span class="artiste-page__mystere" aria-hidden="true">✦</span>
+            )
+          }
+        </figure>
+
+        <div>
+          <span class="surtitre">{plateau} · {jours[a.jour]}{a.horaire && ` · ${a.horaire}`}</span>
+          <h1>{a.nom}</h1>
+          {a.style && <p class="artiste-page__style">{a.style}</p>}
+          {a.accroche && <p class="intro">{a.accroche}</p>}
+          <div class="texte-long artiste-page__texte">
+            <Content />
+          </div>
+          {
+            liens.length > 0 && (
+              <div class="boutons">
+                {liens.map((l, i) => (
+                  <a class:list={["bouton", i === 0 ? "bouton--rose" : "bouton--contour"]} href={l.href} rel="noopener">
+                    {l.libelle}
+                  </a>
+                ))}
+              </div>
+            )
+          }
+        </div>
+      </div>
+
+      {
+        a.clip && (
+          <section class="artiste-page__bloc" aria-labelledby="titre-clip">
+            <h2 id="titre-clip">En vidéo</h2>
+            <Video lien={a.clip} titre={`Clip de ${a.nom}`} />
+          </section>
+        )
+      }
+
+      {
+        spotify && (
+          <section class="artiste-page__bloc" aria-labelledby="titre-ecoute">
+            <h2 id="titre-ecoute">À écouter</h2>
+            <div class="spotify" data-src={spotify}>
+              <button class="bouton bouton--contour" type="button">
+                Charger le lecteur Spotify
+              </button>
+              <p class="texte-doux">Le lecteur est fourni par Spotify, qui peut déposer des cookies.</p>
+            </div>
+          </section>
+        )
+      }
+
+      {
+        autres.length > 0 && (
+          <section class="artiste-page__bloc" aria-labelledby="titre-autres">
+            <h2 id="titre-autres">Aussi le {jours[a.jour].split(" ")[0].toLowerCase()}</h2>
+            <ul class="autres">
+              {autres.map((x) => (
+                <li>
+                  <a href={`/artistes/${x.id}/`}>{x.data.nom}</a>
+                  {x.data.style && <span class="texte-doux"> · {x.data.style}</span>}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      <div class="boutons artiste-page__fin">
+        <a class="bouton bouton--rose" href="/billetterie/">Réserver mon billet</a>
+        <a class="bouton bouton--contour" href="/programmation/">Toute la programmation</a>
+      </div>
+    </div>
+  </article>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".spotify[data-src]").forEach((bloc) => {
+    bloc.querySelector("button")?.addEventListener("click", () => {
+      const cadre = document.createElement("iframe");
+      cadre.src = bloc.dataset.src!;
+      cadre.title = "Lecteur Spotify";
+      cadre.loading = "lazy";
+      cadre.allow = "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
+      cadre.height = "352";
+      bloc.replaceChildren(cadre);
+    });
+  });
+</script>
+
+<style>
+  .artiste-page {
+    padding: calc(var(--hauteur-entete) + clamp(2rem, 6vw, 4rem)) var(--marge) clamp(4rem, 9vw, 6rem);
+    background:
+      radial-gradient(ellipse 70% 50% at 20% 0%, rgba(44, 122, 111, 0.45), transparent 70%),
+      var(--vert-nuit);
+  }
+
+  .artiste-page__contenu {
+    max-width: var(--largeur-max);
+    margin: 0 auto;
+  }
+
+  .retour {
+    margin: 0 0 2rem;
+  }
+
+  .retour a {
+    color: var(--creme-doux);
+  }
+
+  .artiste-page__grille {
+    display: grid;
+    gap: 2rem clamp(2rem, 5vw, 4rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    align-items: start;
+  }
+
+  /* La photo dans une arche dorée, comme le miroir */
+  .artiste-page__photo {
+    margin: 0;
+    aspect-ratio: 4 / 5;
+    border-radius: 999px 999px var(--rayon) var(--rayon);
+    border: 2px solid var(--or);
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(ellipse at 50% 30%, rgba(44, 122, 111, 0.6), rgba(5, 40, 40, 0.8));
+    box-shadow: 0 0 3rem rgba(243, 226, 176, 0.15);
+  }
+
+  .artiste-page__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .artiste-page__mystere {
+    font-size: 6rem;
+    background: linear-gradient(180deg, var(--or-clair), var(--or-fonce));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  h1 {
+    margin: 0.4rem 0 0.25rem;
+    font-size: clamp(2.2rem, 6vw, 3.6rem);
+  }
+
+  .artiste-page__style {
+    margin: 0 0 1rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--rose);
+  }
+
+  .artiste-page__texte {
+    margin: 1.25rem 0;
+  }
+
+  .artiste-page__bloc {
+    margin-top: clamp(3rem, 7vw, 4.5rem);
+  }
+
+  .artiste-page__bloc h2 {
+    margin-bottom: 1.25rem;
+  }
+
+  .spotify :global(iframe) {
+    width: 100%;
+    border: 0;
+    border-radius: var(--rayon);
+  }
+
+  .spotify p {
+    margin: 0.6rem 0 0;
+    font-size: 0.875rem;
+  }
+
+  .autres {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .autres a {
+    font-weight: 600;
+    color: var(--creme);
+  }
+
+  .artiste-page__fin {
+    margin-top: clamp(3rem, 7vw, 4.5rem);
+  }
+</style>

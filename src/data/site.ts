@@ -70,18 +70,25 @@ export const trajets: { region: string; titre: string; villes: Trajet[] }[] = [
   },
 ];
 
-// Liens vers les outils externes : à remplir quand les prestataires sont choisis.
+// Liens vers les outils externes (billetterie, newsletter, formulaires, réseaux).
+// Ils se modifient dans l'interface d'administration (/admin/, « Réglages »),
+// qui écrit dans src/data/reglages.json : les boutons s'activent tout seuls.
+import reglages from "./reglages.json";
+
 export const liensExternes = {
-  billetterie: "", // module ou page du prestataire de billetterie
-  rechargeCashless: "", // page de recharge du prestataire cashless
-  formulaireBenevoles: "", // formulaire (Tally, Google Forms…)
-  formulairePartenaires: "",
-  formulairePresse: "",
-  newsletter: "", // outil d'inscription (Brevo, Mailchimp…)
-  instagram: "",
-  facebook: "",
-  tiktok: "",
+  billetterie: reglages.billetterie, // module ou page du prestataire de billetterie
+  rechargeCashless: reglages.rechargeCashless, // page de recharge du prestataire cashless
+  formulaireBenevoles: reglages.formulaireBenevoles, // formulaire (Tally, Google Forms…)
+  formulairePartenaires: reglages.formulairePartenaires,
+  formulairePresse: reglages.formulairePresse,
+  newsletter: reglages.newsletter, // adresse du formulaire d'inscription (Brevo…)
+  instagram: reglages.instagram,
+  facebook: reglages.facebook,
+  tiktok: reglages.tiktok,
 };
+
+/** Adresse e-mail de contact (formulaires, presse, partenaires). */
+export const contact = reglages.contact;
 
 export type Lien = { libelle: string; href: string };
 
@@ -102,6 +109,8 @@ export const menuPied: { titre: string; liens: Lien[] }[] = [
       { libelle: "Billetterie", href: "/billetterie/" },
       { libelle: "Cashless", href: "/cashless/" },
       { libelle: "Infos pratiques", href: "/infos/" },
+      { libelle: "Édition 2026", href: "/edition-2026/" },
+      { libelle: "Les newsletters", href: "/lettres/" },
     ],
   },
   {
@@ -223,7 +232,7 @@ export function evenementSchema(siteUrl = SITE) {
     name: `${festival.nom} 2027`,
     alternateName: "Festival des Ragondins Farfelus",
     description:
-      "Festival de musique et de magie dans le Loiret, à 1 h 30 de Paris : DJ sets, pop, rock et électro, magie fun et pleine d'humour sur scène et en close-up, journée des familles le dimanche avec des spectacles de magie pour les enfants.",
+      "Festival de musique et de magie dans le Loiret, à 1 h 30 de Paris : DJ sets, pop, rock et électro, magie fun, impressionnante et pleine de surprises, sur scène et en close-up, journée des familles le dimanche avec des spectacles de magie pour les enfants.",
     startDate: festival.dates.debut,
     endDate: festival.dates.fin,
     eventStatus: "https://schema.org/EventScheduled",

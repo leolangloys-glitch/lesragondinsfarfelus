@@ -1,8 +1,15 @@
 ---
+import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import EnTetePage from "../components/EnTetePage.astro";
-import ModuleExterne from "../components/ModuleExterne.astro";
-import { festival, liensExternes } from "../data/site";
+import Formulaire from "../components/Formulaire.astro";
+import { contact, festival, liensExternes } from "../data/site";
+
+// La revue de presse se remplit dans l'administration (/admin/, « Revue de presse »).
+const articles = (await getCollection("presse", (a) => a.data.publie)).sort(
+  (a, b) => (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0),
+);
+const formatDate = (d: Date) => d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
 const ressources = [
   { titre: "Dossier de presse 2027", texte: "Le festival, sa programmation et son univers." },
@@ -13,14 +20,113 @@ const ressources = [
 ---
 
 <Base
-  titre="Espace presse"
-  description="Espace presse du festival Les Ragondins Farfelus (Loiret, 28-30 mai 2027) : dossier de presse, communiqués, photos HD, logos et demande d'accréditation."
+  titre="Espace presse : accréditation et revue de presse"
+  nomCourt="Espace presse"
+  description="Espace presse des Ragondins Farfelus (Loiret, 28-30 mai 2027) : demande d'accréditation, revue de presse, dossier de presse, photos et logos."
 >
   <EnTetePage
     surtitre="Presse"
     titre="Espace presse"
-    intro="Journalistes, blogueurs, créateurs de contenu : retrouvez ici tout ce qu'il faut pour parler du festival."
-  />
+    intro="Journalistes, photographes, vidéastes, créateurs de contenu : demandez votre accréditation et retrouvez tout ce qu'il faut pour parler du festival."
+  >
+    <div class="boutons">
+      <a class="bouton bouton--rose" href="#accreditation">Demander une accréditation</a>
+      <a class="bouton bouton--contour" href="#ils-parlent-de-nous">Ils parlent de nous</a>
+    </div>
+  </EnTetePage>
+
+  <section class="section fond-nuit" id="accreditation" aria-labelledby="titre-accreditation">
+    <div class="contenu accreditation">
+      <div>
+        <span class="surtitre">Accréditation 2027</span>
+        <h2 id="titre-accreditation">Couvrir le festival</h2>
+        <p class="intro">
+          Vous souhaitez couvrir les Ragondins Farfelus les 28, 29 et 30 mai 2027&nbsp;? Faites votre
+          demande d'accréditation&nbsp;: nous revenons vers vous par e-mail avant le festival.
+        </p>
+        <ul class="liste conditions">
+          <li>Une demande par personne&nbsp;: chaque membre d'une équipe fait la sienne.</li>
+          <li>Joignez des exemples de vos publications (articles, photos, vidéos, émissions).</li>
+          <li>Chaque demande est étudiée&nbsp;; les places sont limitées.</li>
+          <li>
+            Après le festival, envoyez-nous vos articles, photos ou reportages&nbsp;: nous serons
+            ravis de les partager.
+          </li>
+          <li>Date limite des demandes&nbsp;: <em class="a-completer">à préciser</em></li>
+        </ul>
+      </div>
+      <div class="carte">
+        <h3>Demande d'accréditation</h3>
+        <Formulaire
+          id="accreditation-presse"
+          sujet="Demande d'accréditation presse 2027"
+          bouton="Envoyer ma demande"
+          lienExterne={liensExternes.formulairePresse}
+          champs={[
+            { nom: "nom", libelle: "Nom et prénom", requis: true, autocomplete: "name" },
+            { nom: "media", libelle: "Média", requis: true, autocomplete: "organization" },
+            {
+              nom: "fonction",
+              libelle: "Vous êtes",
+              type: "select",
+              requis: true,
+              options: ["Journaliste", "Photographe", "Vidéaste", "Radio / podcast", "Créateur de contenu", "Autre"],
+            },
+            { nom: "email", libelle: "E-mail", type: "email", requis: true, autocomplete: "email" },
+            { nom: "telephone", libelle: "Téléphone", type: "tel", autocomplete: "tel" },
+            {
+              nom: "jours",
+              libelle: "Jour(s) souhaité(s)",
+              type: "select",
+              requis: true,
+              options: ["Vendredi 28 mai", "Samedi 29 mai", "Dimanche 30 mai", "Les trois jours"],
+            },
+            { nom: "exemples", libelle: "Lien vers vos publications", type: "url", aide: "Site, article, portfolio ou réseau social." },
+            { nom: "message", libelle: "Votre projet de couverture", type: "textarea" },
+          ]}
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section fond-vert" id="ils-parlent-de-nous" aria-labelledby="titre-revue">
+    <div class="contenu">
+      <div class="titre-section">
+        <span class="surtitre">Revue de presse</span>
+        <h2 id="titre-revue">Ils parlent de nous</h2>
+      </div>
+      {
+        articles.length > 0 ? (
+          <ul class="revue">
+            {articles.map((a) => (
+              <li class="revue__article">
+                <p class="revue__media">
+                  <span>{a.data.media}</span>
+                  <span class="revue__type">{a.data.type}</span>
+                </p>
+                <h3>
+                  {a.data.lien ? (
+                    <a href={a.data.lien} rel="noopener">
+                      {a.data.titre}
+                    </a>
+                  ) : (
+                    a.data.titre
+                  )}
+                </h3>
+                {a.data.resume && <p class="texte-doux">{a.data.resume}</p>}
+                {a.data.date && <p class="revue__date">{formatDate(a.data.date)}</p>}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="intro">Les premiers articles arrivent bientôt.</p>
+        )
+      }
+      <p class="revue__appel">
+        Vous avez parlé du festival&nbsp;? Envoyez-nous le lien à <a href={`mailto:${contact}`}>{contact}</a>.
+      </p>
+    </div>
+  </section>
 
   <section class="section fond-nuit" aria-labelledby="titre-bref">
     <div class="contenu">
@@ -32,7 +138,8 @@ const ressources = [
         <div><dt>Quoi</dt><dd>Festival de musique et de magie, {festival.edition}</dd></div>
         <div><dt>Quand</dt><dd>{festival.dates.affichage}</dd></div>
         <div><dt>Où</dt><dd>{festival.lieu.nom}, {festival.lieu.commune} ({festival.lieu.departement})</dd></div>
-        <div><dt>Au programme</dt><dd>DJ sets, pop, rock et électro, magie fun sur scène et en close-up, journée des familles le dimanche</dd></div>
+        <div><dt>Au programme</dt><dd>DJ sets, pop, rock et électro, magie fun, impressionnante et pleine de surprises sur scène et en close-up, journée des familles le dimanche</dd></div>
+        <div><dt>Organisation</dt><dd>Association {festival.editeur}</dd></div>
       </dl>
     </div>
   </section>
@@ -54,27 +161,81 @@ const ressources = [
           ))
         }
       </div>
-    </div>
-  </section>
-
-  <section class="section fond-nuit" aria-labelledby="titre-accreditation">
-    <div class="contenu">
-      <h2 id="titre-accreditation" class="sr-only">Accréditation</h2>
-      <ModuleExterne
-        titre="Demande d'accréditation"
-        texte="Vous souhaitez couvrir le festival ? Faites votre demande d'accréditation, nous revenons vers vous rapidement."
-        lien={liensExternes.formulairePresse}
-        libelleBouton="Demander une accréditation"
-      />
       <div class="carte contact-presse">
         <h3>Contact presse</h3>
-        <p><em class="a-completer">Nom et adresse e-mail à venir</em></p>
+        <p><a href={`mailto:${contact}`}>{contact}</a></p>
       </div>
     </div>
   </section>
 </Base>
 
 <style>
+  .accreditation {
+    display: grid;
+    gap: 2rem clamp(2rem, 5vw, 4rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    align-items: start;
+  }
+
+  .conditions {
+    margin-top: 1.5rem;
+  }
+
+  .revue {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  }
+
+  .revue__article {
+    padding: 1.5rem;
+    border-radius: var(--rayon);
+    border: 1.5px solid rgba(243, 226, 176, 0.35);
+    background: rgba(5, 40, 40, 0.55);
+  }
+
+  .revue__media {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--rose);
+  }
+
+  .revue__type {
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid rgba(243, 226, 176, 0.5);
+    font-size: 0.75rem;
+    color: var(--creme-doux);
+  }
+
+  .revue__article h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.15rem;
+  }
+
+  .revue__article h3 a {
+    color: var(--creme);
+  }
+
+  .revue__date {
+    margin: 0.6rem 0 0;
+    font-size: 0.875rem;
+    color: var(--creme-doux);
+  }
+
+  .revue__appel {
+    margin: 2rem 0 0;
+  }
+
   .fiche {
     margin: 0;
     display: grid;

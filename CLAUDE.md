@@ -27,7 +27,8 @@ mêmes informations.
 ### Déroulé prévu pour 2027
 
 - Deux plateaux : **musique** = DJ sets, pop, rock, électro (**pas de jazz**)
-  et **magie** = magie fun, basée sur l'humour, sur scène et en close-up (pas de
+  et **magie** = magie fun (avec de l'humour), impressionnante et pleine de
+  surprises, sur scène et en close-up (pas de
   « grands numéros d'illusion »).
 - Vendredi : ouverture du camping, premiers concerts en fin d'après-midi, puis
   DJ sets jusque tard dans la nuit.
@@ -84,27 +85,102 @@ n°2 pas encore commencée). Tout ce qui suit est provisoire.
 ## Pages du site
 
 Menu principal : Programmation · Infos · Cashless · Bénévoles · Partenaires +
-bouton Billetterie. Pied de page : Domaine, Presse, Contact, Mentions légales,
-Confidentialité. Menus et liens externes : `src/data/site.ts`.
+bouton Billetterie. Pied de page : Domaine, Édition 2026, Les newsletters,
+Comment venir, Presse, Contact, Mentions légales, Confidentialité. Menus :
+`src/data/site.ts`.
 
 | Page | Fichier |
 | --- | --- |
-| Accueil : entrée par le miroir, puis le haut sur fond noir (titre, infos), le festival en bref, programme, billetterie, retour 2026, solidarité, le lieu | `src/pages/index.astro` |
-| Programmation (3 jours, plateaux musique/magie, artistes « mystère ») | `programmation.astro` |
+| Accueil : entrée par le miroir, puis le haut sur fond noir (titre, infos), le festival en bref, programme, billetterie, retour 2026 (4 photos + lien), le lieu | `src/pages/index.astro` |
+| Programmation (3 jours, plateaux musique/magie : les artistes publiés, complétés par des cartes « mystère ») | `programmation.astro` |
+| Une page par artiste (photo, texte, écoute, clip, liens), créée toute seule pour chaque fiche publiée | `artistes/[slug].astro` |
 | Billetterie (formules, gratuités, module du prestataire, FAQ) | `billetterie.astro` |
 | Cashless (étapes, recharge en ligne, FAQ) | `cashless.astro` |
 | Infos pratiques (dates, accès, camping, accessibilité, sur place, FAQ, contact) | `infos.astro` |
 | Venir au festival (temps de trajet, train, covoiturage, FAQ) | `venir.astro` |
-| Devenir bénévole | `benevoles.astro` |
-| Devenir partenaire (niveaux Lanterne / Étoile / Portail, provisoires) | `partenaires.astro` |
+| Devenir bénévole (avantages en premier, aftermovie bénévoles, missions, formulaire) | `benevoles.astro` |
+| Devenir partenaire (Club Ragondins Farfelus VIP, Mécénat, Sponsoring, « Rejoignez l'aventure » + formulaire) | `partenaires.astro` |
 | Le Domaine de Briquemault | `domaine.astro` |
-| Espace presse | `presse.astro` |
+| Espace presse (accréditation + formulaire, « Ils parlent de nous », en bref, ressources) | `presse.astro` |
+| Édition 2026 (« Vous avez été nombreux, merci encore ! », aftermovie, photothèque) | `edition-2026.astro` |
+| Les newsletters (archives) ; chaque lettre a une page web et une version e-mail | `lettres/index.astro`, `lettres/[slug]/` |
 | Mentions légales, confidentialité, page 404 | `mentions-legales.astro`, `confidentialite.astro`, `404.astro` |
 
-Billetterie, recharge cashless, formulaires et newsletter passent par des
-outils externes : renseigner leurs liens dans `liensExternes` (`src/data/site.ts`),
-les boutons s'activent tout seuls. Les éléments à compléter sont marqués avec
-la classe `a-completer` (chercher `a-completer` dans `src/`).
+Billetterie, recharge cashless, formulaires externes, newsletter et réseaux
+sociaux : leurs liens sont dans `src/data/reglages.json` (modifiable dans
+l'administration, « Liens et contact ») et repris par `liensExternes`
+(`src/data/site.ts`) ; les boutons s'activent tout seuls. Les éléments à
+compléter sont marqués avec la classe `a-completer` (chercher `a-completer`
+dans `src/`).
+
+## L'interface d'administration (`/admin/`)
+
+- **Sveltia CMS** (version figée 0.256.1, chargée depuis unpkg), configuré dans
+  `public/admin/config.yml`. Pas de serveur ni de base de données : chaque
+  enregistrement crée un commit sur **`main`**, le site se reconstruit tout seul
+  (≈ 2 min). Elle ne fonctionne donc **qu'une fois le site fusionné dans
+  `main` et en ligne**.
+- **Accès protégé par un code** : on se connecte avec un jeton GitHub
+  (« fine-grained personal access token », uniquement ce dépôt, droit
+  « Contents : Read and write »), que seuls les membres de l'équipe ayant
+  accès au dépôt peuvent créer. Le jeton reste sur leur ordinateur : ne jamais
+  le demander ni l'écrire dans le dépôt. Page `noindex` et interdite dans
+  `robots.txt`.
+- Ce qu'on y modifie :
+  - **Artistes** (`src/content/artistes/*.md`) : nom, publié oui/non, jour,
+    plateau, style, horaire, photo, accroche, ordre, lien d'écoute (Spotify,
+    Deezer, SoundCloud…), clip YouTube, Instagram, site, texte. Rien n'apparaît
+    tant que « Publié » n'est pas coché (règle : pas de nom non confirmé).
+    `exemple-artiste.md` sert de modèle (non publié).
+  - **Newsletters** (`src/content/lettres/*.md`) : titre, date, image de
+    couverture, chapô, texte avec photos, bouton. Modèle toujours identique.
+  - **Revue de presse** (`src/content/presse/*.md`) : média, titre, date, type,
+    lien, résumé.
+  - **Souvenirs 2026** (`src/data/souvenirs.json`) : aftermovie, aftermovie
+    bénévoles (liens YouTube), photothèque (photo, légende, crédit).
+  - **Liens et contact** (`src/data/reglages.json`).
+- Images envoyées depuis l'administration : `public/medias/` (sous-dossiers
+  artistes, lettres, presse, souvenirs). Pas de photo de personne sans son
+  accord.
+
+## Newsletter
+
+- Outil conseillé : **Brevo** (gratuit jusqu'à 300 e-mails par jour,
+  hébergé en Europe). L'équipe crée le compte et un formulaire d'inscription,
+  puis colle son adresse (`https://….sibforms.com/serve/…`) dans « Liens et
+  contact > Newsletter » : le formulaire du site l'envoie directement
+  (`Newsletter.astro`, champs `EMAIL`, `email_address_check`, `locale`).
+  Avec un autre outil, le bouton mène simplement à son lien.
+- Envoyer une lettre : l'écrire dans l'administration (« Newsletters »), la
+  publier, puis dans Brevo créer une campagne > « Importer depuis une URL »
+  avec `https://lesragondinsfarfelus.com/lettres/NOM-DE-LA-LETTRE/email/`
+  (HTML e-mail : tableaux, styles en ligne, adresses absolues, lien de
+  désinscription `{{ unsubscribe }}`). La lettre reste aussi en ligne sur
+  `/lettres/NOM/` (archives). Les versions e-mail sont `noindex` et hors du
+  plan du site.
+
+## Formulaires (bénévoles, partenaires, accréditation presse)
+
+- `src/components/Formulaire.astro` : sans outil externe, l'envoi ouvre la
+  messagerie du visiteur avec un e-mail déjà rempli vers l'adresse de
+  contact. Dès qu'un lien de formulaire externe (Tally conseillé, hébergé en
+  Europe) est renseigné dans « Liens et contact », un bouton y mène à la place.
+
+## Contenus confirmés (novembre 2026)
+
+- **Bénévoles** : accès au festival en dehors de leurs créneaux et repas
+  offerts pendant leurs missions : confirmés par l'équipe, mis en avant.
+- **Partenaires** : structure inspirée de Cocorico Electro (Club VIP, mécénat,
+  sponsoring, formulaire), **textes originaux**. Mention : avantages fiscaux
+  « sous réserve de l'éligibilité de l'association au régime du mécénat » (à
+  vérifier par l'équipe : rescrit fiscal, intérêt général). Nom de l'espace
+  VIP à confirmer.
+- **Presse** : seule la fiche agenda du JDS (2026) a été trouvée en ligne ;
+  la presse locale bloque les robots. L'équipe ajoute les articles dans
+  l'administration. Les publications LinkedIn de particuliers ne sont **pas**
+  reprises sans leur accord. Date limite des accréditations : à préciser.
+- **Édition 2026** : aucun chiffre de fréquentation publié (« vous avez été
+  nombreux »). Aftermovies « bientôt publiés ».
 
 ## La page d'accueil : l'entrée par le miroir
 
@@ -196,8 +272,9 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
 
 ## À décider
 
-- Formulaires bénévoles / partenaires / presse : outil (Tally, Google Forms…).
-- Newsletter : outil (Brevo, Mailchimp…).
+- Formulaires bénévoles / partenaires / presse : outil externe (Tally
+  conseillé) ou garder l'envoi par la messagerie.
+- Newsletter : créer le compte Brevo (conseillé) et son formulaire.
 - Langues : français seul ou français + anglais.
 - Son d'ambiance sur l'entrée 3D.
 
@@ -212,6 +289,10 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
   `python3 -I outils/apercu.py dist <dossier>` produit des pages autonomes
   (CSS et JS intégrés, images publiées à côté).
 - Poids : environ 1,3 Mo en tout (plus de 3D ni de Three.js).
+- Contenus éditables : collections Astro dans `src/content.config.ts`
+  (artistes, lettres, presse) ; vidéos YouTube et lecteur Spotify chargés
+  seulement au clic (RGPD) : `src/components/Video.astro`, `src/lib/medias.ts`.
+- L'aperçu ignore `/admin/` et les versions e-mail des lettres.
 - `public/brouillon/` : visuels de la graphiste (logo, miroir, escalier, sol,
   image de partage). **La graphiste a donné son accord (novembre 2026)** : ils
   sont maintenant dans le dépôt et seront publiés avec le site.

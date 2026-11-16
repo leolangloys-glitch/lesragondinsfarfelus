@@ -1,9 +1,12 @@
 ---
 import { liensExternes } from "../data/site";
 
-// Tant que l'outil de newsletter n'est pas choisi, le formulaire est affiché
-// mais désactivé, avec une mention claire.
+// Inscription à la newsletter. L'adresse du formulaire de l'outil d'envoi
+// (Brevo conseillé) se renseigne dans l'administration (/admin/, « Réglages »).
+// Tant qu'elle est vide, le formulaire est affiché mais désactivé.
 const actif = Boolean(liensExternes.newsletter);
+// Les formulaires Brevo attendent le champ « EMAIL » et deux champs cachés
+const brevo = /sibforms\.com/.test(liensExternes.newsletter);
 ---
 
 <section class="newsletter" aria-labelledby="titre-newsletter">
@@ -15,12 +18,14 @@ const actif = Boolean(liensExternes.newsletter);
         Ragondins en premier.
       </p>
     </div>
-    <form class="newsletter__form" action={actif ? liensExternes.newsletter : undefined} method="post">
+    <form class="newsletter__form" action={actif ? liensExternes.newsletter : undefined} method="post" data-brevo={brevo ? "" : undefined}>
+      {brevo && <input type="text" name="email_address_check" value="" class="sr-only" tabindex="-1" autocomplete="off" aria-hidden="true" />}
+      {brevo && <input type="hidden" name="locale" value="fr" />}
       <label for="newsletter-email">Votre adresse e-mail</label>
       <div class="newsletter__ligne">
         <input
           id="newsletter-email"
-          name="email"
+          name={brevo ? "EMAIL" : "email"}
           type="email"
           autocomplete="email"
           placeholder="prenom@exemple.fr"
@@ -33,11 +38,32 @@ const actif = Boolean(liensExternes.newsletter);
       </div>
       <p class="newsletter__note">
         Un e-mail de temps en temps, jamais de spam. Désinscription en un clic.&#32;
-        <a href="/confidentialite/">Confidentialité</a>
+        <a href="/confidentialite/">Confidentialité</a> · <a href="/lettres/">Les lettres précédentes</a>
+      </p>
+      <p class="newsletter__merci" role="status" hidden>
+        Merci&nbsp;! Pour confirmer votre inscription, cliquez sur le lien dans l'e-mail que vous
+        allez recevoir.
       </p>
     </form>
   </div>
 </section>
+
+<script>
+  // Inscription Brevo sans quitter la page (sinon, envoi classique du formulaire)
+  document.querySelectorAll<HTMLFormElement>(".newsletter__form[data-brevo]").forEach((form) => {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const merci = form.querySelector<HTMLElement>(".newsletter__merci");
+      try {
+        await fetch(form.action, { method: "POST", body: new FormData(form), mode: "no-cors" });
+        form.reset();
+        if (merci) merci.hidden = false;
+      } catch {
+        form.submit();
+      }
+    });
+  });
+</script>
 
 <style>
   .newsletter {
@@ -105,5 +131,12 @@ const actif = Boolean(liensExternes.newsletter);
     margin: 0.75rem 0 0;
     font-size: 0.875rem;
     color: var(--creme-doux);
+  }
+
+  .newsletter__merci {
+    margin: 0.75rem 0 0;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    border: 1.5px solid var(--rose);
   }
 </style>

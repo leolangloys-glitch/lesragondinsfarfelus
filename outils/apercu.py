@@ -47,12 +47,13 @@ def js_integre(src):
     return modules + f"<script type=\"module\">{js}</script>"
 
 def nom_page(chemin):
-    return "index.html" if chemin == "" else f"{chemin}.html"
+    # /lettres/ma-lettre/ -> lettres--ma-lettre.html (aperçu à plat)
+    return "index.html" if chemin == "" else f"{chemin.replace('/', '--')}.html"
 
 def reecrire(html, principale):
     html = re.sub(r'<link rel="stylesheet" href="([^"]+)">', lambda m: f"<style>{css_integre(m.group(1))}</style>", html)
     html = re.sub(r'<script type="module" src="([^"]+)"></script>', lambda m: js_integre(m.group(1)), html)
-    html = html.replace("/brouillon/", "brouillon/").replace("/photos/", "photos/").replace('href="/favicon.svg"', 'href="data:,"')
+    html = html.replace("/brouillon/", "brouillon/").replace("/photos/", "photos/").replace('"/medias/', '"medias/').replace('href="/favicon.svg"', 'href="data:,"')
     # Le service d'aperçu ne sert pas les .glb : on les publie en .glb.wasm (données binaires brutes)
     html = html.replace(".glb`", ".glb.wasm`")
     html = html.replace('"/monde"', '"monde"').replace('`/monde`', '`monde`').replace("/monde/", "monde/")
@@ -60,8 +61,8 @@ def reecrire(html, principale):
     def lien(m):
         chemin, ancre = m.group(1).strip("/"), m.group(2) or ""
         if chemin == "": return f'href="./{ancre}"'
-        return f'href="{chemin}.html{ancre}"'
-    html = re.sub(r'href="(/[a-z-]*/?)(#[\w-]+)?"', lien, html)
+        return f'href="{nom_page(chemin)}{ancre}"'
+    html = re.sub(r'href="(/[a-z0-9-]+(?:/[a-z0-9-]+)*/?|/)(#[\w-]+)?"', lien, html)
     if principale:
         html = re.sub(r"<!DOCTYPE html>|</?html[^>]*>|</?head>|</?body>", "", html)
         html = re.sub(r"<title>.*?</title>", "<title>Les Ragondins Farfelus</title>", html, count=1)
@@ -69,6 +70,8 @@ def reecrire(html, principale):
 
 for page in sorted(dist.rglob("index.html")):
     chemin = str(page.parent.relative_to(dist)).replace(".", "")
+    if chemin == "admin" or chemin.endswith("/email"):
+        continue  # l'administration et les versions e-mail ne servent pas dans l'aperçu
     html = reecrire(page.read_text(), chemin == "")
     (sortie / nom_page(chemin)).write_text(html)
     print(nom_page(chemin), round(len(html) / 1024), "Ko")

@@ -1,0 +1,163 @@
+# Interface d'administration du site des Ragondins Farfelus (Sveltia CMS).
+# Chaque modification enregistrée ici crée un « commit » sur la branche main :
+# le site se reconstruit et se met en ligne tout seul en 2 ou 3 minutes.
+
+backend:
+  name: github
+  repo: leolangloys-glitch/lesragondinsfarfelus
+  branch: main
+  commit_messages:
+    create: "Ajout : {{collection}} « {{slug}} » (administration)"
+    update: "Modification : {{collection}} « {{slug}} » (administration)"
+    delete: "Suppression : {{collection}} « {{slug}} » (administration)"
+    uploadMedia: "Ajout d'un fichier : {{path}} (administration)"
+    deleteMedia: "Suppression d'un fichier : {{path}} (administration)"
+
+site_url: https://lesragondinsfarfelus.com
+display_url: https://lesragondinsfarfelus.com
+logo_url: /brouillon/logo-petit.webp
+
+media_folder: public/medias
+public_folder: /medias
+
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: "-"
+
+collections:
+  # ---------------------------------------------------------------- Artistes
+  - name: artistes
+    label: Artistes
+    label_singular: Artiste
+    description: >-
+      Les artistes de la programmation. Une fiche « publiée » apparaît dans la page
+      Programmation (à la place d'une carte « mystère ») et a sa propre page.
+      Ne publiez un artiste qu'une fois sa venue confirmée.
+    folder: src/content/artistes
+    create: true
+    slug: "{{nom}}"
+    identifier_field: nom
+    summary: "{{nom}} · {{jour}} · {{plateau}}{{publie | ternary(' · publié', ' · brouillon')}}"
+    sortable_fields: [nom, jour, ordre]
+    media_folder: /public/medias/artistes
+    public_folder: /medias/artistes
+    preview_path: "artistes/{{slug}}/"
+    fields:
+      - { label: Nom de l'artiste, name: nom, widget: string }
+      - label: Publié sur le site
+        name: publie
+        widget: boolean
+        default: false
+        hint: Laissez décoché tant que l'artiste n'est pas annoncé officiellement.
+      - label: Jour
+        name: jour
+        widget: select
+        options:
+          - { label: Vendredi 28 mai, value: vendredi }
+          - { label: Samedi 29 mai, value: samedi }
+          - { label: Dimanche 30 mai, value: dimanche }
+      - label: Plateau
+        name: plateau
+        widget: select
+        options:
+          - { label: Musique, value: musique }
+          - { label: Magie, value: magie }
+      - { label: Style, name: style, widget: string, required: false, hint: "Ex. : Électro, Pop rock, DJ set, Magie close-up…" }
+      - { label: Horaire, name: horaire, widget: string, required: false, hint: "Ex. : 22 h 30 (laisser vide si pas encore fixé)" }
+      - { label: Photo, name: photo, widget: image, required: false, hint: "Format portrait de préférence (4:5), au moins 1000 pixels de large." }
+      - { label: Accroche, name: accroche, widget: string, required: false, hint: "Une phrase courte qui donne envie (affichée en gros sous le nom)." }
+      - { label: Présentation, name: body, widget: markdown, required: false, hint: "Quelques lignes sur l'artiste." }
+      - { label: Lien d'écoute, name: ecouter, widget: string, required: false, hint: "Lien Spotify, Deezer, SoundCloud… (un lien Spotify affiche aussi un lecteur sur la page)." }
+      - { label: Clip (lien YouTube), name: clip, widget: string, required: false, hint: "Copiez l'adresse de la vidéo YouTube." }
+      - { label: Instagram, name: instagram, widget: string, required: false }
+      - { label: Site officiel, name: site, widget: string, required: false }
+      - { label: Ordre d'affichage, name: ordre, widget: number, value_type: int, default: 100, hint: "Plus le nombre est petit, plus l'artiste apparaît en premier dans sa journée." }
+
+  # ------------------------------------------------------------- Newsletters
+  - name: lettres
+    label: Newsletters
+    label_singular: Newsletter
+    description: >-
+      Les newsletters, toujours au même modèle. Une lettre « publiée » apparaît sur le
+      site (page Les newsletters). Pour l'envoyer par e-mail : dans Brevo, créer une
+      campagne, « Importer un modèle » depuis l'adresse
+      https://lesragondinsfarfelus.com/lettres/NOM-DE-LA-LETTRE/email/ puis envoyer.
+    folder: src/content/lettres
+    create: true
+    slug: "{{year}}-{{month}}-{{titre}}"
+    identifier_field: titre
+    summary: "{{titre}} · {{date | date('DD/MM/YYYY')}}{{publie | ternary(' · publiée', ' · brouillon')}}"
+    sortable_fields: [date, titre]
+    media_folder: /public/medias/lettres
+    public_folder: /medias/lettres
+    preview_path: "lettres/{{slug}}/"
+    fields:
+      - { label: Titre, name: titre, widget: string }
+      - { label: Publiée, name: publie, widget: boolean, default: false, hint: "Cochez pour la mettre en ligne (et pouvoir l'importer dans Brevo)." }
+      - { label: Date, name: date, widget: datetime, time_format: false, date_format: "DD/MM/YYYY", format: "YYYY-MM-DD" }
+      - { label: Photo de couverture, name: couverture, widget: image, required: false, hint: "Format paysage, en JPG ou PNG (les e-mails n'aiment pas le WebP)." }
+      - { label: Introduction, name: chapo, widget: text, required: false, hint: "Une ou deux phrases en haut de la lettre (aussi l'aperçu dans la boîte mail)." }
+      - { label: Contenu, name: body, widget: markdown, hint: "Texte, intertitres, listes, liens et photos." }
+      - { label: Texte du bouton, name: bouton_texte, widget: string, required: false, hint: "Ex. : Réserver mon billet" }
+      - { label: Lien du bouton, name: bouton_lien, widget: string, required: false, hint: "Ex. : https://lesragondinsfarfelus.com/billetterie/" }
+
+  # --------------------------------------------------------- Revue de presse
+  - name: presse
+    label: Revue de presse
+    label_singular: Article de presse
+    description: Les articles, émissions et annonces qui parlent du festival (page Presse, « Ils parlent de nous »).
+    folder: src/content/presse
+    create: true
+    slug: "{{media}}-{{titre}}"
+    identifier_field: titre
+    summary: "{{media}} · {{titre}}"
+    sortable_fields: [date, media]
+    fields:
+      - { label: Média, name: media, widget: string, hint: "Ex. : La République du Centre" }
+      - { label: Titre de l'article, name: titre, widget: string }
+      - { label: Publié sur le site, name: publie, widget: boolean, default: true }
+      - { label: Date, name: date, widget: datetime, time_format: false, date_format: "DD/MM/YYYY", format: "YYYY-MM-DD", required: false }
+      - { label: Lien, name: lien, widget: string, required: false }
+      - label: Type
+        name: type
+        widget: select
+        default: Article
+        options: [Article, Radio, Télévision, Agenda, Web, Réseaux sociaux]
+      - { label: Résumé, name: resume, widget: text, required: false, hint: "Une phrase écrite par vous (ne copiez pas le texte de l'article)." }
+
+  # ----------------------------------------------------- Pages et réglages
+  - name: reglages
+    label: Pages et réglages
+    files:
+      - name: souvenirs
+        label: Souvenirs 2026 (aftermovies et photos)
+        file: src/data/souvenirs.json
+        media_folder: /public/medias/souvenirs
+        public_folder: /medias/souvenirs
+        fields:
+          - { label: Aftermovie 2026 (lien YouTube), name: aftermovie, widget: string, required: false, hint: "Laissez vide tant qu'il n'est pas publié : la page affiche « bientôt »." }
+          - { label: Aftermovie des bénévoles (lien YouTube), name: aftermovieBenevoles, widget: string, required: false }
+          - label: Photothèque
+            name: photos
+            widget: list
+            required: false
+            summary: "{{legende}}"
+            fields:
+              - { label: Photo, name: image, widget: image }
+              - { label: Légende, name: legende, widget: string, required: false }
+              - { label: Crédit photo, name: credit, widget: string, required: false }
+      - name: liens
+        label: Liens et contact
+        file: src/data/reglages.json
+        fields:
+          - { label: E-mail de contact, name: contact, widget: string }
+          - { label: Billetterie (lien), name: billetterie, widget: string, required: false, hint: "Dès qu'il est rempli, les boutons « Billetterie » s'activent." }
+          - { label: Recharge cashless (lien), name: rechargeCashless, widget: string, required: false }
+          - { label: Formulaire d'inscription à la newsletter (Brevo), name: newsletter, widget: string, required: false, hint: "Dans Brevo : Contacts > Formulaires > votre formulaire > Partager > copier le lien (il contient « sibforms.com »)." }
+          - { label: Formulaire bénévoles (lien), name: formulaireBenevoles, widget: string, required: false, hint: "Lien d'un formulaire Tally, Google Forms… Vide = bouton « Ouverture prochaine »." }
+          - { label: Formulaire partenaires (lien), name: formulairePartenaires, widget: string, required: false, hint: "Vide = formulaire du site (qui envoie un e-mail à l'adresse de contact)." }
+          - { label: Formulaire d'accréditation presse (lien), name: formulairePresse, widget: string, required: false, hint: "Vide = formulaire du site (qui envoie un e-mail à l'adresse de contact)." }
+          - { label: Instagram, name: instagram, widget: string, required: false }
+          - { label: Facebook, name: facebook, widget: string, required: false }
+          - { label: TikTok, name: tiktok, widget: string, required: false }

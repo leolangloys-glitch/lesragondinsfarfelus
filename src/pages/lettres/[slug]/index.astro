@@ -1,0 +1,88 @@
+---
+// Une newsletter, version web (même contenu que l'e-mail envoyé).
+import { getCollection, render } from "astro:content";
+import Base from "../../../layouts/Base.astro";
+
+export async function getStaticPaths() {
+  const lettres = await getCollection("lettres", (l) => l.data.publie);
+  return lettres.map((lettre) => ({ params: { slug: lettre.id }, props: { lettre } }));
+}
+
+const { lettre } = Astro.props;
+const l = lettre.data;
+const { Content } = await render(lettre);
+const date = l.date.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+---
+
+<Base
+  titre={l.titre}
+  nomCourt={l.titre}
+  description={(l.chapo || `Newsletter des Ragondins Farfelus du ${date}.`).slice(0, 158)}
+  image={l.couverture || undefined}
+>
+  <article class="lettre-page">
+    <div class="lettre-page__contenu">
+      <p class="retour"><a href="/lettres/">← Toutes les newsletters</a></p>
+      <span class="surtitre">Newsletter · {date}</span>
+      <h1>{l.titre}</h1>
+      {l.chapo && <p class="intro">{l.chapo}</p>}
+      {l.couverture && <img class="lettre-page__couverture" src={l.couverture} alt="" />}
+      <div class="texte-long lettre-page__texte">
+        <Content />
+      </div>
+      {
+        l.bouton_texte && l.bouton_lien && (
+          <p>
+            <a class="bouton bouton--rose" href={l.bouton_lien}>
+              {l.bouton_texte}
+            </a>
+          </p>
+        )
+      }
+    </div>
+  </article>
+</Base>
+
+<style>
+  .lettre-page {
+    padding: calc(var(--hauteur-entete) + clamp(2rem, 6vw, 4rem)) var(--marge) clamp(4rem, 9vw, 6rem);
+    background:
+      radial-gradient(ellipse 70% 40% at 50% 0%, rgba(44, 122, 111, 0.45), transparent 70%),
+      var(--vert-nuit);
+  }
+
+  .lettre-page__contenu {
+    max-width: 44rem;
+    margin: 0 auto;
+  }
+
+  .retour {
+    margin: 0 0 2rem;
+  }
+
+  .retour a {
+    color: var(--creme-doux);
+  }
+
+  h1 {
+    margin: 0.4rem 0 1rem;
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+
+  .lettre-page__couverture {
+    width: 100%;
+    margin: 1.5rem 0;
+    border-radius: var(--rayon);
+    border: 1.5px solid rgba(243, 226, 176, 0.35);
+  }
+
+  .lettre-page__texte :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--rayon);
+  }
+
+  .lettre-page__texte {
+    margin-bottom: 2rem;
+  }
+</style>

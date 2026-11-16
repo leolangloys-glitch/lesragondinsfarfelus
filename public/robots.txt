@@ -2,6 +2,7 @@
 # (pour qu'ils puissent recommander le festival).
 User-agent: *
 Allow: /
+Disallow: /admin/
 
 User-agent: Googlebot
 User-agent: Bingbot
@@ -17,5 +18,6 @@ User-agent: Perplexity-User
 User-agent: Applebot
 User-agent: Applebot-Extended
 Allow: /
+Disallow: /admin/
 
 Sitemap: https://lesragondinsfarfelus.com/sitemap-index.xml
