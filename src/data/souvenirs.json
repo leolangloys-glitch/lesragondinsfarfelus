@@ -1,5 +1,51 @@
 {
   "aftermovie": "",
   "aftermovieBenevoles": "",
-  "photos": []
+  "photos": [],
+  "videosBenevoles": [
+    {
+      "video": "/medias/benevoles/2026-bar-danse.mp4",
+      "affiche": "/medias/benevoles/2026-bar-danse.webp",
+      "legende": "Au bar des Ragondins, on sert… et on danse !",
+      "format": "paysage"
+    },
+    {
+      "video": "/medias/benevoles/2026-bar-salut.mp4",
+      "affiche": "/medias/benevoles/2026-bar-salut.webp",
+      "legende": "Coucou de la troupe !",
+      "format": "portrait"
+    }
+  ],
+  "photosBenevoles": [
+    {
+      "image": "/medias/benevoles/2026-danse.webp",
+      "legende": "Les bénévoles mettent l'ambiance dans la cour",
+      "credit": ""
+    },
+    {
+      "image": "/medias/benevoles/2026-buffet.webp",
+      "legende": "Le buffet se prépare",
+      "credit": ""
+    },
+    {
+      "image": "/medias/benevoles/2026-epluchage.webp",
+      "legende": "Atelier épluchage : les frites maison commencent ici",
+      "credit": ""
+    },
+    {
+      "image": "/medias/benevoles/2026-bar-accueil.webp",
+      "legende": "Au bar, chaque festivalier est accueilli comme un ami",
+      "credit": ""
+    },
+    {
+      "image": "/medias/benevoles/2026-bar-equipe.webp",
+      "legende": "Au bar, l'ambiance commence dans l'équipe",
+      "credit": ""
+    },
+    {
+      "image": "/medias/benevoles/2026-bar-file.webp",
+      "legende": "Le bar des Ragondins ne désemplit pas",
+      "credit": ""
+    }
+  ]
 }

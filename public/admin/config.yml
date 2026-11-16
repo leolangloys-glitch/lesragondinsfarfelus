@@ -138,6 +138,26 @@ collections:
         fields:
           - { label: Aftermovie 2026 (lien YouTube), name: aftermovie, widget: string, required: false, hint: "Laissez vide tant qu'il n'est pas publié : la page affiche « bientôt »." }
           - { label: Aftermovie des bénévoles (lien YouTube), name: aftermovieBenevoles, widget: string, required: false }
+          - label: Petites vidéos des bénévoles (page Bénévoles)
+            name: videosBenevoles
+            widget: list
+            required: false
+            summary: "{{legende}}"
+            hint: "Vidéos courtes (moins de 30 secondes, quelques Mo), sans son : elles tournent en boucle. Les plus longues vont sur YouTube."
+            fields:
+              - { label: Vidéo (MP4), name: video, widget: file }
+              - { label: Image d'attente, name: affiche, widget: image, required: false }
+              - { label: Légende, name: legende, widget: string, required: false }
+              - { label: Format, name: format, widget: select, default: paysage, options: [paysage, portrait, carre] }
+          - label: Photos des bénévoles (page Bénévoles)
+            name: photosBenevoles
+            widget: list
+            required: false
+            summary: "{{legende}}"
+            fields:
+              - { label: Photo, name: image, widget: image }
+              - { label: Légende, name: legende, widget: string, required: false }
+              - { label: Crédit photo, name: credit, widget: string, required: false }
           - label: Photothèque
             name: photos
             widget: list
