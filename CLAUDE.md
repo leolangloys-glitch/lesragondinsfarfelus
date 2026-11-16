@@ -291,10 +291,14 @@ dans `src/`).
   `.affiche` dans `index.astro`). Dans le miroir, **seul le titre** (le logo),
   un peu plus grand que sur l'affiche, centré dans l'ouverture.
 - Dans l'affiche, le miroir n'est pas tout à fait centré : marches et damier
-  sont alignés sur le bas du miroir, un peu à droite. Pour que les carreaux
-  soient bien droits, l'affiche est décalée de 1,63 % : le point de fuite du
-  damier et l'escalier tombent pile au milieu de l'écran. Ne pas « recentrer »
-  le miroir.
+  sont un peu à droite du miroir. L'affiche est décalée de 1,63 % : le point de
+  fuite du damier et l'escalier tombent pile au milieu de l'écran (carreaux
+  bien droits). **Puis, à la demande de l'équipe (novembre 2026, sur
+  téléphone : « c'est pas centré »), le miroir lui-même est décalé de 1,97 %
+  vers la droite** (cadre, titre, eau, bouton ; halo du fond et texte « Touchez
+  le miroir » recentrés aussi, `0.5163` dans `miroir-eau.ts`) : miroir,
+  escalier et damier sont maintenant tous au milieu de l'écran. Ne pas revenir
+  aux positions exactes de l'affiche.
 - Le sol est un SVG extensible qui reproduit celui de la graphiste (mêmes
   couleurs, même perspective, même découpe) pour remplir tout l'écran :
   `python3 -I outils/sol-damier.py public/brouillon/sol-damier.webp public/brouillon/sol-damier.svg`

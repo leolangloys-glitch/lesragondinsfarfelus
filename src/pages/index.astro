@@ -527,6 +527,10 @@ const jours = [
     Le point de fuite du damier et l'escalier sont à 51,63 % de la largeur de
     l'affiche : on décale légèrement l'affiche pour qu'ils tombent pile au milieu
     de l'écran, et que les carreaux soient bien droits de part et d'autre.
+    Sur l'affiche, le miroir est 1,97 % plus à gauche (centre à 49,66 %) : à la
+    demande de l'équipe (novembre 2026, vu sur téléphone), on le décale d'autant
+    vers la droite (avec le titre, l'eau et le bouton) pour que miroir, escalier
+    et damier soient tous au milieu de l'écran.
   */
   .affiche {
     position: relative;
@@ -544,7 +548,7 @@ const jours = [
     content: "";
     position: absolute;
     z-index: -1;
-    left: 50%;
+    left: 51.63%;
     top: 49%;
     width: max(260vmax, 300%);
     height: max(260vmax, 300%);
@@ -589,6 +593,7 @@ const jours = [
     top: 14%;
     width: 81.13%;
     aspect-ratio: 1007 / 1292;
+    translate: 1.97cqw 0;
     opacity: 0;
     -webkit-mask: var(--masque) 0 0 / 100% 100% no-repeat;
     mask: var(--masque) 0 0 / 100% 100% no-repeat;
@@ -604,6 +609,7 @@ const jours = [
     top: 14%;
     width: 81.13%;
     height: auto;
+    translate: 1.97cqw 0;
     filter: drop-shadow(0 0 2.5rem rgba(243, 226, 176, 0.14));
     transition: filter 0.5s ease;
   }
@@ -623,7 +629,7 @@ const jours = [
     top: 49%;
     left: 0;
     right: 0;
-    translate: 0 -50%;
+    translate: 1.63cqw -50%;
     display: flex;
     justify-content: center;
     pointer-events: none;
@@ -633,7 +639,7 @@ const jours = [
      ondule) ; si elle ne peut pas s'afficher, c'est lui qu'on voit. */
 
   .affiche .portail__logo {
-    margin: 0 0 0 1.06cqw;
+    margin: 0;
     width: 60cqw;
   }
 
@@ -647,7 +653,7 @@ const jours = [
   .affiche__miroir {
     position: absolute;
     z-index: 5;
-    left: 16%;
+    left: 17.63%;
     top: 16%;
     width: 68%;
     height: 66%;
@@ -677,7 +683,7 @@ const jours = [
   .affiche__indice {
     position: absolute;
     z-index: 4;
-    left: 0;
+    left: 3.26%;
     right: 0;
     top: 96.2%;
     margin: 0;
