@@ -102,8 +102,10 @@ n°2 pas encore commencée). Tout ce qui suit est provisoire.
 
 ## Pages du site
 
-Menu principal : Programmation · Infos · Cashless · Bénévoles · Partenaires +
-bouton Billetterie. Pied de page : Domaine, Édition 2026, Les newsletters,
+Menu principal : Programmation · Le Domaine · Édition 2026 · Infos · Cashless ·
+Bénévoles · Partenaires + bouton Billetterie (Domaine et Édition 2026 ajoutés à
+la demande de l'équipe, novembre 2026, qui ne les retrouvait pas ; menu burger
+en dessous de 1100 px de large, sinon le menu ne tient pas sur une ligne). Pied de page : Domaine, Édition 2026, Les newsletters,
 Comment venir, Presse, Contact, Mentions légales, Confidentialité. Menus :
 `src/data/site.ts`.
 

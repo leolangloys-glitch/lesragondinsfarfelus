@@ -99,6 +99,8 @@ export type Lien = { libelle: string; href: string };
 // Menu principal (en haut de chaque page). La billetterie est un bouton à part.
 export const menuPrincipal: Lien[] = [
   { libelle: "Programmation", href: "/programmation/" },
+  { libelle: "Le Domaine", href: "/domaine/" },
+  { libelle: "Édition 2026", href: "/edition-2026/" },
   { libelle: "Infos", href: "/infos/" },
   { libelle: "Cashless", href: "/cashless/" },
   { libelle: "Bénévoles", href: "/benevoles/" },
