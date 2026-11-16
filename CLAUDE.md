@@ -174,10 +174,16 @@ dans `src/`).
 - **Bénévoles** : accès au festival en dehors de leurs créneaux et repas
   offerts pendant leurs missions : confirmés par l'équipe, mis en avant.
 - **Partenaires** : structure inspirée de Cocorico Electro (Club VIP, mécénat,
-  sponsoring, formulaire), **textes originaux**. Mention : avantages fiscaux
-  « sous réserve de l'éligibilité de l'association au régime du mécénat » (à
-  vérifier par l'équipe : rescrit fiscal, intérêt général). Nom de l'espace
-  VIP à confirmer.
+  sponsoring, formulaire), **textes originaux**. Nom de l'espace VIP à
+  confirmer.
+- **Mécénat : l'association est éligible** (confirmé par l'équipe, novembre
+  2026). Section « Le mécénat en pratique » sur la page Partenaires :
+  entreprises 60 % du don en réduction d'impôt (plafond 20 000 € ou 0,5 % du
+  CA HT, report sur 5 ans), particuliers 66 % (plafond 20 % du revenu
+  imposable), reçu fiscal pour chaque don, dons en nature ou en compétences
+  possibles. Taux 2026 (art. 200 et 238 bis du CGI) : à revérifier chaque
+  année (loi de finances). Le formulaire accepte aussi les dons de
+  particuliers.
 - **Presse** : seule la fiche agenda du JDS (2026) a été trouvée en ligne ;
   la presse locale bloque les robots. L'équipe ajoute les articles dans
   l'administration. Les publications LinkedIn de particuliers ne sont **pas**
