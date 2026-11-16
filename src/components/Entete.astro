@@ -106,7 +106,8 @@ const estActif = (href: string) => cheminActuel === normaliser(href);
 
   .entete__nav ul a {
     display: block;
-    padding: 0.5rem 0.85rem;
+    padding: 0.5rem clamp(0.6rem, 0.75vw, 0.85rem);
+    white-space: nowrap;
     color: var(--creme);
     text-decoration: none;
     font-weight: 500;
@@ -139,8 +140,9 @@ const estActif = (href: string) => cheminActuel === normaliser(href);
     display: none;
   }
 
-  /* ----- Téléphone et tablette ----- */
-  @media (max-width: 899px) {
+  /* ----- Téléphone et tablette (menu burger) : 7 rubriques + Billetterie ne
+     tiennent sur une ligne qu'à partir de 1100 px ----- */
+  @media (max-width: 1099px) {
     .entete__burger {
       display: grid;
       place-items: center;
