@@ -201,20 +201,26 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
   `python3 -I outils/apercu.py dist <dossier>` produit des pages autonomes
   (CSS et JS intégrés, images publiées à côté).
 - Poids : environ 1,3 Mo en tout (plus de 3D ni de Three.js).
-- `public/brouillon/` : visuels provisoires de la graphiste. **Ce dossier est
-  exclu du dépôt** (`.gitignore`) tant que le dépôt est public et que les
-  visuels ne sont pas validés. Il faut les y remettre à la main pour voir le
-  site complet.
+- `public/brouillon/` : visuels de la graphiste (logo, miroir, escalier, sol,
+  image de partage). **La graphiste a donné son accord (novembre 2026)** : ils
+  sont maintenant dans le dépôt et seront publiés avec le site.
 
 ## Mise en ligne (à faire)
 
 - Publication automatique prête : `.github/workflows/mise-en-ligne.yml` (à
   chaque modification de `main`, le site est reconstruit et publié sur GitHub
   Pages). Il refuse de publier si les visuels de `public/brouillon/` manquent.
-- Avant : compléter les mentions légales (structure, forme juridique, adresse,
-  SIRET/RNA, contact, directeur de la publication) ; accord de la graphiste
-  pour publier ses visuels (ils doivent alors entrer dans le dépôt, retirer
-  `public/brouillon/` du `.gitignore`) ; choisir l'extension du domaine.
+- Fait : mentions légales et confidentialité complétées (éditeur :
+  association **7 DE COEUR**, association déclarée, siège à la mairie de
+  Sainte-Geneviève-des-Bois, SIRET 104 227 723 00012, contact
+  contact@domainedebriquemault.com, aussi utilisé comme contact général sur
+  la page Infos) ; accord de la graphiste, visuels ajoutés au dépôt.
+- Reste : l'extension du domaine acheté chez OVH (puis `public/CNAME` et
+  l'adresse du site dans `astro.config.mjs`, `public/robots.txt`,
+  `src/data/site.ts`) ; crédit de la graphiste dans les mentions légales (nom
+  à compléter) ; durées de conservation des données (confidentialité).
+- Ne jamais demander ni accepter les mots de passe OVH ou GitHub : l'équipe
+  fait elle-même les réglages, on la guide.
 - GitHub : Settings > Pages > Source = « GitHub Actions » ; domaine
   personnalisé dans Settings > Pages (+ fichier `public/CNAME`) ; « Enforce
   HTTPS ». Puis fusionner la branche de travail dans `main` (après validation).
