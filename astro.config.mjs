@@ -4,9 +4,9 @@ import sitemap from "@astrojs/sitemap";
 
 // https://docs.astro.build/
 export default defineConfig({
-  // Adresse définitive du site (extension à confirmer avant la mise en ligne).
+  // Adresse du site (domaine acheté chez OVH).
   // Elle sert au plan du site et aux adresses « canoniques » lues par Google.
-  site: "https://lesragondinsfarfelus.fr",
+  site: "https://lesragondinsfarfelus.com",
   integrations: [
     sitemap({
       // Les pages légales n'ont pas besoin d'être mises en avant.

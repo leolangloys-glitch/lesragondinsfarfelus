@@ -7,13 +7,13 @@ const univers = [
   {
     titre: "La musique",
     texte:
-      "Jazz, jazz manouche, rock, pop et DJ sets jusqu'au bout de la nuit, sur plusieurs scènes nichées dans le domaine.",
+      "DJ sets, pop, rock et électro jusqu'au bout de la nuit, sur les scènes nichées dans le domaine.",
     icone: "musique",
   },
   {
     titre: "La magie",
     texte:
-      "De grands numéros d'illusion sur scène et des magiciens qui surgissent au milieu du public, à quelques centimètres de vous.",
+      "Une magie fun et pleine d'humour, sur scène et en close-up au milieu du public, à quelques centimètres de vous. Et le dimanche, de la magie pour les enfants.",
     icone: "magie",
   },
   {
@@ -41,7 +41,7 @@ const jours = [
     jour: "Dimanche",
     date: "30 mai",
     titre: "La journée des familles",
-    texte: "Artistes pour les enfants, magie à hauteur d'yeux, jeux et animations pour tous les âges.",
+    texte: "De la musique toute la journée et, en plus, des spectacles de magie sur scène pour les enfants.",
   },
 ];
 ---
@@ -132,7 +132,7 @@ const jours = [
           <span>mai 2027</span>
         </p>
       </div>
-      <p class="portail__genres">Magie · DJ sets · Concerts jazz et rock</p>
+      <p class="portail__genres">Magie · DJ sets · Pop, rock et électro</p>
       <p class="portail__affiche">Têtes d'affiche dévoilées très bientôt</p>
     </div>
 
@@ -155,20 +155,18 @@ const jours = [
         <strong>Les Ragondins Farfelus</strong> est un festival de musique et de magie qui se tient les
         28, 29 et 30 mai 2027 au Domaine de Briquemault, à Sainte-Geneviève-des-Bois, dans le Loiret,
         à 1&nbsp;h&nbsp;30 de Paris. Un monde mystérieux, onirique et hors du temps qui s'éveille une
-        fois par an&nbsp;: trois jours d'expérience immersive entre nature, musique puissante et magie,
-        au profit de l'association Handi'Chiens.
+        fois par an&nbsp;: trois jours d'expérience immersive entre nature, musique puissante et magie.
       </p>
 
       <section class="en-bref" aria-labelledby="titre-en-bref">
         <h3 id="titre-en-bref">Le festival en bref</h3>
         <dl>
-          <div><dt>Quoi</dt><dd>Festival de musique (jazz, jazz manouche, rock, pop, DJ sets) et de magie (scène et close-up)</dd></div>
+          <div><dt>Quoi</dt><dd>Festival de musique (DJ sets, pop, rock, électro) et de magie (fun et pleine d'humour, sur scène et en close-up)</dd></div>
           <div><dt>Quand</dt><dd>Vendredi 28, samedi 29 et dimanche 30 mai 2027 · 2<sup>e</sup> édition</dd></div>
           <div><dt>Où</dt><dd>{festival.lieu.nom}, {festival.lieu.codePostal} {festival.lieu.commune} (Loiret, Centre-Val de Loire)</dd></div>
           <div><dt>À combien</dt><dd>1&nbsp;h&nbsp;30 de Paris, 1&nbsp;h&nbsp;15 d'Orléans, 25&nbsp;min de Montargis et de Gien · <a href="/venir/">Comment venir</a></dd></div>
-          <div><dt>Pour qui</dt><dd>Tout public&nbsp;; journée des familles le dimanche&nbsp;; entrée gratuite pour les moins de 11&nbsp;ans et les personnes en situation de handicap</dd></div>
+          <div><dt>Pour qui</dt><dd>Vendredi et samedi&nbsp;: plutôt un public adulte. Dimanche&nbsp;: journée des familles, ouverte aux plus jeunes, avec des spectacles de magie pour les enfants. Entrée gratuite pour les moins de 11&nbsp;ans et les personnes en situation de handicap</dd></div>
           <div><dt>Dormir</dt><dd>Camping sur place dès le vendredi après-midi</dd></div>
-          <div><dt>Pour la bonne cause</dt><dd>Au profit de l'association Handi'Chiens</dd></div>
         </dl>
       </section>
 
@@ -240,8 +238,7 @@ const jours = [
         <span class="surtitre">Billetterie</span>
         <h2 id="titre-billetterie">Ouverture prochaine</h2>
         <p>
-          Pass jour, pass 3 jours, camping : toutes les formules seront disponibles à l'ouverture de
-          la billetterie.
+          Pass 3 jours avec camping et autres formules&nbsp;: disponibles très prochainement.
         </p>
         <div class="boutons">
           <a class="bouton bouton--rose" href="/billetterie/">Voir les formules</a>
@@ -262,7 +259,7 @@ const jours = [
         <h2 id="titre-retour">La première fois que le portail s'est ouvert</h2>
         <p class="intro">
           Les 30 et 31 mai 2026, le Domaine de Briquemault accueillait la toute première édition des
-          Ragondins Farfelus. Magie, jazz, rock, guinguette et DJ sets&nbsp;: retour en images.
+          Ragondins Farfelus. Magie, concerts, guinguette et DJ sets&nbsp;: retour en images.
         </p>
       </div>
       <ul class="retour__photos" aria-label="Photos de l'édition 2026 (à venir)">
@@ -271,26 +268,6 @@ const jours = [
         <li><span>Photo à venir</span></li>
         <li><span>Vidéo à venir</span></li>
       </ul>
-    </div>
-  </section>
-
-  <!-- ===================== SOLIDARITÉ ===================== -->
-  <section class="section solidarite" aria-labelledby="titre-solidarite">
-    <div class="contenu solidarite__grille">
-      <div>
-        <span class="surtitre">Un festival solidaire</span>
-        <h2 id="titre-solidarite">Au profit de Handi'Chiens</h2>
-      </div>
-      <div>
-        <p class="intro">
-          Les Ragondins Farfelus soutiennent l'association Handi'Chiens, qui éduque et remet
-          gratuitement des chiens d'assistance à des personnes en situation de handicap.
-        </p>
-        <p>
-          Chaque billet, chaque verre partagé au bar contribue à offrir un compagnon à quatre pattes
-          à celles et ceux qui en ont besoin.
-        </p>
-      </div>
     </div>
   </section>
 
@@ -1141,22 +1118,6 @@ const jours = [
     background: radial-gradient(ellipse at 50% 30%, rgba(44, 122, 111, 0.45), rgba(8, 61, 61, 0.2));
     color: var(--creme-doux);
     font-size: 0.9rem;
-  }
-
-  /* ---------- Solidarité ---------- */
-  .solidarite {
-    background: var(--vert);
-  }
-
-  .solidarite__grille {
-    display: grid;
-    gap: 1.5rem 4rem;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-    align-items: start;
-  }
-
-  .solidarite p:last-child {
-    color: var(--creme-doux);
   }
 
   /* ---------- Le lieu ---------- */

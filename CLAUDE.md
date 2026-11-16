@@ -6,13 +6,16 @@ mêmes informations.
 
 ## Le festival
 
-- Festival de musique et de magie, caritatif.
+- Festival de musique et de magie, édité et organisé par l'association
+  **7 DE COEUR** (association déclarée, voir les mentions légales).
 - Lieu : Domaine de Briquemault, 45230 Sainte-Geneviève-des-Bois (Loiret).
   Site du domaine : https://domainedebriquemault.com
 - 1re édition : 30 et 31 mai 2026.
 - 2e édition : **vendredi 28, samedi 29 et dimanche 30 mai 2027** (confirmé par
   l'équipe ; « été 2027 » sur le site du domaine est une erreur).
-- Au profit de l'association Handi'Chiens.
+- **Plus au profit de Handi'Chiens** (novembre 2026). Une autre association est
+  envisagée mais pas encore confirmée : **rien n'est publié à ce sujet** tant
+  que l'équipe ne l'a pas validé (pas de section « solidarité » pour l'instant).
 - Entrée gratuite pour les moins de 11 ans et les personnes en situation de
   handicap (info de l'édition 2026, à reconfirmer pour 2027).
 - Mission : « vous faire vivre une expérience immersive où la musique
@@ -23,13 +26,20 @@ mêmes informations.
 
 ### Déroulé prévu pour 2027
 
-- Deux plateaux : **musique** (jazz, jazz manouche, rock, pop, DJ sets) et
-  **magie** (numéros sur scène + close-up dans le public).
-- Vendredi : ouverture du camping l'après-midi, concerts en soirée, DJ sets
-  tard dans la nuit.
-- Samedi : grosse journée, magiciens sur scène et en close-up, soirée têtes
-  d'affiche.
-- Dimanche : journée familiale.
+- Deux plateaux : **musique** = DJ sets, pop, rock, électro (**pas de jazz**)
+  et **magie** = magie fun, basée sur l'humour, sur scène et en close-up (pas de
+  « grands numéros d'illusion »).
+- Vendredi : ouverture du camping, premiers concerts en fin d'après-midi, puis
+  DJ sets jusque tard dans la nuit.
+- Samedi : magiciens sur scène et en close-up, concerts toute la journée,
+  grande soirée avec les têtes d'affiche.
+- Dimanche : journée des familles : de la musique **et** des spectacles de
+  magie sur scène pour les enfants.
+- Public : vendredi et samedi plutôt adulte ; dimanche ouvert aux familles et
+  aux plus jeunes (pas « tout public »).
+- Billetterie : pass 3 jours avec camping et autres formules, « disponibles
+  très prochainement ».
+- L'équipe va reprendre tous les textes du site.
 
 **Aucun nom d'artiste n'est publié sur le site ni écrit dans ce dépôt tant
 que l'équipe ne l'a pas confirmé.** Les listes de têtes d'affiche envisagées
@@ -63,8 +73,10 @@ n°2 pas encore commencée). Tout ce qui suit est provisoire.
 - **Site séparé** du site du domaine, avec une identité propre.
 - **Liens dans les deux sens** : une page « Le lieu » renvoie vers le site du
   domaine ; le site du domaine garde une courte page festival qui renvoie ici.
-- **Nom de domaine** : `lesragondinsfarfelus`, acheté chez OVH (extension à
-  confirmer).
+- **Nom de domaine** : `lesragondinsfarfelus.com`, acheté chez OVH (avec la zone
+  DNS, un MX Plan pour les e-mails, et un hébergement web OVH
+  `lesragb.cluster129.hosting.ovh.net` qui ne sert pas : le site est sur GitHub
+  Pages).
 - **Hébergement** : GitHub Pages, domaine géré chez OVH.
 - **Technique** : site statique avec Astro.
 - **Billetterie** : outil externe intégré au site (nom exact à confirmer).
@@ -178,9 +190,8 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
 - Logo de l'accueil en deux tailles (`srcset`) pour charger vite sur téléphone.
 - Adresses officielles avec barre finale : les liens internes s'écrivent
   `/programmation/`, jamais `/programmation`.
-- Adresse du site provisoire `https://lesragondinsfarfelus.fr` : à corriger
-  dans `astro.config.mjs`, `public/robots.txt` et `src/data/site.ts` si
-  l'extension change.
+- Adresse du site : `https://lesragondinsfarfelus.com` (dans `astro.config.mjs`,
+  `public/robots.txt`, `src/data/site.ts` et `public/CNAME`).
 - Image de partage : `public/brouillon/partage.jpg` (1200×630).
 
 ## À décider
@@ -215,10 +226,13 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
   Sainte-Geneviève-des-Bois, SIRET 104 227 723 00012, contact
   contact@domainedebriquemault.com, aussi utilisé comme contact général sur
   la page Infos) ; accord de la graphiste, visuels ajoutés au dépôt.
-- Reste : l'extension du domaine acheté chez OVH (puis `public/CNAME` et
-  l'adresse du site dans `astro.config.mjs`, `public/robots.txt`,
-  `src/data/site.ts`) ; crédit de la graphiste dans les mentions légales (nom
-  à compléter) ; durées de conservation des données (confidentialité).
+- Fait aussi : domaine `lesragondinsfarfelus.com` branché dans le site
+  (`public/CNAME`, adresse du site).
+- Reste côté équipe : GitHub Settings > Pages > Source = « GitHub Actions »,
+  fusionner la branche de travail dans `main`, domaine personnalisé dans
+  Settings > Pages, zone DNS chez OVH (sans toucher aux lignes MX, SPF et
+  e-mail), puis « Enforce HTTPS ». Encore à compléter : crédit de la graphiste
+  (mentions légales), durées de conservation des données (confidentialité).
 - Ne jamais demander ni accepter les mots de passe OVH ou GitHub : l'équipe
   fait elle-même les réglages, on la guide.
 - GitHub : Settings > Pages > Source = « GitHub Actions » ; domaine
@@ -248,4 +262,5 @@ la classe `a-completer` (chercher `a-completer` dans `src/`).
 - Tous les textes sont provisoires : à faire relire par l'équipe. Points à
   valider en priorité : FAQ cashless (paiement uniquement cashless, recharge
   sur place, remboursement, bracelet perdu), FAQ billetterie, avantages
-  bénévoles, niveaux de partenariat, présentation de Handi'Chiens.
+  bénévoles, niveaux de partenariat, gratuités (moins de 11 ans, personnes en
+  situation de handicap : info 2026 à reconfirmer).

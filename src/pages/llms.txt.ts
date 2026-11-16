@@ -9,19 +9,18 @@ export const GET: APIRoute = () => {
     .join("\n");
   const texte = `# ${festival.nom}
 
-> ${festival.nom} est un festival de musique et de magie caritatif. La 2e édition a lieu les ${festival.dates.affichage} au ${festival.lieu.nom}, ${festival.lieu.codePostal} ${festival.lieu.commune}, dans le ${festival.lieu.departement} (${festival.lieu.region}), entre Montargis et Gien, à environ 1 h 30 de Paris et 1 h 15 d'Orléans. Le festival est organisé au profit de l'association ${festival.association}.
+> ${festival.nom} est un festival de musique et de magie. La 2e édition a lieu les ${festival.dates.affichage} au ${festival.lieu.nom}, ${festival.lieu.codePostal} ${festival.lieu.commune}, dans le ${festival.lieu.departement} (${festival.lieu.region}), entre Montargis et Gien, à environ 1 h 30 de Paris et 1 h 15 d'Orléans. Il est organisé par l'association ${festival.editeur}.
 
 ## L'essentiel
 
 - Dates : vendredi 28, samedi 29 et dimanche 30 mai 2027 (1re édition : 30 et 31 mai 2026).
 - Lieu : ${festival.lieu.nom}, domaine historique de 10 hectares (site attesté dès 1240, ruines d'un château fort entouré de douves), au bord du Loing.
-- Musique : jazz, jazz manouche, rock, pop et DJ sets. Magie : grands numéros sur scène et magiciens en close-up dans le public.
-- Programme : vendredi, ouverture du camping, concerts et DJ sets ; samedi, journée magie et concerts, soirée têtes d'affiche ; dimanche, journée des familles.
+- Musique : DJ sets, pop, rock et électro. Magie : une magie fun et pleine d'humour, sur scène et en close-up dans le public ; spectacles de magie pour les enfants le dimanche.
+- Programme : vendredi, ouverture du camping, concerts et DJ sets ; samedi, journée magie et concerts, soirée têtes d'affiche ; dimanche, journée des familles (musique et magie pour les enfants).
 - Têtes d'affiche : annoncées prochainement sur ${SITE}/programmation/.
-- Public : tout public ; entrée gratuite pour les moins de 11 ans et les personnes en situation de handicap.
+- Public : vendredi et samedi plutôt pour un public adulte ; dimanche, journée des familles ouverte aux plus jeunes. Entrée gratuite pour les moins de 11 ans et les personnes en situation de handicap.
 - Hébergement : camping sur place dès le vendredi après-midi ; chambres d'hôtes au domaine.
 - Paiement sur place : bracelet cashless.
-- Solidarité : au profit de ${festival.association}, qui éduque et remet gratuitement des chiens d'assistance.
 
 ## Venir au festival (temps indicatifs en voiture)
 

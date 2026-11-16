@@ -3,9 +3,9 @@
 // Pour changer une date, un lien ou le menu, c'est ici et nulle part ailleurs.
 // ==========================================================================
 
-// Adresse du site (provisoire : extension du nom de domaine à confirmer).
-// À changer aussi dans astro.config.mjs et public/robots.txt.
-export const SITE = "https://lesragondinsfarfelus.fr";
+// Adresse du site (domaine acheté chez OVH).
+// À changer aussi dans astro.config.mjs, public/robots.txt et public/CNAME.
+export const SITE = "https://lesragondinsfarfelus.com";
 
 export const festival = {
   nom: "Les Ragondins Farfelus",
@@ -29,7 +29,8 @@ export const festival = {
     latitude: 47.8181,
     longitude: 2.8183,
   },
-  association: "Handi'Chiens",
+  // Association qui édite le site et organise le festival
+  editeur: "7 DE COEUR",
 };
 
 // Temps de trajet indicatifs en voiture (estimations, à vérifier par l'équipe).
@@ -158,7 +159,7 @@ export function organisationSchema() {
     name: festival.nom,
     url: `${SITE}/`,
     logo: `${SITE}/brouillon/logo.webp`,
-    description: "Festival de musique et de magie caritatif dans le Loiret, au profit de l'association Handi'Chiens.",
+    description: "Festival de musique et de magie dans le Loiret, à 1 h 30 de Paris, organisé par l'association 7 DE COEUR.",
     ...(reseaux.length ? { sameAs: reseaux } : {}),
   };
 }
@@ -222,7 +223,7 @@ export function evenementSchema(siteUrl = SITE) {
     name: `${festival.nom} 2027`,
     alternateName: "Festival des Ragondins Farfelus",
     description:
-      "Festival de musique et de magie dans le Loiret, à 1 h 30 de Paris : concerts jazz, jazz manouche, rock et pop, DJ sets, magiciens sur scène et en close-up, journée familiale le dimanche. Au profit de l'association Handi'Chiens.",
+      "Festival de musique et de magie dans le Loiret, à 1 h 30 de Paris : DJ sets, pop, rock et électro, magie fun et pleine d'humour sur scène et en close-up, journée des familles le dimanche avec des spectacles de magie pour les enfants.",
     startDate: festival.dates.debut,
     endDate: festival.dates.fin,
     eventStatus: "https://schema.org/EventScheduled",
@@ -231,7 +232,7 @@ export function evenementSchema(siteUrl = SITE) {
     url: `${siteUrl}/`,
     image: [`${siteUrl}/brouillon/partage.jpg`],
     keywords:
-      "festival Loiret, festival musique et magie, festival près de Paris, festival Orléans, festival Montargis, festival Gien, festival jazz rock, festival familial, festival solidaire",
+      "festival Loiret, festival musique et magie, festival près de Paris, festival Orléans, festival Montargis, festival Gien, festival rock électro, festival DJ set, festival magie, festival familial",
     isAccessibleForFree: false,
     location: lieuSchema(),
     offers: {
@@ -244,7 +245,7 @@ export function evenementSchema(siteUrl = SITE) {
     subEvent: [
       jour("2027-05-28", "Vendredi : l'éveil", "Ouverture du camping, concerts en soirée et DJ sets tard dans la nuit."),
       jour("2027-05-29", "Samedi : la grande nuit", "Magiciens sur scène et en close-up, concerts et soirée têtes d'affiche."),
-      jour("2027-05-30", "Dimanche : la journée des familles", "Artistes jeune public, magie, jeux et animations."),
+      jour("2027-05-30", "Dimanche : la journée des familles", "Musique toute la journée et spectacles de magie pour les enfants."),
     ],
   };
 }
