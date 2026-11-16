@@ -315,37 +315,43 @@ dans `src/`).
   image de partage). **La graphiste a donné son accord (novembre 2026)** : ils
   sont maintenant dans le dépôt et seront publiés avec le site.
 
-## Mise en ligne (à faire)
+## Mise en ligne
 
-- Publication automatique prête : `.github/workflows/mise-en-ligne.yml` (à
-  chaque modification de `main`, le site est reconstruit et publié sur GitHub
-  Pages). Il refuse de publier si les visuels de `public/brouillon/` manquent.
-- Fait : mentions légales et confidentialité complétées (éditeur :
-  association **7 DE COEUR**, association déclarée, siège à la mairie de
-  Sainte-Geneviève-des-Bois, SIRET 104 227 723 00012, contact
-  contact@domainedebriquemault.com, aussi utilisé comme contact général sur
-  la page Infos) ; accord de la graphiste, visuels ajoutés au dépôt.
-- Fait aussi : domaine `lesragondinsfarfelus.com` branché dans le site
-  (`public/CNAME`, adresse du site).
-- Reste côté équipe : GitHub Settings > Pages > Source = « GitHub Actions »,
-  fusionner la branche de travail dans `main`, domaine personnalisé dans
-  Settings > Pages, zone DNS chez OVH (sans toucher aux lignes MX, SPF et
-  e-mail), puis « Enforce HTTPS ». Encore à compléter : crédits des photos
+- **Le site est en ligne depuis le 16 novembre 2026** : demande de fusion
+  `leolangloys-glitch/lesragondinsfarfelus#1` fusionnée dans `main`,
+  publication GitHub Actions réussie, domaine personnalisé enregistré dans
+  Settings > Pages (l'adresse `leolangloys-glitch.github.io/lesragondinsfarfelus/`
+  redirige vers lesragondinsfarfelus.com).
+- Publication automatique : `.github/workflows/mise-en-ligne.yml` (à chaque
+  modification de `main`, le site est reconstruit et publié sur GitHub Pages,
+  environ 2 min). Il refuse de publier si les visuels de `public/brouillon/`
+  manquent. Settings > Pages > Source = « GitHub Actions » (fait).
+- Méthode de travail : on modifie la branche `claude/memoire-projet`, puis
+  l'équipe ouvre une demande de fusion vers `main` et clique « Merge ».
+  L'administration (`/admin/`) écrit directement dans `main`.
+- **Zone DNS chez OVH (faite le 16/11/2026, vérifiée sur le DNS public)** :
+  4 A `@` vers 185.199.108.153, .109.153, .110.153, .111.153 ; 4 AAAA `@` vers
+  2606:50c0:8000::153, 8001, 8002, 8003 ; `www` en CNAME vers
+  `leolangloys-glitch.github.io.`. Supprimés : l'ancien A et AAAA de
+  l'hébergement OVH (51.91.236.255, 2001:41d0:301::29), la redirection OVH
+  (`@ TXT "1|www…"`), `www` A/AAAA/TXT `3|welcome`. **Gardés intacts** : MX,
+  SPF, DKIM (`ovhmo-selector-*`), mail, pop3, smtp, imap, SRV, autoconfig,
+  autodiscover, ftp, NS. Dans la nouvelle interface OVH, la racine s'écrit `@`.
+- Reste : cocher **« Enforce HTTPS »** dans Settings > Pages dès que le
+  certificat est prêt ; « Check again » si le contrôle DNS est encore rouge.
+- Mentions légales et confidentialité : éditeur association **7 DE COEUR**,
+  association déclarée, siège à la mairie de Sainte-Geneviève-des-Bois, SIRET
+  104 227 723 00012, contact contact@domainedebriquemault.com (aussi contact
+  général sur la page Infos). Encore à compléter : crédits des photos
   (mentions légales), durées de conservation des données (confidentialité).
 - Crédit de la graphiste (Cécilie Larroya, `festival.graphiste` dans
   `site.ts`) : mentions légales, pied de page de toutes les pages, ressources
   de l'espace presse et `llms.txt`.
 - Ne jamais demander ni accepter les mots de passe OVH ou GitHub : l'équipe
   fait elle-même les réglages, on la guide.
-- GitHub : Settings > Pages > Source = « GitHub Actions » ; domaine
-  personnalisé dans Settings > Pages (+ fichier `public/CNAME`) ; « Enforce
-  HTTPS ». Puis fusionner la branche de travail dans `main` (après validation).
-- OVH, zone DNS du domaine : 4 enregistrements A vers 185.199.108.153,
-  185.199.109.153, 185.199.110.153, 185.199.111.153 (et AAAA
-  2606:50c0:8000::153, 8001::153, 8002::153, 8003::153), `www` en CNAME vers
-  `leolangloys-glitch.github.io.` ; supprimer l'ancien A / la redirection OVH.
 - Après : Google Search Console (validation par TXT chez OVH, envoyer
-  `sitemap-index.xml`), Bing Webmaster Tools, fiche Google du festival.
+  `sitemap-index.xml`), Bing Webmaster Tools, fiche Google du festival,
+  compte Brevo pour la newsletter, jetons d'accès à l'administration.
 
 ## Règles de travail
 
