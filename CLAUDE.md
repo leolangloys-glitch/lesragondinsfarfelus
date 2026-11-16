@@ -430,8 +430,21 @@ dans `src/`).
   (`@ TXT "1|www…"`), `www` A/AAAA/TXT `3|welcome`. **Gardés intacts** : MX,
   SPF, DKIM (`ovhmo-selector-*`), mail, pop3, smtp, imap, SRV, autoconfig,
   autodiscover, ftp, NS. Dans la nouvelle interface OVH, la racine s'écrit `@`.
-- Reste : cocher **« Enforce HTTPS »** dans Settings > Pages dès que le
-  certificat est prêt ; « Check again » si le contrôle DNS est encore rouge.
+  Ajouté ensuite : `@ TXT "google-site-verification=…"` (Search Console) :
+  **ne jamais le supprimer**, Google le revérifie.
+- **Certificat HTTPS** : resté bloqué à « 1 of 3, Certificate Requested »
+  plusieurs heures (le site en https affichait une alerte) ; domaine retiré
+  puis remis dans Settings > Pages le 16/11/2026 au soir, « DNS check
+  successful » aussitôt. Reste : cocher **« Enforce HTTPS »** dès que la case
+  n'est plus grisée. Si ça rebloque plus de 24 h : refaire Remove puis Save.
+  Le job `signaler` (IndexNow) échoue tant que le certificat n'est pas prêt
+  (« SSL: no alternative certificate subject name »), sans gêner la mise en
+  ligne.
+- **Google Search Console** : propriété « Domaine » validée par TXT chez OVH
+  (16/11/2026). **Bing Webmaster Tools** : site importé depuis Search Console
+  (16/11/2026). Reste, une fois le HTTPS prêt : envoyer `sitemap-index.xml`
+  dans Search Console et « Demander l'indexation » de l'accueil,
+  `/programmation/` et `/domaine/`.
 - Mentions légales et confidentialité : éditeur association **7 DE COEUR**,
   association déclarée, siège à la mairie de Sainte-Geneviève-des-Bois, SIRET
   104 227 723 00012, contact contact@domainedebriquemault.com (aussi contact
@@ -442,9 +455,7 @@ dans `src/`).
   de l'espace presse et `llms.txt`.
 - Ne jamais demander ni accepter les mots de passe OVH ou GitHub : l'équipe
   fait elle-même les réglages, on la guide.
-- Après : Google Search Console (code de vérification dans l'administration,
-  ou TXT chez OVH ; envoyer `sitemap-index.xml`), Bing Webmaster Tools
-  (importer depuis Search Console), inscription du festival dans les agendas
+- Après : inscription du festival dans les agendas
   (OpenAgenda, Tourisme Loiret, offices de tourisme de Montargis et Gien, JDS,
   Facebook événement), compte Brevo pour la newsletter, jetons d'accès à
   l'administration.
