@@ -1,0 +1,117 @@
+---
+// Petites vidéos hébergées avec le site (courtes, sans son, quelques Mo).
+// Elles se lancent toutes seules en boucle quand on les voit, sauf avec
+// « réduire les animations » (on voit alors l'image et le bouton lecture).
+// Gérées dans l'administration (/admin/, « Souvenirs 2026 »).
+interface Clip {
+  video: string;
+  affiche?: string;
+  legende?: string;
+  format?: string; // « paysage », « portrait » ou « carre »
+}
+
+interface Props {
+  clips: Clip[];
+}
+
+const { clips } = Astro.props;
+const ratios: Record<string, number> = { paysage: 16 / 9, portrait: 9 / 16, carre: 1 };
+const liste = clips.filter((c) => c.video);
+---
+
+{
+  liste.length > 0 && (
+    <ul class="clips">
+      {liste.map((c) => {
+        const ratio = ratios[c.format ?? "paysage"] ?? 16 / 9;
+        return (
+          <li style={`--ratio: ${ratio}`}>
+            <figure>
+              <video
+                src={c.video}
+                poster={c.affiche || undefined}
+                muted
+                loop
+                playsinline
+                controls
+                preload="none"
+                aria-label={c.legende || "Vidéo des bénévoles"}
+              />
+              {c.legende && <figcaption>{c.legende}</figcaption>}
+            </figure>
+          </li>
+        );
+      })}
+    </ul>
+  )
+}
+
+<script>
+  // Lecture automatique (sans son) quand la vidéo est visible
+  const calme = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!calme && "IntersectionObserver" in window) {
+    const observateur = new IntersectionObserver(
+      (entrees) =>
+        entrees.forEach((e) => {
+          const v = e.target as HTMLVideoElement;
+          if (e.isIntersecting) v.play().catch(() => {});
+          else v.pause();
+        }),
+      { threshold: 0.4 },
+    );
+    document.querySelectorAll<HTMLVideoElement>(".clips video").forEach((v) => observateur.observe(v));
+  }
+</script>
+
+<style>
+  .clips {
+    list-style: none;
+    margin: 0 0 2.5rem;
+    padding: 0;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  /* Largeurs proportionnelles au format : toutes les vidéos ont la même hauteur */
+  .clips li {
+    flex: var(--ratio) 1 0;
+    min-width: 0;
+  }
+
+  .clips figure {
+    margin: 0;
+  }
+
+  .clips video {
+    display: block;
+    width: 100%;
+    aspect-ratio: var(--ratio);
+    object-fit: cover;
+    border-radius: var(--rayon);
+    border: 1.5px solid rgba(243, 226, 176, 0.45);
+    background: #000;
+  }
+
+  .clips figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--creme-doux);
+  }
+
+  @media (max-width: 40rem) {
+    .clips {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .clips li {
+      width: 100%;
+      flex: none;
+    }
+
+    .clips li[style*="0.5625"] {
+      width: min(100%, 17rem);
+    }
+  }
+</style>

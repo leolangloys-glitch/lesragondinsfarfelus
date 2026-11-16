@@ -55,6 +55,9 @@ mêmes informations.
   complète sur Programmation (`#concours`), carte courte sur l'accueil, FAQ
   Infos, `llms.txt` (`src/components/ConcoursCostume.astro`). **À confirmer** :
   jour, déroulé, jury, récompenses (le site dit « annoncés très bientôt »).
+- **Nouveauté 2027 (donnée par l'équipe, novembre 2026)** : le château fort
+  sera illuminé, avec une **scène sur pilotis** (page Domaine, accueil,
+  `llms.txt`).
 - L'équipe va reprendre tous les textes du site.
 
 **Aucun nom d'artiste n'est publié sur le site ni écrit dans ce dépôt tant
@@ -226,6 +229,15 @@ dans `src/`).
   d'écran (petite résolution) : à remplacer par les fichiers d'origine en
   haute définition. Liens vers les sites : seulement Brasserie Galilée et le
   Domaine (les autres à compléter), en `rel="sponsored"`.
+- **Photos et vidéos des bénévoles 2026** (envoyées par l'équipe, novembre
+  2026) : `public/medias/benevoles/`, listes `photosBenevoles` et
+  `videosBenevoles` de `souvenirs.json` (administration, « Souvenirs 2026 »),
+  section « La troupe 2026 en action » de la page Bénévoles. Vidéos courtes
+  réencodées **sans son** (musique de fond peut-être protégée), lecture
+  automatique en boucle sauf « réduire les animations »
+  (`src/components/Clips.astro`). Une photo recadrée pour retirer deux enfants
+  au premier plan. Crédits photo à demander. Les longues vidéos vont sur
+  YouTube.
 - **Édition 2026** : aucun chiffre de fréquentation publié (« vous avez été
   nombreux »). Aftermovies « bientôt publiés ».
 
