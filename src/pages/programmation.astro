@@ -85,11 +85,12 @@ const jours = [
       </div>
       <div class="grille grille--large">
         <article class="carte plateau">
-          <span class="plateau__chiffre">24 artistes</span>
+          <span class="plateau__chiffre">24 groupes, artistes et DJ</span>
           <h3>Le plateau musique</h3>
           <p class="texte-doux">
-            DJ sets, pop, rock et électro, des premiers rayons de l'après-midi jusqu'au cœur de la
-            nuit&nbsp;: 6 artistes le vendredi, 13 le samedi et 5 le dimanche.
+            Des groupes en live, des artistes et des DJ&nbsp;: pop, rock et électro, des premiers
+            rayons de l'après-midi jusqu'au cœur de la nuit. 6 le vendredi, 13 le samedi et 5 le
+            dimanche.
           </p>
         </article>
         <article class="carte plateau">
@@ -122,7 +123,7 @@ const jours = [
             <p class="intro">{j.texte}</p>
             <ul class="compteurs" aria-label={`Au programme le ${j.jour.split(" ")[0].toLowerCase()}`}>
               <li>
-                <strong>{j.musique}</strong> artistes musique
+                <strong>{j.musique}</strong> groupes, artistes et DJ
               </li>
               <li>
                 <strong>{j.magieTexte}</strong> magiciens, sur scène et en close-up
@@ -155,7 +156,7 @@ const jours = [
                 <span class="artiste__plateau">Musique</span>
                 <span class="artiste__mystere" aria-hidden="true">?</span>
                 <span class="artiste__nom">Artiste mystère</span>
-                <span class="artiste__revelation">Révélation prochaine</span>
+                <span class="artiste__revelation">Groupe, artiste ou DJ</span>
               </li>
             ))}
             {Array.from({
@@ -252,8 +253,9 @@ const jours = [
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 1.25rem;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: clamp(0.75rem, 2.5vw, 1.25rem);
+    /* 2 colonnes sur téléphone : le samedi compte jusqu'à 19 cartes */
+    grid-template-columns: repeat(auto-fill, minmax(min(calc(50% - 0.75rem), 13rem), 1fr));
   }
 
   .artiste {
@@ -262,7 +264,7 @@ const jours = [
     flex-direction: column;
     align-items: center;
     gap: 0.35rem;
-    padding: 2.5rem 1rem 1.5rem;
+    padding: clamp(1.75rem, 5vw, 2.5rem) clamp(0.5rem, 2vw, 1rem) clamp(1.1rem, 3vw, 1.5rem);
     border-radius: 999px 999px var(--rayon) var(--rayon);
     border: 1.5px solid rgba(243, 226, 176, 0.4);
     background: radial-gradient(ellipse at 50% 30%, rgba(44, 122, 111, 0.55), rgba(5, 40, 40, 0.6));
@@ -283,7 +285,7 @@ const jours = [
 
   .artiste__mystere {
     font-family: var(--font-titre);
-    font-size: 4.5rem;
+    font-size: clamp(3rem, 11vw, 4.5rem);
     line-height: 1.1;
     background: linear-gradient(180deg, var(--or-clair), var(--or-fonce));
     -webkit-background-clip: text;
@@ -293,7 +295,8 @@ const jours = [
 
   .artiste__nom {
     font-family: var(--font-titre);
-    font-size: 1.25rem;
+    font-size: clamp(1.05rem, 3.6vw, 1.25rem);
+    line-height: 1.2;
     font-weight: 600;
   }
 

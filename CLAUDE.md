@@ -31,7 +31,9 @@ mêmes informations.
   surprises, sur scène et en close-up (pas de
   « grands numéros d'illusion »).
 - **Nombre d'artistes prévus (donné par l'équipe, novembre 2026)** : musique
-  6 le vendredi, 13 le samedi, 5 le dimanche (24) ; magie 3 à 4 le vendredi,
+  6 le vendredi, 13 le samedi, 5 le dimanche (24) — **des groupes autant que
+  des artistes solo et des DJ** : toujours écrire « groupes, artistes et DJ »,
+  jamais seulement « artistes musique » ; magie 3 à 4 le vendredi,
   5 à 6 le samedi, 5 le dimanche (13 à 15). Publiés sur Programmation
   (compteurs par jour + cartes « mystère » : 4 et 6 pour les fourchettes, à
   ajuster), accueil, données structurées et `llms.txt`. Bien expliquer les
