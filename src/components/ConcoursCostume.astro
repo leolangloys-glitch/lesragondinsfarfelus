@@ -1,0 +1,209 @@
+---
+// Concours du meilleur costume sur le thème de la magie (demande de l'équipe,
+// novembre 2026). Jour, déroulé et récompenses : à annoncer.
+// court = version courte pour l'accueil, qui renvoie vers la programmation.
+interface Props {
+  court?: boolean;
+}
+
+const { court = false } = Astro.props;
+
+const astuces = [
+  {
+    icone: "✦",
+    titre: "Brillez dans la nuit",
+    texte: "LED, guirlandes à piles, fils lumineux : à la tombée du jour, votre costume devient un spectacle. Pensez aux piles de rechange !",
+  },
+  {
+    icone: "✧",
+    titre: "Osez l'éclat",
+    texte: "Paillettes, sequins, dorures, couleurs vives : plus c'est flamboyant, mieux c'est. Préférez les paillettes biodégradables, le domaine vous dira merci.",
+  },
+  {
+    icone: "❖",
+    titre: "Trouvez vos références",
+    texte: "Contes, légendes, cabaret, cinéma, tours de cartes… Inspirez-vous, détournez, mélangez : l'idée la plus inattendue a toutes ses chances.",
+  },
+  {
+    icone: "✂",
+    titre: "Fait main, fait malin",
+    texte: "Carton, récup, tissus chinés : l'ingéniosité compte autant que le résultat. Et restez à l'aise, vous allez danser !",
+  },
+];
+---
+
+{
+  court ? (
+    <section class="section fond-nuit concours concours--court" aria-labelledby="titre-concours">
+      <div class="contenu">
+        <div class="concours__carte">
+          <span class="concours__etoiles" aria-hidden="true">✦ ✧ ✦</span>
+          <span class="surtitre">Le grand concours</span>
+          <h2 id="titre-concours">Venez déguisés&nbsp;!</h2>
+          <p>
+            Concours du meilleur costume sur le thème de la magie, à prendre au sens large. LED,
+            paillettes, couleurs&nbsp;: faites preuve d'ingéniosité et de créativité, les
+            déguisements les plus créatifs seront choisis&nbsp;!
+          </p>
+          <div class="boutons">
+            <a class="bouton bouton--rose" href="/programmation/#concours">Découvrir le concours</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  ) : (
+    <section class="section fond-nuit concours" id="concours" aria-labelledby="titre-concours">
+      <div class="contenu">
+        <div class="concours__grille">
+          <div class="concours__texte">
+            <span class="surtitre">Le grand concours</span>
+            <h2 id="titre-concours">Le concours du meilleur costume</h2>
+            <p class="intro">
+              Cette année, la magie se porte aussi sur vous&nbsp;! Venez déguisés&nbsp;: un grand
+              concours mettra à l'honneur les costumes les plus créatifs du festival.
+            </p>
+            <p>
+              <strong>Le thème&nbsp;: la magie, à prendre au sens large.</strong> Magicien de cabaret,
+              illusionniste, sorcière, fée, créature enchantée, carte à jouer échappée d'un tour,
+              lapin sorti du chapeau, miroir ensorcelé ou ragondin farfelu&nbsp;: tout est permis, tant
+              que ça émerveille.
+            </p>
+            <p>
+              Faites preuve d'ingéniosité et de créativité&nbsp;: les déguisements les plus créatifs
+              seront choisis et célébrés sur place.
+            </p>
+            <p class="concours__note">Jour, déroulé et surprises pour les gagnants&nbsp;: annoncés très bientôt.</p>
+          </div>
+          <div>
+            <h3 class="concours__sous-titre">Nos astuces de magicien</h3>
+            <ul class="concours__astuces">
+              {astuces.map((a) => (
+                <li>
+                  <span class="concours__icone" aria-hidden="true">
+                    {a.icone}
+                  </span>
+                  <div>
+                    <h4>{a.titre}</h4>
+                    <p>{a.texte}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .concours {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 60% 50% at 85% 10%, rgba(255, 160, 203, 0.16), transparent 70%),
+      radial-gradient(ellipse 50% 45% at 10% 90%, rgba(243, 226, 176, 0.1), transparent 70%),
+      var(--vert-nuit);
+  }
+
+  .concours__grille {
+    display: grid;
+    gap: 2.5rem clamp(2rem, 5vw, 4rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    align-items: start;
+  }
+
+  .concours__texte p {
+    color: var(--creme-doux);
+  }
+
+  .concours__texte strong {
+    color: var(--creme);
+  }
+
+  .concours__note {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: 1.5px dashed rgba(243, 226, 176, 0.45);
+    font-size: 0.9rem;
+  }
+
+  .concours__sous-titre {
+    margin: 0 0 1rem;
+    font-size: 1.3rem;
+  }
+
+  .concours__astuces {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.875rem;
+  }
+
+  .concours__astuces li {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1.1rem 1.25rem;
+    border-radius: var(--rayon);
+    border: 1.5px solid rgba(243, 226, 176, 0.3);
+    background: rgba(5, 40, 40, 0.55);
+  }
+
+  .concours__icone,
+  .concours__etoiles {
+    background: linear-gradient(180deg, var(--or-clair), var(--or-fonce));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .concours__icone {
+    flex: none;
+    width: 1.75rem;
+    font-size: 1.6rem;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .concours__astuces h4 {
+    margin: 0 0 0.3rem;
+    font-size: 1.05rem;
+  }
+
+  .concours__astuces p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--creme-doux);
+  }
+
+  /* Version courte (accueil) : une carte en arche, comme le miroir */
+  .concours__carte {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: clamp(3rem, 7vw, 4.5rem) clamp(1.5rem, 5vw, 3.5rem) clamp(2rem, 5vw, 3rem);
+    border-radius: 999px 999px var(--rayon) var(--rayon);
+    border: 2px solid var(--or);
+    background: radial-gradient(ellipse at 50% 20%, rgba(255, 160, 203, 0.2), rgba(5, 40, 40, 0.75));
+    box-shadow: 0 0 3rem rgba(243, 226, 176, 0.12);
+    text-align: center;
+  }
+
+  .concours__etoiles {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-size: 1.4rem;
+    letter-spacing: 0.5em;
+  }
+
+  .concours__carte p {
+    color: var(--creme-doux);
+  }
+
+  .concours__carte .boutons {
+    justify-content: center;
+  }
+</style>

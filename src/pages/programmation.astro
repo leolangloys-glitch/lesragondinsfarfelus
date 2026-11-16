@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import ConcoursCostume from "../components/ConcoursCostume.astro";
 import EnTetePage from "../components/EnTetePage.astro";
 import { getCollection } from "astro:content";
 import { evenementSchema, SITE } from "../data/site";
@@ -23,15 +24,19 @@ const evenement = {
       }
     : {}),
 };
+// Nombre d'artistes prévus par jour (donné par l'équipe, novembre 2026).
+// musique / magie = nombre de cartes ; magieTexte = ce qui est annoncé
+// (« 3 à 4 » : on affiche 4 cartes, à ajuster quand le nombre est fixé).
 const jours = [
   {
     id: "vendredi",
     jour: "Vendredi 28 mai",
     titre: "L'éveil",
     texte:
-      "Le portail s'ouvre en fin d'après-midi : installation au camping, premiers concerts, puis la nuit s'électrise avec les DJ sets.",
-    musique: 3,
-    magie: 1,
+      "Le portail s'ouvre en fin d'après-midi : installation au camping, premiers concerts et premiers tours de magie, puis la nuit s'électrise avec les DJ sets.",
+    musique: 6,
+    magie: 4,
+    magieTexte: "3 à 4",
   },
   {
     id: "samedi",
@@ -39,17 +44,19 @@ const jours = [
     titre: "La grande nuit",
     texte:
       "Une journée entière de concerts, des magiciens sur scène et au milieu du public, puis la grande soirée avec nos têtes d'affiche.",
-    musique: 4,
-    magie: 3,
+    musique: 13,
+    magie: 6,
+    magieTexte: "5 à 6",
   },
   {
     id: "dimanche",
     jour: "Dimanche 30 mai",
     titre: "La journée des familles",
     texte:
-      "De la musique toute la journée et, en plus, des spectacles de magie sur scène pour les enfants : un dimanche pour petits et grands ragondins.",
-    musique: 2,
-    magie: 2,
+      "De la musique toute la journée et de la magie partout, avec des spectacles sur scène pensés pour les enfants : un dimanche pour petits et grands ragondins.",
+    musique: 5,
+    magie: 5,
+    magieTexte: "5",
   },
 ];
 ---
@@ -77,18 +84,28 @@ const jours = [
         <h2 id="titre-plateaux">La musique et la magie, main dans la main</h2>
       </div>
       <div class="grille grille--large">
-        <article class="carte">
+        <article class="carte plateau">
+          <span class="plateau__chiffre">24 artistes</span>
           <h3>Le plateau musique</h3>
           <p class="texte-doux">
             DJ sets, pop, rock et électro, des premiers rayons de l'après-midi jusqu'au cœur de la
-            nuit.
+            nuit&nbsp;: 6 artistes le vendredi, 13 le samedi et 5 le dimanche.
           </p>
         </article>
-        <article class="carte">
-          <h3>Le plateau magie</h3>
+        <article class="carte plateau">
+          <span class="plateau__chiffre">13 à 15 magiciens</span>
+          <h3>La magie sur scène</h3>
           <p class="texte-doux">
-            Une magie fun, impressionnante et pleine de surprises&nbsp;: sur scène et en close-up, des magiciens viennent
-            vous surprendre au détour d'une allée. Le dimanche, des spectacles de magie pour les enfants.
+            Des spectacles fun, impressionnants et pleins de surprises, à vivre devant la scène. Le
+            dimanche, des spectacles pensés pour les enfants.
+          </p>
+        </article>
+        <article class="carte plateau">
+          <span class="plateau__chiffre">Sous vos yeux</span>
+          <h3>La magie en close-up</h3>
+          <p class="texte-doux">
+            La magie de tout près&nbsp;: les magiciens viennent à votre rencontre, au milieu du public,
+            et les tours se passent à quelques centimètres de vous, parfois même entre vos mains.
           </p>
         </article>
       </div>
@@ -103,6 +120,14 @@ const jours = [
             <span class="surtitre">{j.jour}</span>
             <h2 id={`titre-${j.id}`}>{j.titre}</h2>
             <p class="intro">{j.texte}</p>
+            <ul class="compteurs" aria-label={`Au programme le ${j.jour.split(" ")[0].toLowerCase()}`}>
+              <li>
+                <strong>{j.musique}</strong> artistes musique
+              </li>
+              <li>
+                <strong>{j.magieTexte}</strong> magiciens, sur scène et en close-up
+              </li>
+            </ul>
           </div>
           <ul class="artistes">
             {artistes
@@ -140,7 +165,7 @@ const jours = [
                 <span class="artiste__plateau">Magie</span>
                 <span class="artiste__mystere" aria-hidden="true">?</span>
                 <span class="artiste__nom">Magicien mystère</span>
-                <span class="artiste__revelation">Révélation prochaine</span>
+                <span class="artiste__revelation">Scène ou close-up</span>
               </li>
             ))}
           </ul>
@@ -149,7 +174,9 @@ const jours = [
     ))
   }
 
-  <section class="section fond-nuit" aria-labelledby="titre-horaires">
+  <ConcoursCostume />
+
+  <section class="section fond-vert" aria-labelledby="titre-horaires">
     <div class="contenu">
       <div class="titre-section">
         <span class="surtitre">Horaires</span>
@@ -167,6 +194,38 @@ const jours = [
 </Base>
 
 <style>
+  .plateau__chiffre {
+    display: inline-block;
+    margin-bottom: 0.6rem;
+    font-family: var(--font-titre);
+    font-size: 1.35rem;
+    background: linear-gradient(180deg, var(--or-clair), var(--or-fonce));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .compteurs {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 1.25rem 0 0;
+    padding: 0;
+  }
+
+  .compteurs li {
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    border: 1.5px solid rgba(243, 226, 176, 0.45);
+    background: rgba(5, 40, 40, 0.5);
+    font-size: 0.95rem;
+  }
+
+  .compteurs strong {
+    color: var(--or-clair);
+  }
+
   .jours-nav {
     display: flex;
     flex-wrap: wrap;

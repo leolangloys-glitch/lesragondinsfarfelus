@@ -91,6 +91,8 @@ export const liensExternes = {
 
 /** Adresse e-mail de contact (formulaires, presse, partenaires). */
 export const contact = reglages.contact;
+// Adresse qui reçoit les inscriptions bénévoles (vide = adresse de contact)
+export const emailBenevoles = reglages.emailBenevoles || reglages.contact;
 
 export type Lien = { libelle: string; href: string };
 
@@ -254,9 +256,9 @@ export function evenementSchema(siteUrl = SITE) {
     },
     organizer: { "@type": "Organization", "@id": `${siteUrl}/#organisation`, name: festival.nom, url: `${siteUrl}/` },
     subEvent: [
-      jour("2027-05-28", "Vendredi : l'éveil", "Ouverture du camping, concerts en soirée et DJ sets tard dans la nuit."),
-      jour("2027-05-29", "Samedi : la grande nuit", "Magiciens sur scène et en close-up, concerts et soirée têtes d'affiche."),
-      jour("2027-05-30", "Dimanche : la journée des familles", "Musique toute la journée et spectacles de magie pour les enfants."),
+      jour("2027-05-28", "Vendredi : l'éveil", "Ouverture du camping, 6 artistes musique (concerts puis DJ sets tard dans la nuit) et 3 à 4 magiciens sur scène et en close-up."),
+      jour("2027-05-29", "Samedi : la grande nuit", "13 artistes musique, 5 à 6 magiciens sur scène et en close-up, soirée têtes d'affiche."),
+      jour("2027-05-30", "Dimanche : la journée des familles", "5 artistes musique et 5 magiciens, avec des spectacles de magie sur scène pour les enfants."),
     ],
   };
 }
