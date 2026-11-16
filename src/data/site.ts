@@ -91,6 +91,8 @@ export const liensExternes = {
 
 /** Adresse e-mail de contact (formulaires, presse, partenaires). */
 export const contact = reglages.contact;
+// Adresse qui reçoit les inscriptions bénévoles (vide = adresse de contact)
+export const emailBenevoles = reglages.emailBenevoles || reglages.contact;
 
 export type Lien = { libelle: string; href: string };
 

@@ -1,10 +1,10 @@
 ---
 import Base from "../layouts/Base.astro";
 import EnTetePage from "../components/EnTetePage.astro";
-import ModuleExterne from "../components/ModuleExterne.astro";
 import Faq from "../components/Faq.astro";
 import Video from "../components/Video.astro";
-import { liensExternes } from "../data/site";
+import Formulaire from "../components/Formulaire.astro";
+import { emailBenevoles, liensExternes } from "../data/site";
 import souvenirs from "../data/souvenirs.json";
 
 // Les avantages des bénévoles (confirmés par l'équipe en novembre 2026)
@@ -51,7 +51,11 @@ const questions = [
   },
   {
     q: "Y a-t-il un âge minimum ?",
-    r: "L'âge minimum sera précisé dans le formulaire d'inscription.",
+    r: "Indiquez votre âge dans le formulaire : nous revenons vers vous avec les conditions. Pour les mineurs, une autorisation parentale est demandée.",
+  },
+  {
+    q: "Pourquoi vous demandez mes qualités et mes défauts ?",
+    r: "Pour mieux vous connaître et vous proposer la mission qui vous ressemble. Il n'y a pas de mauvaise réponse : on a tous nos petits défauts, et un peu d'humour est bienvenu !",
   },
 ];
 ---
@@ -147,15 +151,111 @@ const questions = [
 
   <section class="section fond-vert" id="inscription" aria-labelledby="titre-inscription">
     <div class="contenu">
-      <h2 id="titre-inscription" class="sr-only">Inscription</h2>
-      <ModuleExterne
-        titre="Le formulaire d'inscription"
-        texte="Les inscriptions bénévoles ouvriront prochainement. Vos informations servent uniquement à organiser le bénévolat du festival."
-        lien={liensExternes.formulaireBenevoles}
-        libelleBouton="Devenir bénévole"
-      />
+      <div class="titre-section">
+        <span class="surtitre">Inscriptions 2027 ouvertes</span>
+        <h2 id="titre-inscription">Le formulaire d'inscription</h2>
+        <p class="intro">
+          Quelques minutes suffisent. Pas besoin d'être parfait&nbsp;: on veut surtout vous connaître
+          un peu. Nous lisons chaque candidature et revenons vers vous par e-mail ou par téléphone.
+        </p>
+      </div>
+      <div class="carte inscription">
+        <Formulaire
+          id="inscription-benevole"
+          sujet="Inscription bénévole · Les Ragondins Farfelus 2027"
+          bouton="Envoyer ma candidature"
+          destinataire={emailBenevoles}
+          lienExterne={liensExternes.formulaireBenevoles}
+          champs={[
+            { nom: "nom", libelle: "Prénom et nom", requis: true, autocomplete: "name" },
+            { nom: "email", libelle: "E-mail", type: "email", requis: true, autocomplete: "email" },
+            { nom: "telephone", libelle: "Téléphone", type: "tel", requis: true, autocomplete: "tel" },
+            { nom: "ville", libelle: "Ville", autocomplete: "address-level2", aide: "Pour organiser les covoiturages." },
+            {
+              nom: "age",
+              libelle: "Votre âge",
+              type: "select",
+              requis: true,
+              options: ["Moins de 18 ans", "18 à 25 ans", "26 à 40 ans", "41 à 60 ans", "Plus de 60 ans"],
+            },
+            {
+              nom: "tshirt",
+              libelle: "Taille de t-shirt",
+              type: "select",
+              options: ["XS", "S", "M", "L", "XL", "XXL"],
+            },
+            {
+              nom: "disponibilites",
+              libelle: "Vos disponibilités",
+              type: "cases",
+              requis: true,
+              aide: "Cochez tout ce qui est possible pour vous.",
+              options: [
+                "Montage (les jours avant le festival)",
+                "Vendredi 28 mai",
+                "Samedi 29 mai",
+                "Dimanche 30 mai",
+                "Démontage (les jours après le festival)",
+              ],
+            },
+            {
+              nom: "missions",
+              libelle: "Les missions qui vous tentent",
+              type: "cases",
+              aide: "Plusieurs choix possibles. Rien n'est figé : on en parle ensemble.",
+              options: [...missions.map((m) => m.titre), "Peu importe, je suis partant pour tout !"],
+            },
+            {
+              nom: "qualites",
+              libelle: "Quelques qualités",
+              type: "textarea",
+              requis: true,
+              lignes: 3,
+              max: 600,
+              aide: "Comment vos proches vous décriraient-ils ? Trois mots ou trois phrases suffisent.",
+            },
+            {
+              nom: "defauts",
+              libelle: "Et quelques défauts",
+              type: "textarea",
+              requis: true,
+              lignes: 3,
+              max: 600,
+              aide: "On a tous les nôtres ! Un peu d'honnêteté (et d'humour) est bienvenu.",
+            },
+            {
+              nom: "motivation",
+              libelle: "Pourquoi voulez-vous devenir bénévole aux Ragondins Farfelus ?",
+              type: "textarea",
+              requis: true,
+              lignes: 4,
+              max: 1000,
+            },
+            {
+              nom: "experience",
+              libelle: "Avez-vous déjà vécu une expérience similaire, de près ou de loin ?",
+              type: "choix",
+              requis: true,
+              options: [
+                "Oui, j'ai déjà été bénévole sur un festival ou un événement",
+                "De loin : associatif, accueil du public, restauration, animation, spectacle…",
+                "Non, ce sera une première (et c'est très bien comme ça !)",
+              ],
+            },
+            {
+              nom: "experience-detail",
+              libelle: "Racontez-nous en quelques mots",
+              type: "textarea",
+              lignes: 3,
+              max: 800,
+              aide: "Où, quand, quel rôle… même si le lien est lointain, tout nous intéresse.",
+            },
+          ]}
+        />
+      </div>
       <p class="note">
-        En savoir plus sur l'utilisation de vos données&nbsp;: <a href="/confidentialite/">politique de confidentialité</a>.
+        Vos réponses servent uniquement à constituer l'équipe bénévole du festival et ne sont jamais
+        transmises à des tiers. En savoir plus&nbsp;: <a href="/confidentialite/">politique de confidentialité</a>.
       </p>
     </div>
   </section>
@@ -208,6 +308,10 @@ const questions = [
   .avantage p {
     margin: 0;
     color: var(--creme-doux);
+  }
+
+  .inscription {
+    max-width: 52rem;
   }
 
   .note {

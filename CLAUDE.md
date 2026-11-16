@@ -165,9 +165,23 @@ dans `src/`).
 ## Formulaires (bénévoles, partenaires, accréditation presse)
 
 - `src/components/Formulaire.astro` : sans outil externe, l'envoi ouvre la
-  messagerie du visiteur avec un e-mail déjà rempli vers l'adresse de
-  contact. Dès qu'un lien de formulaire externe (Tally conseillé, hébergé en
+  messagerie du visiteur avec un e-mail déjà rempli (« Question : réponse »),
+  et un bouton « Copier mes réponses » sert de secours si aucune messagerie ne
+  s'ouvre. Types de champs : texte, e-mail, tél., liste, zone de texte,
+  `cases` (plusieurs choix, « au moins une » si obligatoire) et `choix` (un
+  seul). Dès qu'un lien de formulaire externe (Tally conseillé, hébergé en
   Europe) est renseigné dans « Liens et contact », un bouton y mène à la place.
+- **Où arrivent les demandes** : partenaires et presse vers l'e-mail de
+  contact (contact@domainedebriquemault.com) ; **bénévoles** vers « E-mail des
+  inscriptions bénévoles » (`emailBenevoles` dans `reglages.json`, vide =
+  e-mail de contact). Newsletter : pas encore branchée (Brevo à créer).
+- **Inscriptions bénévoles ouvertes (novembre 2026)**, formulaire demandé par
+  l'équipe : nom, e-mail, téléphone, ville, tranche d'âge, taille de t-shirt,
+  disponibilités (montage, vendredi, samedi, dimanche, démontage), missions
+  souhaitées, **qualités, défauts, motivation, expérience similaire de près
+  ou de loin** (+ quelques mots). Âge minimum : non fixé (FAQ : autorisation
+  parentale pour les mineurs, à confirmer). Ne jamais stocker les réponses
+  dans le dépôt.
 
 ## Contenus confirmés (novembre 2026)
 

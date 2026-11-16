@@ -167,11 +167,12 @@ collections:
         label: Liens et contact
         file: src/data/reglages.json
         fields:
-          - { label: E-mail de contact, name: contact, widget: string }
+          - { label: E-mail de contact, name: contact, widget: string, hint: "Reçoit les demandes partenaires et presse, et sert de contact général." }
+          - { label: E-mail des inscriptions bénévoles, name: emailBenevoles, widget: string, required: false, hint: "Vide = l'e-mail de contact. Par exemple une adresse benevoles@lesragondinsfarfelus.com créée chez OVH." }
           - { label: Billetterie (lien), name: billetterie, widget: string, required: false, hint: "Dès qu'il est rempli, les boutons « Billetterie » s'activent." }
           - { label: Recharge cashless (lien), name: rechargeCashless, widget: string, required: false }
           - { label: Formulaire d'inscription à la newsletter (Brevo), name: newsletter, widget: string, required: false, hint: "Dans Brevo : Contacts > Formulaires > votre formulaire > Partager > copier le lien (il contient « sibforms.com »)." }
-          - { label: Formulaire bénévoles (lien), name: formulaireBenevoles, widget: string, required: false, hint: "Lien d'un formulaire Tally, Google Forms… Vide = bouton « Ouverture prochaine »." }
+          - { label: Formulaire bénévoles (lien), name: formulaireBenevoles, widget: string, required: false, hint: "Lien d'un formulaire Tally, Google Forms… Vide = le formulaire du site (qui envoie un e-mail à l'adresse des inscriptions bénévoles)." }
           - { label: Formulaire partenaires (lien), name: formulairePartenaires, widget: string, required: false, hint: "Vide = formulaire du site (qui envoie un e-mail à l'adresse de contact)." }
           - { label: Formulaire d'accréditation presse (lien), name: formulairePresse, widget: string, required: false, hint: "Vide = formulaire du site (qui envoie un e-mail à l'adresse de contact)." }
           - { label: Instagram, name: instagram, widget: string, required: false }
