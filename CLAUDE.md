@@ -30,8 +30,15 @@ mêmes informations.
   et **magie** = magie fun (avec de l'humour), impressionnante et pleine de
   surprises, sur scène et en close-up (pas de
   « grands numéros d'illusion »).
-- Vendredi : ouverture du camping, premiers concerts en fin d'après-midi, puis
-  DJ sets jusque tard dans la nuit.
+- **Nombre d'artistes prévus (donné par l'équipe, novembre 2026)** : musique
+  6 le vendredi, 13 le samedi, 5 le dimanche (24) ; magie 3 à 4 le vendredi,
+  5 à 6 le samedi, 5 le dimanche (13 à 15). Publiés sur Programmation
+  (compteurs par jour + cartes « mystère » : 4 et 6 pour les fourchettes, à
+  ajuster), accueil, données structurées et `llms.txt`. Bien expliquer les
+  deux formes de magie : **sur scène** et **en close-up** (de tout près, au
+  milieu du public).
+- Vendredi : ouverture du camping, premiers concerts (et premiers tours de
+  magie) en fin d'après-midi, puis DJ sets jusque tard dans la nuit.
 - Samedi : magiciens sur scène et en close-up, concerts toute la journée,
   grande soirée avec les têtes d'affiche.
 - Dimanche : journée des familles : de la musique **et** des spectacles de

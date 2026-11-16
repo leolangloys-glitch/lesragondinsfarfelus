@@ -32,19 +32,22 @@ const jours = [
     jour: "Vendredi",
     date: "28 mai",
     titre: "L'éveil",
-    texte: "Ouverture du camping, premiers concerts en fin d'après-midi, puis DJ sets jusque tard dans la nuit.",
+    texte: "Ouverture du camping, premiers concerts et premiers tours de magie en fin d'après-midi, puis DJ sets jusque tard dans la nuit.",
+    chiffres: "6 artistes musique · 3 à 4 magiciens",
   },
   {
     jour: "Samedi",
     date: "29 mai",
     titre: "La grande nuit",
     texte: "Magiciens sur scène et en close-up, concerts toute la journée et grande soirée avec nos têtes d'affiche.",
+    chiffres: "13 artistes musique · 5 à 6 magiciens",
   },
   {
     jour: "Dimanche",
     date: "30 mai",
     titre: "La journée des familles",
-    texte: "De la musique toute la journée et, en plus, des spectacles de magie sur scène pour les enfants.",
+    texte: "De la musique toute la journée et de la magie partout, avec des spectacles sur scène pour les enfants.",
+    chiffres: "5 artistes musique · 5 magiciens",
   },
 ];
 ---
@@ -224,6 +227,7 @@ const jours = [
               </p>
               <h3>{j.titre}</h3>
               <p>{j.texte}</p>
+              <p class="jour__chiffres">{j.chiffres}</p>
             </li>
           ))
         }
@@ -1058,6 +1062,13 @@ const jours = [
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--rose);
+  }
+
+  .jour__chiffres {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--or-clair);
   }
 
   .jour p:last-child {
