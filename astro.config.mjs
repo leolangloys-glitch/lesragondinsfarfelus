@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
+import referencement from "./outils/referencement.mjs";
 
 // https://docs.astro.build/
 export default defineConfig({
@@ -16,5 +17,7 @@ export default defineConfig({
       lastmod: new Date(),
       i18n: { defaultLocale: "fr", locales: { fr: "fr-FR" } },
     }),
+    // Après le plan du site : llms-full.txt (assistants IA) et photos du plan du site
+    referencement(),
   ],
 });

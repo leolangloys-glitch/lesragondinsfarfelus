@@ -50,3 +50,24 @@ jobs:
     steps:
       - id: publication
         uses: actions/deploy-pages@v4
+
+  # Prévient Bing (et donc ChatGPT, Copilot, DuckDuckGo, Qwant…), Yandex, Seznam
+  # et Naver que le site a changé (protocole IndexNow). Sans effet sur la mise en
+  # ligne si ça échoue. La clé est publique par nature (fichier public/070ec91cfce7ceb1224b9c9875dcca25.txt).
+  signaler:
+    needs: publier
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Signaler les pages à IndexNow
+        env:
+          SITE: https://lesragondinsfarfelus.com
+          CLE: 070ec91cfce7ceb1224b9c9875dcca25
+        run: |
+          sleep 60
+          urls=$(curl -fsS "$SITE/sitemap-0.xml" | grep -o '<loc>[^<]*</loc>' | sed -e 's/<loc>//' -e 's/<\/loc>//' | sed 's/.*/"&"/' | paste -sd, -)
+          [ -n "$urls" ] || { echo "Plan du site introuvable"; exit 0; }
+          curl -sS -X POST https://api.indexnow.org/indexnow \
+            -H 'Content-Type: application/json; charset=utf-8' \
+            -d "{\"host\":\"lesragondinsfarfelus.com\",\"key\":\"$CLE\",\"keyLocation\":\"$SITE/$CLE.txt\",\"urlList\":[$urls]}" \
+            -w '\nRéponse IndexNow : %{http_code}\n'

@@ -3,7 +3,7 @@ import Base from "../layouts/Base.astro";
 import EnTetePage from "../components/EnTetePage.astro";
 import ModuleExterne from "../components/ModuleExterne.astro";
 import Faq from "../components/Faq.astro";
-import { liensExternes } from "../data/site";
+import { faqSchema, liensExternes } from "../data/site";
 
 // Formules provisoires : contenus et tarifs à valider par l'équipe.
 const formules = [
@@ -41,10 +41,12 @@ const questions = [
 <Base
   titre="Billetterie 2027 : pass jour, 3 jours, camping"
   nomCourt="Billetterie"
+  image="/partage/billetterie.jpg"
+  donneesStructurees={faqSchema(questions)}
   description="Billets du festival Les Ragondins Farfelus 2027 : pass jour, pass 3 jours et camping. Musique et magie les 28-30 mai au Domaine de Briquemault (Loiret)."
 >
   <EnTetePage
-    surtitre="Billetterie"
+    surtitre="Billetterie du festival 2027"
     titre="Votre billet pour l'autre monde"
     intro="Pass jour, pass 3 jours, camping : choisissez comment vous voulez traverser le portail."
   />

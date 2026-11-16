@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import EnTetePage from "../components/EnTetePage.astro";
-import { festival, lieuSchema } from "../data/site";
+import { festival, lieuSchema, SITE } from "../data/site";
 
 // Les lieux du domaine (photos : Domaine de Briquemault, reprises de son site
 // à la demande de l'équipe, novembre 2026). Textes écrits pour le festival.
@@ -62,16 +62,38 @@ const lieux = [
     texte: "Dix hectares d'arbres centenaires, de prairies et de cours d'eau, au bord du Loing.",
   },
 ];
+
+const schemaDomaine = {
+  "@context": "https://schema.org",
+  ...lieuSchema(),
+  "@type": ["Place", "TouristAttraction"],
+  description:
+    "Domaine historique de dix hectares au bord du Loing, à Sainte-Geneviève-des-Bois (Loiret), entre Montargis et Gien, à environ 1 h 30 de Paris : vestiges d'un château fort du XIIIe siècle entouré de douves, manoir, orangerie, théâtre de verdure, cascade et parc. Il accueille chaque printemps le festival de musique et de magie Les Ragondins Farfelus.",
+  photo: [
+    { "@type": "ImageObject", url: `${SITE}/medias/domaine/panorama.webp`, caption: "Le Domaine de Briquemault" },
+    { "@type": "ImageObject", url: `${SITE}/medias/domaine/forteresse-jour.webp`, caption: "Les tours du château fort et les douves" },
+  ],
+  hasMap: "https://www.google.com/maps/search/?api=1&query=Domaine+de+Briquemault+45230+Sainte-Genevi%C3%A8ve-des-Bois",
+  touristType: ["Festivaliers", "Familles", "Amateurs de patrimoine"],
+  containsPlace: lieux.map((l) => ({
+    "@type": "Place",
+    name: l.nom,
+    description: l.texte,
+    photo: `${SITE}${l.photo}`,
+  })),
+  event: { "@id": `${SITE}/#festival` },
+};
 ---
 
 <Base
   titre="Le Domaine de Briquemault (Loiret)"
   nomCourt="Le Domaine de Briquemault"
+  image="/partage/domaine.jpg"
   description="Le Domaine de Briquemault, 10 hectares de nature et d'histoire entre Montargis et Gien (Loiret), accueille le festival Les Ragondins Farfelus."
-  donneesStructurees={{ "@context": "https://schema.org", ...lieuSchema() }}
+  donneesStructurees={schemaDomaine}
 >
   <EnTetePage
-    surtitre="Le lieu"
+    surtitre="Le lieu du festival, dans le Loiret"
     titre="Le Domaine de Briquemault"
     intro="À 1 h 30 de Paris et 1 h 15 d'Orléans, entre Montargis et Gien, un domaine chargé d'histoire qui se transforme chaque printemps en monde des Ragondins Farfelus."
   >

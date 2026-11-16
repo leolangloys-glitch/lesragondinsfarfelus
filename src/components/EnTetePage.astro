@@ -11,8 +11,10 @@ const { surtitre, titre, intro } = Astro.props;
 
 <header class="ouverture-page">
   <div class="ouverture-page__contenu">
-    <span class="surtitre">{surtitre}</span>
-    <h1>{titre}</h1>
+    <h1>
+      <span class="surtitre">{surtitre}</span><span class="sr-only"> : </span>
+      {titre}
+    </h1>
     {intro && <p class="intro">{intro}</p>}
     <slot />
   </div>
@@ -50,6 +52,14 @@ const { surtitre, titre, intro } = Astro.props;
     font-size: clamp(2.6rem, 8vw, 5rem);
     max-width: 14ch;
     text-wrap: balance;
+  }
+
+  /* Le surtitre est dans le h1 (bon pour Google), mais garde son style */
+  h1 .surtitre {
+    display: block;
+    width: max-content;
+    max-width: 90vw;
+    text-wrap: wrap;
   }
 
   .intro {

@@ -8,15 +8,24 @@ import Video from "../components/Video.astro";
 import Phototheque from "../components/Phototheque.astro";
 import LogosPartenaires from "../components/LogosPartenaires.astro";
 import souvenirs from "../data/souvenirs.json";
+import partenaires from "../data/partenaires.json";
+import { edition2026Schema } from "../data/site";
+
+const schema = edition2026Schema(
+  souvenirs.photos.map((p) => p.image),
+  partenaires.liste,
+);
 ---
 
 <Base
   titre="Édition 2026 : merci ! Aftermovie et photos"
   nomCourt="Édition 2026"
+  image="/partage/edition-2026.jpg"
+  donneesStructurees={schema}
   description="Retour sur la 1re édition des Ragondins Farfelus, les 30 et 31 mai 2026 au Domaine de Briquemault (Loiret) : merci à tous, aftermovie et photos."
 >
   <EnTetePage
-    surtitre="Édition 2026"
+    surtitre="Retour sur le festival 2026"
     titre="Vous avez été nombreux. Merci encore !"
     intro="Les 30 et 31 mai 2026, le miroir s'est ouvert pour la toute première fois au Domaine de Briquemault. Vous avez été nombreux à le franchir, et vous avez fait de ce premier week-end un moment magique. Merci à vous, festivaliers, artistes, bénévoles et partenaires !"
   >
