@@ -256,9 +256,9 @@ export function evenementSchema(siteUrl = SITE) {
     },
     organizer: { "@type": "Organization", "@id": `${siteUrl}/#organisation`, name: festival.nom, url: `${siteUrl}/` },
     subEvent: [
-      jour("2027-05-28", "Vendredi : l'éveil", "Ouverture du camping, 6 artistes musique (concerts puis DJ sets tard dans la nuit) et 3 à 4 magiciens sur scène et en close-up."),
-      jour("2027-05-29", "Samedi : la grande nuit", "13 artistes musique, 5 à 6 magiciens sur scène et en close-up, soirée têtes d'affiche."),
-      jour("2027-05-30", "Dimanche : la journée des familles", "5 artistes musique et 5 magiciens, avec des spectacles de magie sur scène pour les enfants."),
+      jour("2027-05-28", "Vendredi : l'éveil", "Ouverture du camping, 6 groupes, artistes et DJ (concerts puis DJ sets tard dans la nuit) et 3 à 4 magiciens sur scène et en close-up."),
+      jour("2027-05-29", "Samedi : la grande nuit", "13 groupes, artistes et DJ, 5 à 6 magiciens sur scène et en close-up, soirée têtes d'affiche."),
+      jour("2027-05-30", "Dimanche : la journée des familles", "5 groupes, artistes et DJ et 5 magiciens, avec des spectacles de magie sur scène pour les enfants."),
     ],
   };
 }

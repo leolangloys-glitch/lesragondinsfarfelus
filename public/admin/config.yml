@@ -44,7 +44,7 @@ collections:
     public_folder: /medias/artistes
     preview_path: "artistes/{{slug}}/"
     fields:
-      - { label: Nom de l'artiste, name: nom, widget: string }
+      - { label: Nom de l'artiste ou du groupe, name: nom, widget: string }
       - label: Publié sur le site
         name: publie
         widget: boolean
