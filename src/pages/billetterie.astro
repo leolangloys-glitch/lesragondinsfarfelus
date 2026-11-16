@@ -13,61 +13,66 @@ const jours = [
     nom: "Pass vendredi",
     ambiance: "L'éveil",
     date: "Vendredi 28 mai",
-    accroche: "Le portail s'ouvre. On plante la tente, les premières notes résonnent dans le domaine… et la nuit s'électrise.",
+    ruban: "La soirée d'ouverture",
+    accroche:
+      "Le portail s'ouvre et tout le domaine se réveille d'un coup. Premiers concerts au coucher du soleil, des magiciens qui surgissent là où on ne les attend pas, puis les DJ font monter la température jusqu'au bout de la nuit.",
     points: [
       "6 groupes, artistes et DJ",
-      "3 à 4 magiciens, sur scène et en close-up",
-      "Ouverture du camping l'après-midi",
+      "3 à 4 magiciens, sur scène et au milieu de la foule",
       "DJ sets jusque tard dans la nuit",
+      "Des surprises dès le premier soir",
     ],
-    pourQui: "Idéal entre amis",
+    pourQui: "Pour démarrer fort",
   },
   {
     id: "samedi",
     nom: "Pass samedi",
     ambiance: "La grande nuit",
     date: "Samedi 29 mai",
-    ruban: "Le temps fort",
-    accroche: "La plus grande journée du festival : des concerts toute la journée jusqu'au bout de la nuit, des magiciens partout, et la soirée des têtes d'affiche.",
+    ruban: "La nuit des têtes d'affiche",
+    accroche:
+      "Une journée entière à fond : des concerts du jour jusqu'à la nuit, de la magie sur scène et à quelques centimètres de vous, puis la grande soirée avec les têtes d'affiche. Et quelques surprises… qu'on garde secrètes.",
     points: [
       "13 groupes, artistes et DJ",
       "5 à 6 magiciens, sur scène et en close-up",
       "La grande soirée têtes d'affiche",
-      "Concerts toute la journée",
+      "Des surprises qu'on ne dévoile pas ici",
     ],
-    pourQui: "Le jour à ne pas rater",
+    pourQui: "Pour la nuit la plus folle",
   },
   {
     id: "dimanche",
     nom: "Pass dimanche",
-    ambiance: "La journée des familles",
+    ambiance: "Le grand final",
     date: "Dimanche 30 mai",
-    accroche: "Le monde des Ragondins s'ouvre aux plus jeunes : on vient en famille, on écoute, on rit et on s'émerveille ensemble.",
+    ruban: "Le grand final",
+    accroche:
+      "On ne quitte pas le monde des Ragondins sans un dernier tour : de la musique toute la journée, de la magie à chaque coin du domaine et des surprises jusqu'à la dernière minute. Les plus jeunes sont aussi de la fête.",
     points: [
       "5 groupes, artistes et DJ",
-      "5 magiciens, avec des spectacles sur scène pour les enfants",
-      "Musique toute la journée",
+      "5 magiciens, dont des spectacles pour les enfants",
+      "Des surprises pour finir en beauté",
       "Gratuit pour les moins de 11 ans",
     ],
-    pourQui: "Parfait en famille",
+    pourQui: "Entre amis ou en famille",
   },
 ];
 
 const pass3jours = {
   points: [
-    "Les 3 jours du festival, sans rien manquer",
+    "Les 3 jours, de la soirée d'ouverture au grand final",
     "24 groupes, artistes et DJ et 13 à 15 magiciens",
-    "Le camping inclus, au cœur du domaine, dès le vendredi après-midi",
+    "Le camping au cœur du domaine, dès le vendredi après-midi",
     "Nouveauté 2027 : la forteresse illuminée et sa scène sur pilotis",
-    "Le concours du meilleur costume : venez déguisés !",
+    "Toutes les surprises des trois jours (et il y en aura)",
   ],
 };
 
 // Inclus quel que soit le pass
 const inclus = [
   { titre: "Les deux plateaux", texte: "La musique et la magie, sans supplément." },
-  { titre: "La magie de tout près", texte: "Des magiciens en close-up au milieu du public." },
-  { titre: "Un domaine à explorer", texte: "Forteresse, manoir illuminé, cascade, parc." },
+  { titre: "Des surprises partout", texte: "Des magiciens au milieu de la foule, et d'autres secrets." },
+  { titre: "Le camping", texte: "Possible avec tous les pass : 1, 2 ou 3 jours." },
   { titre: "Le concours de costume", texte: "Venez déguisés : les plus créatifs seront choisis." },
 ];
 
@@ -77,6 +82,10 @@ const lienBouton = billetterieOuverte ? liensExternes.billetterie : "#titre-news
 const texteBouton = billetterieOuverte ? "Réserver ce pass" : "Être prévenu de l'ouverture";
 
 const questions = [
+  {
+    q: "Peut-on camper avec un pass 1 jour ?",
+    r: "Oui : le camping est possible avec tous les pass, que vous veniez 1, 2 ou 3 jours. Il ouvre le vendredi après-midi, au cœur du domaine.",
+  },
   {
     q: "Où acheter mes billets ?",
     r: "Uniquement sur ce site, via notre billetterie officielle. Méfiez-vous des reventes sur les réseaux sociaux ou les sites non officiels : nous ne pourrons pas garantir l'accès avec un billet acheté ailleurs.",
@@ -101,16 +110,16 @@ const questions = [
 ---
 
 <Base
-  titre="Billetterie 2027 : pass 3 jours avec camping, pass jour"
+  titre="Billetterie 2027 : pass 1, 2 ou 3 jours, camping"
   nomCourt="Billetterie"
   image="/partage/billetterie.jpg"
   donneesStructurees={faqSchema(questions)}
-  description="Billets du festival Les Ragondins Farfelus 2027 : pass 3 jours avec camping, pass vendredi, samedi ou dimanche. Musique et magie du 28 au 30 mai (Loiret)."
+  description="Billets du festival Les Ragondins Farfelus 2027 : pass 1, 2 ou 3 jours, camping possible avec tous les pass. Musique et magie du 28 au 30 mai (Loiret)."
 >
   <EnTetePage
     surtitre="Billetterie du festival 2027"
     titre="Votre billet pour l'autre monde"
-    intro="Trois jours, trois ambiances, et un pass pour tout vivre avec le camping. Choisissez comment vous voulez traverser le portail."
+    intro="Trois jours, trois ambiances, des surprises à chaque coin du domaine. Pass 1, 2 ou 3 jours, et le camping possible avec tous les pass."
   />
 
   <section class="section fond-nuit" aria-labelledby="titre-formules">
@@ -119,8 +128,9 @@ const questions = [
         <span class="surtitre">Les formules</span>
         <h2 id="titre-formules">Choisissez votre passage</h2>
         <p class="intro">
-          Tarifs dévoilés très bientôt&nbsp;: inscrivez-vous à la newsletter pour être prévenu en
-          premier.
+          Chaque jour a son ambiance, ses artistes et ses surprises. Impossible de choisir&nbsp;?
+          Prenez les trois. Tarifs dévoilés très bientôt&nbsp;: inscrivez-vous à la newsletter pour
+          être prévenu en premier.
         </p>
       </div>
 
@@ -131,8 +141,9 @@ const questions = [
           <p class="pass3__date">Du vendredi 28 au dimanche 30 mai</p>
           <h3 id="titre-pass3">Pass 3 jours <span class="pass3__plus">+ camping</span></h3>
           <p class="pass3__accroche">
-            Vivez tout, sans rien manquer&nbsp;: du premier accord du vendredi au dernier tour de
-            magie du dimanche, avec vos nuits au cœur du domaine.
+            Trois jours, zéro regret&nbsp;: la soirée d'ouverture, la nuit des têtes d'affiche, le
+            grand final, et toutes les surprises entre les trois. Vous vivez tout, et vous dormez au
+            cœur du domaine.
           </p>
         </div>
         <ul class="pass3__points">
@@ -172,6 +183,11 @@ const questions = [
           ))
         }
       </ul>
+
+      <p class="autres-formules">
+        <strong>Deux jours vous tentent&nbsp;?</strong> Un pass 2 jours sera aussi proposé. Et le
+        camping est possible avec tous les pass, que vous veniez 1, 2 ou 3 jours.
+      </p>
 
       <div class="inclus">
         <h3 class="inclus__titre">Dans tous les pass</h3>
@@ -341,7 +357,7 @@ const questions = [
     margin: 0 0 2.5rem;
     padding: 0;
     display: grid;
-    gap: 1.5rem 1.25rem;
+    gap: 2.5rem 1.25rem;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
   }
 
@@ -361,13 +377,13 @@ const questions = [
 
   .formule--samedi {
     --accent: var(--or-clair);
-    border-width: 2px;
   }
 
-  .formule--samedi .formule__ruban {
+  .formule .formule__ruban {
     left: 50%;
     transform: translateX(-50%);
-    background: linear-gradient(180deg, var(--or-clair), var(--or));
+    white-space: nowrap;
+    background: var(--accent);
   }
 
   .formule--dimanche {
@@ -435,6 +451,16 @@ const questions = [
     align-self: stretch;
     justify-content: center;
     text-align: center;
+  }
+
+  .autres-formules {
+    margin: 0 0 2rem;
+    text-align: center;
+    color: var(--creme-doux);
+  }
+
+  .autres-formules strong {
+    color: var(--creme);
   }
 
   /* ----- Inclus dans tous les pass ----- */

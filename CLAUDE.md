@@ -47,8 +47,16 @@ mêmes informations.
   magie sur scène pour les enfants.
 - Public : vendredi et samedi plutôt adulte ; dimanche ouvert aux familles et
   aux plus jeunes (pas « tout public »).
-- Billetterie : pass 3 jours avec camping et autres formules, « disponibles
-  très prochainement ».
+- Billetterie : **pass 1 jour (vendredi, samedi, dimanche), pass 2 jours et
+  pass 3 jours avec camping** (confirmé par l'équipe, novembre 2026) ;
+  **camping possible avec tous les pass** (1, 2 ou 3 jours) ; tarifs « à
+  venir » (pas encore fixés). « Disponibles très prochainement ».
+- Ton de la billetterie (demande de l'équipe) : donner envie à des
+  **25-30 ans** sur **chacun des trois jours**, pas seulement le samedi ;
+  **des surprises** annoncées chaque jour. Noms des jours : vendredi
+  « L'éveil » (la soirée d'ouverture), samedi « La grande nuit » (la nuit des
+  têtes d'affiche), dimanche **« Le grand final »** (entre amis ou en famille ;
+  c'est toujours la journée des familles, avec les spectacles pour enfants).
 - **Concours du meilleur costume** (demande de l'équipe, novembre 2026) : thème
   de la magie au sens large, ingéniosité et créativité, LED, paillettes,
   couleurs ; « les déguisements les plus créatifs seront choisis ». Section
