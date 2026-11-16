@@ -8,18 +8,23 @@
       "credit": "Domaine de Briquemault"
     },
     {
+      "image": "/medias/souvenirs/2026-manoir-projections.webp",
+      "legende": "La nuit tombée, le manoir se pare de vagues de lumière",
+      "credit": ""
+    },
+    {
       "image": "/medias/souvenirs/2026-allee-illuminee.webp",
       "legende": "Les allées du domaine illuminées de rose et de vert",
       "credit": ""
     },
     {
-      "image": "/medias/souvenirs/2026-concert-jour.webp",
-      "legende": "Concert en plein soleil sur la grande scène",
+      "image": "/medias/souvenirs/2026-concert-nuit.webp",
+      "legende": "La grande scène, au cœur de la nuit",
       "credit": "Domaine de Briquemault"
     },
     {
-      "image": "/medias/souvenirs/2026-concert-nuit.webp",
-      "legende": "La grande scène, au cœur de la nuit",
+      "image": "/medias/souvenirs/2026-concert-jour.webp",
+      "legende": "Concert en plein soleil sur la grande scène",
       "credit": "Domaine de Briquemault"
     },
     {

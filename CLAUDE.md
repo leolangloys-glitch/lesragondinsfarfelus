@@ -251,7 +251,9 @@ dans `src/`).
   Photos envoyées par l'équipe ensuite : cours illuminées rose et vert (carte
   « Les cours illuminées »), concert de jour, régie, allée illuminée
   (photothèque 2026 ; ordre de `souvenirs.photos` = les 4 premières sur
-  l'accueil). Photo de nuit de l'Orangerie : à renvoyer (non reçue en fichier).
+  l'accueil). Projections lumineuses sur le manoir : carte « Le Manoir » (photo
+  orange) et photothèque 2026 (photo bleue, 2e, donc aussi sur l'accueil).
+  Photo de nuit de l'Orangerie : à renvoyer (non reçue en fichier).
 - **Édition 2026** : aucun chiffre de fréquentation publié (« vous avez été
   nombreux »). Aftermovies « bientôt publiés ».
 
