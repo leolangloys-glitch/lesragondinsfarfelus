@@ -461,8 +461,10 @@ dans `src/`).
   (16/11/2026). **Bing Webmaster Tools** : site importé depuis Search Console
   (16/11/2026). Plan du site : dans une propriété « Domaine », Search Console
   exige l'adresse complète `https://lesragondinsfarfelus.com/sitemap-index.xml`
-  (pas seulement `sitemap-index.xml`). Reste : « Demander l'indexation » de
-  l'accueil, `/programmation/` et `/domaine/`.
+  (pas seulement `sitemap-index.xml`). Fait le 17/11/2026 : plan du site
+  envoyé, indexation demandée pour l'accueil, `/programmation/` et
+  `/domaine/`. Première mise en ligne faite par Claude sur demande : PR
+  `leolangloys-glitch/lesragondinsfarfelus#9` (17/11/2026).
 - Mentions légales et confidentialité : éditeur association **7 DE COEUR**,
   association déclarée, siège à la mairie de Sainte-Geneviève-des-Bois, SIRET
   104 227 723 00012, contact contact@domainedebriquemault.com (aussi contact
