@@ -432,8 +432,13 @@ dans `src/`).
   environ 2 min). Il refuse de publier si les visuels de `public/brouillon/`
   manquent. Settings > Pages > Source = « GitHub Actions » (fait).
 - Méthode de travail : on modifie la branche `claude/memoire-projet`, puis
-  l'équipe ouvre une demande de fusion vers `main` et clique « Merge ».
-  L'administration (`/admin/`) écrit directement dans `main`.
+  on fusionne dans `main`. Soit l'équipe ouvre la demande de fusion et clique
+  « Merge », soit **Claude le fait lui-même quand l'équipe le demande
+  explicitement** (« mets en ligne », accord de l'équipe le 17/11/2026) :
+  créer la demande de fusion vers `main` (API REST de GitHub, `gh api`),
+  la fusionner, puis suivre la publication (onglet Actions) jusqu'aux trois
+  coches vertes. Jamais sans demande. L'administration (`/admin/`) écrit
+  directement dans `main` : bien partir de `origin/main` à jour.
 - **Zone DNS chez OVH (faite le 16/11/2026, vérifiée sur le DNS public)** :
   4 A `@` vers 185.199.108.153, .109.153, .110.153, .111.153 ; 4 AAAA `@` vers
   2606:50c0:8000::153, 8001, 8002, 8003 ; `www` en CNAME vers
@@ -447,11 +452,11 @@ dans `src/`).
 - **Certificat HTTPS** : resté bloqué à « 1 of 3, Certificate Requested »
   plusieurs heures (le site en https affichait une alerte) ; domaine retiré
   puis remis dans Settings > Pages le 16/11/2026 au soir, « DNS check
-  successful » aussitôt ; certificat prêt le soir même (case « Enforce
-  HTTPS » cochable). Vérifier qu'elle est bien **cochée**. Si ça rebloque plus de 24 h : refaire Remove puis Save.
-  Le job `signaler` (IndexNow) échoue tant que le certificat n'est pas prêt
-  (« SSL: no alternative certificate subject name »), sans gêner la mise en
-  ligne.
+  successful » aussitôt ; certificat prêt le soir même. **HTTPS fonctionne
+  depuis le 17/11/2026** (le job `signaler` lit le plan du site en https et
+  IndexNow répond 202). Si le certificat rebloque un jour plus de 24 h : Remove
+  puis Save dans Settings > Pages. Le job `signaler` échoue (sans gêner la mise
+  en ligne) si le certificat n'est pas valide.
 - **Google Search Console** : propriété « Domaine » validée par TXT chez OVH
   (16/11/2026). **Bing Webmaster Tools** : site importé depuis Search Console
   (16/11/2026). Plan du site : dans une propriété « Domaine », Search Console
