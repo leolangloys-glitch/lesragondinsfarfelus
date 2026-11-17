@@ -47,8 +47,16 @@ mêmes informations.
   magie sur scène pour les enfants.
 - Public : vendredi et samedi plutôt adulte ; dimanche ouvert aux familles et
   aux plus jeunes (pas « tout public »).
-- Billetterie : pass 3 jours avec camping et autres formules, « disponibles
-  très prochainement ».
+- Billetterie : **pass 1 jour (vendredi, samedi, dimanche), pass 2 jours et
+  pass 3 jours avec camping** (confirmé par l'équipe, novembre 2026) ;
+  **camping possible avec tous les pass** (1, 2 ou 3 jours) ; tarifs « à
+  venir » (pas encore fixés). « Disponibles très prochainement ».
+- Ton de la billetterie (demande de l'équipe) : donner envie à des
+  **25-30 ans** sur **chacun des trois jours**, pas seulement le samedi ;
+  **des surprises** annoncées chaque jour. Noms des jours : vendredi
+  « L'éveil » (la soirée d'ouverture), samedi « La grande nuit » (la nuit des
+  têtes d'affiche), dimanche **« Le grand final »** (entre amis ou en famille ;
+  c'est toujours la journée des familles, avec les spectacles pour enfants).
 - **Concours du meilleur costume** (demande de l'équipe, novembre 2026) : thème
   de la magie au sens large, ingéniosité et créativité, LED, paillettes,
   couleurs ; « les déguisements les plus créatifs seront choisis ». Section
@@ -114,7 +122,7 @@ Comment venir, Presse, Contact, Mentions légales, Confidentialité. Menus :
 | Accueil : entrée par le miroir, puis le haut sur fond noir (titre, infos), le festival en bref, programme, billetterie, retour 2026 (4 photos + lien), le lieu | `src/pages/index.astro` |
 | Programmation (3 jours, plateaux musique/magie : les artistes publiés, complétés par des cartes « mystère ») | `programmation.astro` |
 | Une page par artiste (photo, texte, écoute, clip, liens), créée toute seule pour chaque fiche publiée | `artistes/[slug].astro` |
-| Billetterie (formules, gratuités, module du prestataire, FAQ) | `billetterie.astro` |
+| Billetterie : « Pass 3 jours + camping » mis en avant (grande carte), puis pass vendredi / samedi / dimanche en arches (ambiance, accroche, chiffres du programme, « pour qui », bouton « Être prévenu » vers la newsletter tant que la billetterie n'est pas ouverte, « Réserver » ensuite), « Dans tous les pass », gratuités, module du prestataire, FAQ. Textes vendeurs (novembre 2026) : les 3 jours aussi désirables, surprises chaque jour, dimanche « Le grand final » ; pass 1, 2 et 3 jours confirmés, camping avec tous les pass, **tarifs à venir** | `billetterie.astro` |
 | Cashless (étapes, recharge en ligne, FAQ) | `cashless.astro` |
 | Infos pratiques (dates, accès, camping, accessibilité, sur place, FAQ, contact) | `infos.astro` |
 | Venir au festival (temps de trajet, train, covoiturage, FAQ) | `venir.astro` |
@@ -283,10 +291,14 @@ dans `src/`).
   `.affiche` dans `index.astro`). Dans le miroir, **seul le titre** (le logo),
   un peu plus grand que sur l'affiche, centré dans l'ouverture.
 - Dans l'affiche, le miroir n'est pas tout à fait centré : marches et damier
-  sont alignés sur le bas du miroir, un peu à droite. Pour que les carreaux
-  soient bien droits, l'affiche est décalée de 1,63 % : le point de fuite du
-  damier et l'escalier tombent pile au milieu de l'écran. Ne pas « recentrer »
-  le miroir.
+  sont un peu à droite du miroir. L'affiche est décalée de 1,63 % : le point de
+  fuite du damier et l'escalier tombent pile au milieu de l'écran (carreaux
+  bien droits). **Puis, à la demande de l'équipe (novembre 2026, sur
+  téléphone : « c'est pas centré »), le miroir lui-même est décalé de 1,97 %
+  vers la droite** (cadre, titre, eau, bouton ; halo du fond et texte « Touchez
+  le miroir » recentrés aussi, `0.5163` dans `miroir-eau.ts`) : miroir,
+  escalier et damier sont maintenant tous au milieu de l'écran. Ne pas revenir
+  aux positions exactes de l'affiche.
 - Le sol est un SVG extensible qui reproduit celui de la graphiste (mêmes
   couleurs, même perspective, même découpe) pour remplir tout l'écran :
   `python3 -I outils/sol-damier.py public/brouillon/sol-damier.webp public/brouillon/sol-damier.svg`
@@ -430,8 +442,22 @@ dans `src/`).
   (`@ TXT "1|www…"`), `www` A/AAAA/TXT `3|welcome`. **Gardés intacts** : MX,
   SPF, DKIM (`ovhmo-selector-*`), mail, pop3, smtp, imap, SRV, autoconfig,
   autodiscover, ftp, NS. Dans la nouvelle interface OVH, la racine s'écrit `@`.
-- Reste : cocher **« Enforce HTTPS »** dans Settings > Pages dès que le
-  certificat est prêt ; « Check again » si le contrôle DNS est encore rouge.
+  Ajouté ensuite : `@ TXT "google-site-verification=…"` (Search Console) :
+  **ne jamais le supprimer**, Google le revérifie.
+- **Certificat HTTPS** : resté bloqué à « 1 of 3, Certificate Requested »
+  plusieurs heures (le site en https affichait une alerte) ; domaine retiré
+  puis remis dans Settings > Pages le 16/11/2026 au soir, « DNS check
+  successful » aussitôt ; certificat prêt le soir même (case « Enforce
+  HTTPS » cochable). Vérifier qu'elle est bien **cochée**. Si ça rebloque plus de 24 h : refaire Remove puis Save.
+  Le job `signaler` (IndexNow) échoue tant que le certificat n'est pas prêt
+  (« SSL: no alternative certificate subject name »), sans gêner la mise en
+  ligne.
+- **Google Search Console** : propriété « Domaine » validée par TXT chez OVH
+  (16/11/2026). **Bing Webmaster Tools** : site importé depuis Search Console
+  (16/11/2026). Plan du site : dans une propriété « Domaine », Search Console
+  exige l'adresse complète `https://lesragondinsfarfelus.com/sitemap-index.xml`
+  (pas seulement `sitemap-index.xml`). Reste : « Demander l'indexation » de
+  l'accueil, `/programmation/` et `/domaine/`.
 - Mentions légales et confidentialité : éditeur association **7 DE COEUR**,
   association déclarée, siège à la mairie de Sainte-Geneviève-des-Bois, SIRET
   104 227 723 00012, contact contact@domainedebriquemault.com (aussi contact
@@ -442,9 +468,7 @@ dans `src/`).
   de l'espace presse et `llms.txt`.
 - Ne jamais demander ni accepter les mots de passe OVH ou GitHub : l'équipe
   fait elle-même les réglages, on la guide.
-- Après : Google Search Console (code de vérification dans l'administration,
-  ou TXT chez OVH ; envoyer `sitemap-index.xml`), Bing Webmaster Tools
-  (importer depuis Search Console), inscription du festival dans les agendas
+- Après : inscription du festival dans les agendas
   (OpenAgenda, Tourisme Loiret, offices de tourisme de Montargis et Gien, JDS,
   Facebook événement), compte Brevo pour la newsletter, jetons d'accès à
   l'administration.

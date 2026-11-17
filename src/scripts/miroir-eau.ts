@@ -197,10 +197,11 @@ export function creerEau(o: Options): Eau | null {
     gl!.viewport(0, 0, o.canvas.width, o.canvas.height);
     gl!.uniform2f(r.uTaille, o.canvas.width, o.canvas.height);
     gl!.uniform1f(r.uUnite, o.canvas.width / 600);
-    // centre et rayon du dégradé : (50 %, 49 %) de l'affiche, rayon 0,66 × sa largeur
+    // centre et rayon du dégradé : (51,63 %, 49 %) de l'affiche (au milieu de
+    // l'écran, comme le miroir), rayon 0,66 × sa largeur ; même valeur que le CSS
     gl!.uniform3f(
       r.uFond,
-      (ra.left + ra.width * 0.5 - rc.left) * echelle,
+      (ra.left + ra.width * 0.5163 - rc.left) * echelle,
       (ra.top + ra.height * 0.49 - rc.top) * echelle,
       ra.width * 0.66 * echelle,
     );

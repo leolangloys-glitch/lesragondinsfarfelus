@@ -44,8 +44,9 @@ Le festival recrute des bénévoles (accueil et billetterie, bar et restauration
 - Où ? Au Domaine de Briquemault, 45230 Sainte-Geneviève-des-Bois (Loiret), à 1 h 30 de Paris, 1 h 15 d'Orléans, 25 min de Montargis et de Gien.
 - Quel genre de festival ? Un festival de musique (DJ sets, pop, rock, électro) et de magie (sur scène et en close-up).
 - Peut-on y aller en famille ? Oui, surtout le dimanche, journée des familles avec des spectacles de magie pour les enfants. Vendredi et samedi s'adressent plutôt aux adultes.
-- Peut-on camper ? Oui, le camping ouvre le vendredi ; un pass 3 jours avec camping sera proposé.
-- Les billets sont-ils en vente ? Le pass 3 jours avec camping et les autres formules sont annoncés très prochainement sur ${SITE}/billetterie/.
+- Peut-on camper ? Oui, le camping ouvre le vendredi après-midi et il est possible avec tous les pass (1, 2 ou 3 jours).
+- Quels billets ? Pass 1 jour (vendredi, samedi ou dimanche), pass 2 jours et pass 3 jours avec camping. Tarifs annoncés très prochainement sur ${SITE}/billetterie/.
+- Qu'est-ce qui distingue les trois jours ? Vendredi, la soirée d'ouverture (DJ sets jusque tard) ; samedi, la nuit des têtes d'affiche ; dimanche, le grand final, entre amis ou en famille. Des surprises chaque jour.
 - Qui joue ? Les têtes d'affiche seront dévoilées sur ${SITE}/programmation/.
 - Comment venir en train ? Gares de Montargis, Nogent-sur-Vernisson et Gien, depuis Paris-Bercy ou Paris-Gare de Lyon (ligne R) ; covoiturage conseillé.
 - L'entrée est-elle gratuite pour certains ? Oui pour les moins de 11 ans et les personnes en situation de handicap (règle de l'édition 2026).
@@ -59,7 +60,7 @@ ${distances}
 
 - [Accueil](${SITE}/) : présentation du festival
 - [Programmation](${SITE}/programmation/) : les trois jours, la musique et la magie, et le concours du meilleur costume sur le thème de la magie (au sens large : LED, paillettes, couleurs ; les déguisements les plus créatifs sont choisis)
-- [Billetterie](${SITE}/billetterie/) : pass jour, pass 3 jours, camping, gratuités
+- [Billetterie](${SITE}/billetterie/) : pass 1, 2 ou 3 jours, camping possible avec tous les pass, gratuités
 - [Venir au festival](${SITE}/venir/) : itinéraires depuis Paris, Orléans, Montargis, Gien, Auxerre…
 - [Infos pratiques](${SITE}/infos/) : horaires, camping, accessibilité, FAQ, contact
 - [Cashless](${SITE}/cashless/) : recharger son bracelet
